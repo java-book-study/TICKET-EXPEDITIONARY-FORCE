@@ -1,11 +1,15 @@
 package com.ticket.captain.config;
 
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
+@EnableWebSecurity
+@Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
@@ -14,7 +18,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers("/", "/login","/sign-up").permitAll()
                 .mvcMatchers(HttpMethod.GET).permitAll()
                 .anyRequest().authenticated();
+
         http.formLogin().loginPage("/login").permitAll();
+
         http.logout().logoutSuccessUrl("/");
     }
 

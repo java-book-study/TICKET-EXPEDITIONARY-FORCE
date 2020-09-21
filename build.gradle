@@ -51,3 +51,8 @@ dependencyManagement {
 test {
     useJUnitPlatform()
 }
+
+task npmInstall(type: Exec) {
+    workingDir 'src/main/webapp'
+    commandLine 'npm', 'install'
+}
