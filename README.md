@@ -10,7 +10,7 @@
 • WAS는 2대 이상 이용한다고 가정  
 * 테스트 코드 작성 필수   
 • Spring framework   
-• Maven 사용  
+• Gradle 사용  
 • RESTful 방식 이용  
 • DB는 RDB를 기준  
 • Mysql,Maria,MS,Oracle...  
