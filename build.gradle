@@ -44,7 +44,11 @@ dependencies {
     //Swagger
     compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
     compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+    //ModelMapper
     compile 'org.modelmapper:modelmapper:2.3.3'
+    //Spring AOP
+    compile 'org.springframework.boot:spring-boot-starter-aop'
+    compile group: 'com.google.guava', name: 'guava', version: '18.0'
 }
 
 dependencyManagement {
