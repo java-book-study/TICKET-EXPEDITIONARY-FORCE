@@ -49,6 +49,8 @@ dependencies {
     //Spring AOP
     compile 'org.springframework.boot:spring-boot-starter-aop'
     compile group: 'com.google.guava', name: 'guava', version: '18.0'
+    //Guava
+    implementation("com.google.guava:guava:29.0-jre")
 }
 
 dependencyManagement {
