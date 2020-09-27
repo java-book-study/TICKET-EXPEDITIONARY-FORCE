@@ -1,16 +1,27 @@
 package com.ticket.captain.account;
 
-import javax.persistence.Column;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 
+@Entity
+@Builder @EqualsAndHashCode(of="id")
+@AllArgsConstructor @NoArgsConstructor
 public class Account {
 
-    @Column(name="account_id")
+    @Id
+    @GeneratedValue
     private Long id;
     private String publicIp;
-    private String accountLoginId;
-    private String accountPassword;
-    private String accountName;
+    private String loginId;
+    private String password;
+    private String name;
     private String nickname;
     private String email;
     private LocalDateTime createDate;
@@ -30,30 +41,6 @@ public class Account {
 
     public void setPublicIp(String publicIp) {
         this.publicIp = publicIp;
-    }
-
-    public String getAccountLoginId() {
-        return accountLoginId;
-    }
-
-    public void setAccountLoginId(String accountLoginId) {
-        this.accountLoginId = accountLoginId;
-    }
-
-    public String getAccountPassword() {
-        return accountPassword;
-    }
-
-    public void setAccountPassword(String accountPassword) {
-        this.accountPassword = accountPassword;
-    }
-
-    public String getAccountName() {
-        return accountName;
-    }
-
-    public void setAccountName(String accountName) {
-        this.accountName = accountName;
     }
 
     public String getNickname() {
@@ -86,5 +73,29 @@ public class Account {
 
     public void setModifyDate(LocalDateTime modifyDate) {
         this.modifyDate = modifyDate;
+    }
+
+    public String getLoginId() {
+        return loginId;
+    }
+
+    public void setLoginId(String loginId) {
+        this.loginId = loginId;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
