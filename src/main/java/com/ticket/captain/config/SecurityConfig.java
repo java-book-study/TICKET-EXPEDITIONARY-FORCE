@@ -15,7 +15,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .mvcMatchers("/", "/login","/sign-up").permitAll()
+                .mvcMatchers("/", "/login", "/sign-up", "/swagger/**").permitAll()
                 .mvcMatchers(HttpMethod.GET).permitAll()
                 .anyRequest().authenticated();
 
@@ -28,6 +28,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
                 .mvcMatchers("/node_modules/**")
+                .mvcMatchers("/h2-console/**")
+                .mvcMatchers("/swagger-resources/**", "/swagger-ui.html", "/v1/api-docs", "/v2/api-docs", "/webjars/**")
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 }
