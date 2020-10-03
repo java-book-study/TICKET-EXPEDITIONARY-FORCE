@@ -22,6 +22,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 public class AccountController {
 
     private final AccountService accountService;
+    private final AccountRepository accountRepository;
 
     @GetMapping
     public String signUpForm(Model model){
@@ -35,8 +36,25 @@ public class AccountController {
             return ResponseEntity.unprocessableEntity().body(signUpForm);
         }
         Account account = accountService.createAccount(signUpForm);
+        accountService.login(account);
         URI createdUri = linkTo(AccountController.class).slash(account.getId()).toUri();
-        return ResponseEntity.created(createdUri).body(signUpForm);
+        return ResponseEntity.created(createdUri).body(account);
+    }
+
+    @GetMapping("/check-email-token")
+    public ResponseEntity checkEmailToken(@RequestBody String token, String email){
+        Account account = accountRepository.findByEmail(email);
+        if(account == null){
+            return ResponseEntity.notFound().build();
+        }
+        if(!account.isValidToken(token)){
+            return ResponseEntity.badRequest().body("this is not valid token");
+        }
+
+        accountService.completeSignUp(account);
+        // 로그인 화면으로 이동
+        URI createdUri = linkTo(AccountController.class).slash("/login").toUri();
+        return ResponseEntity.created(createdUri).body(account);
     }
 
 }

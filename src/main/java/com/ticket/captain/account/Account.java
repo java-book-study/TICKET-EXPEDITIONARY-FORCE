@@ -31,7 +31,7 @@ public class Account {
 
     @Enumerated(EnumType.STRING)
     @Transient @Builder.Default
-    private AccountStatus accountStatus = AccountStatus.MEMBER;
+    private AccountStatus accountStatus = AccountStatus.ROLE_USER;
 
     public Long getId() {
         return id;
@@ -140,5 +140,14 @@ public class Account {
     public void generateEmailCheckToken() {
         this.emailCheckToken = UUID.randomUUID().toString();
         this.emailCheckTokenGeneratedAt = LocalDateTime.now();
+    }
+
+    public boolean isValidToken(String token) {
+        return this.emailCheckToken.equals(token);
+    }
+
+    public void completeSignUp() {
+        this.emailVerified = true;
+        this.createDate = LocalDateTime.now();
     }
 }
