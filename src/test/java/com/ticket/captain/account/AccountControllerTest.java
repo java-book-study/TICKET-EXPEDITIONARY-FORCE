@@ -49,6 +49,7 @@ class AccountControllerTest {
         mockMvc.perform(get("/sign-up"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("account/sign-up"))
+                .andExpect(model().attributeExists("signUpForm"))
                 .andExpect(unauthenticated());
 
     }
