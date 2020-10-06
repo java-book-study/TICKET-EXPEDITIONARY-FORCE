@@ -1,7 +1,7 @@
 package com.ticket.captain.account;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.hateoas.MediaTypes;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,24 +10,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping(value="/sign-up", produces = MediaTypes.HAL_JSON_VALUE)
+@RequestMapping(value="/sign-up", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AccountController {
 
     private final AccountService accountService;
     private final AccountRepository accountRepository;
 
     @GetMapping
-    public String signUpForm(Model model){
-        model.addAttribute(new SignUpForm());
-        return "account/sign-up";
+    public ModelAndView signUpForm(){
+        return new ModelAndView("account/sign-up", "signUpForm", new SignUpForm());
     }
 
     @PostMapping
@@ -37,12 +36,12 @@ public class AccountController {
         }
         Account account = accountService.createAccount(signUpForm);
         accountService.login(account);
-        URI createdUri = linkTo(AccountController.class).slash(account.getId()).toUri();
+        URI createdUri = new URI("/");
         return ResponseEntity.created(createdUri).body(account);
     }
 
     @GetMapping("/check-email-token")
-    public ResponseEntity checkEmailToken(@RequestBody String token, String email){
+    public ResponseEntity checkEmailToken(@RequestBody String token, String email) throws URISyntaxException {
         Account account = accountRepository.findByEmail(email);
         if(account == null){
             return ResponseEntity.notFound().build();
@@ -52,9 +51,9 @@ public class AccountController {
         }
 
         accountService.completeSignUp(account);
-        // 로그인 화면으로 이동
-        URI createdUri = linkTo(AccountController.class).slash("/login").toUri();
-        return ResponseEntity.created(createdUri).body(account);
+
+        URI checkEmailUri = new URI("mail/check-email");
+        return ResponseEntity.created(checkEmailUri).body(account);
     }
 
 }
