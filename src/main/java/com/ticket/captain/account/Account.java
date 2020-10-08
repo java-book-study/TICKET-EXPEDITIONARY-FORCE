@@ -1,5 +1,6 @@
 package com.ticket.captain.account;
 
+import com.ticket.captain.account.dto.AccountUpdateRequestDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class Account {
 
     @Column(name="account_id")
@@ -23,7 +24,6 @@ public class Account {
 
     private String name;
 
-    @Column(unique = true)
     private String phone;
 
     @Enumerated(EnumType.STRING)
@@ -35,5 +35,11 @@ public class Account {
 
     @Embedded
     private Address address;
+
+    public void update(AccountUpdateRequestDto requestDto) {
+        this.email = requestDto.getEmail();
+        this.name = requestDto.getName();
+        this.role = requestDto.getRole();
+    }
 
 }
