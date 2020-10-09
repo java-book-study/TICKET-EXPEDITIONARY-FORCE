@@ -29,9 +29,13 @@ public class Account {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private String profileImage;
+
     private LocalDateTime createDate;
 
     private LocalDateTime modifyDate;
+
+    private int point;
 
     @Embedded
     private Address address;

@@ -59,6 +59,8 @@ public class AccountApiControllerTest {
     @SpyBean(name = "objectMapper")
     private ObjectMapper objectMapper;
 
+    static Long testAccountId;
+
     @Before
     public void setUp(){
         Account account = Account.builder()
@@ -67,12 +69,16 @@ public class AccountApiControllerTest {
                 .password(passwordEncoder.encode("1111"))
                 .phone("010-9981-3056")
                 .role(Role.ROLE_USER)
-                .address(new Address("seoul", "mapo", "03951"))
                 .createDate(LocalDateTime.now())
                 .modifyDate(LocalDateTime.now())
+                .profileImage("")
+                .point(5000)
+                .address(new Address("seoul", "mapo", "03951"))
                 .build();
 
-        accountRepository.save(account);
+        Account saveAccount = accountRepository.save(account);
+        testAccountId = saveAccount.getId();
+
     }
 
     @Test
@@ -93,7 +99,7 @@ public class AccountApiControllerTest {
     @Test
     public void 회원_상세조회() throws Exception {
 
-        MvcResult mvcResult = mockMvc.perform(get("/api/account/" + 1))
+        MvcResult mvcResult = mockMvc.perform(get("/api/account/" + testAccountId))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -113,7 +119,7 @@ public class AccountApiControllerTest {
                 new AccountUpdateRequestDto("update@email.com", "update", Role.ROLE_ADMIN);
 
         //when
-        mockMvc.perform(post("/api/account/" + 1)
+        mockMvc.perform(post("/api/account/" + testAccountId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequestDto))
                 .with(csrf()))
