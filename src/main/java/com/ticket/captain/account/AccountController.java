@@ -1,6 +1,7 @@
 package com.ticket.captain.account;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -12,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 
 @Controller
 @RequiredArgsConstructor
@@ -30,30 +31,42 @@ public class AccountController {
     }
 
     @PostMapping
-    public ResponseEntity createAccount(@RequestBody SignUpForm signUpForm, Errors errors) throws URISyntaxException {
+    public ResponseEntity createAccount(@RequestBody @Valid SignUpForm signUpForm, Errors errors) throws URISyntaxException {
         if(errors.hasErrors()){
-            return ResponseEntity.unprocessableEntity().body(signUpForm);
+            errors.setNestedPath("/");
+            return badRequest(errors);
         }
         Account account = accountService.createAccount(signUpForm);
         accountService.login(account);
-        URI createdUri = new URI("/");
-        return ResponseEntity.created(createdUri).body(account);
+        return ResponseEntity.created(new URI("/sign-up/complete")).body(account);
     }
 
+    @GetMapping("/complete")
+    public ModelAndView completeSignUp(@RequestBody Account account) {
+        return new ModelAndView("account/complete", "account", account);
+    }
+
+
     @GetMapping("/check-email-token")
-    public ResponseEntity checkEmailToken(@RequestBody String token, String email) throws URISyntaxException {
+    public String checkEmailToken(String token, String email, Model model) {
         Account account = accountRepository.findByEmail(email);
+        String view = "account/checked-email";
+
         if(account == null){
-            return ResponseEntity.notFound().build();
+            model.addAttribute("error", "wrong.email");
+            return view;
         }
         if(!account.isValidToken(token)){
-            return ResponseEntity.badRequest().body("this is not valid token");
+            model.addAttribute("error", "wrong.token");
+            return view;
         }
 
         accountService.completeSignUp(account);
-
-        URI checkEmailUri = new URI("mail/check-email");
-        return ResponseEntity.created(checkEmailUri).body(account);
+        return view;
     }
 
+    private ResponseEntity badRequest(Errors errors) throws URISyntaxException {
+
+        return ResponseEntity.badRequest().body(errors);
+    }
 }

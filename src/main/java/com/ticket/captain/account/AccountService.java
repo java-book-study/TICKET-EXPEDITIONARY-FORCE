@@ -8,6 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +27,7 @@ import java.util.List;
 @Slf4j
 @Transactional
 @RequiredArgsConstructor
-public class AccountService {
+public class AccountService implements UserDetailsService {
 
     private final PasswordEncoder passwordEncoder;
     private final AccountRepository accountRepository;
@@ -59,7 +62,6 @@ public class AccountService {
                 account.getPassword(),
                 List.of(new SimpleGrantedAuthority("ROLE_USER")));
         SecurityContextHolder.getContext().setAuthentication(token);
-
     }
 
     public void completeSignUp(Account account) {
@@ -92,5 +94,20 @@ public class AccountService {
             ip = req.getRemoteAddr();
         }
         return ip;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public UserDetails loadUserByUsername(String emailOrNickname) throws UsernameNotFoundException {
+        Account account = accountRepository.findByEmail(emailOrNickname);
+
+        if(account == null){
+            account = accountRepository.findByNickname(emailOrNickname);
+        }
+
+        if(account == null){
+            throw new UsernameNotFoundException(emailOrNickname);
+        }
+        return new UserAccount(account);
     }
 }

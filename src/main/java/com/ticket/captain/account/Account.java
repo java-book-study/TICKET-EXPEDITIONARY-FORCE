@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -27,6 +28,7 @@ public class Account {
     private LocalDateTime modifyDate;
     private LocalDateTime emailCheckTokenGeneratedAt;
     private String emailCheckToken;
+
     private boolean emailVerified;
 
     @Enumerated(EnumType.STRING)
