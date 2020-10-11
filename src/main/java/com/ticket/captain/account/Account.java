@@ -17,6 +17,7 @@ public class Account {
 
     @Id
     @GeneratedValue
+    @Column(name = "account_id")
     private Long id;
     private String publicIp;
     private String loginId;
@@ -28,8 +29,11 @@ public class Account {
     private LocalDateTime modifyDate;
     private LocalDateTime emailCheckTokenGeneratedAt;
     private String emailCheckToken;
-
     private boolean emailVerified;
+    private int point;
+    private String city;
+    private String street;
+    private String zipcode;
 
     @Enumerated(EnumType.STRING)
     @Transient @Builder.Default
