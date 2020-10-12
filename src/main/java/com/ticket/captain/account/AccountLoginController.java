@@ -9,7 +9,6 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/test")
 @RequiredArgsConstructor
 @Slf4j
 public class AccountLoginController {
@@ -17,7 +16,7 @@ public class AccountLoginController {
     private final AccountService accountService;
     private final AccountRepository accountRepository;
 
-    @PostMapping("/register")
+    @PostMapping("/testregister")
     public ResponseEntity simple_register(@RequestBody AccountCreateDto accountCreateDto, Errors errors) {
         log.info("accepeted");
         Account account = accountCreateDto.toEntity();
@@ -25,7 +24,7 @@ public class AccountLoginController {
         return ResponseEntity.ok(savedAccount);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/testlogin")
     public ResponseEntity simple_login(@RequestBody AccountCreateDto accountCreateDto, Errors errors) {
         Account findAccount = accountRepository.findAccount(accountCreateDto.getEmail(), accountCreateDto.getPassword());
         if (findAccount == null) {
