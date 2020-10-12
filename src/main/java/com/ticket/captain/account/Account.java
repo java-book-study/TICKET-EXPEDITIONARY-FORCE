@@ -1,5 +1,6 @@
 package com.ticket.captain.account;
 
+import com.ticket.captain.account.dto.AccountUpdateRequestDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -47,4 +48,9 @@ public class Account {
     @Embedded
     private Address address;
 
+    public void update(AccountUpdateRequestDto requestDto) {
+        this.email = requestDto.getEmail();
+        this.name = requestDto.getName();
+        this.role = requestDto.getRole();
+    }
 }
