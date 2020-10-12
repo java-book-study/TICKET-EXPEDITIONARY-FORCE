@@ -1,90 +1,50 @@
 package com.ticket.captain.account;
 
-import javax.persistence.Column;
+import lombok.*;
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Getter
+@Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Account {
 
     @Column(name="account_id")
+    @Id
+    @GeneratedValue
     private Long id;
-    private String publicIp;
-    private String accountLoginId;
-    private String accountPassword;
-    private String accountName;
-    private String nickname;
+
     private String email;
+
+    private String password;
+
+    private String name;
+
+    private String phone;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    private String profileImage;
+
     private LocalDateTime createDate;
+
     private LocalDateTime modifyDate;
 
-    public Long getId() {
-        return id;
-    }
+    private int point;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    private String nickname;
 
-    public String getPublicIp() {
-        return publicIp;
-    }
+    private LocalDateTime emailCheckTokenGeneratedAt;
 
-    public void setPublicIp(String publicIp) {
-        this.publicIp = publicIp;
-    }
+    private String emailCheckToken;
 
-    public String getAccountLoginId() {
-        return accountLoginId;
-    }
+    private boolean emailVerified;
 
-    public void setAccountLoginId(String accountLoginId) {
-        this.accountLoginId = accountLoginId;
-    }
+    @Embedded
+    private Address address;
 
-    public String getAccountPassword() {
-        return accountPassword;
-    }
-
-    public void setAccountPassword(String accountPassword) {
-        this.accountPassword = accountPassword;
-    }
-
-    public String getAccountName() {
-        return accountName;
-    }
-
-    public void setAccountName(String accountName) {
-        this.accountName = accountName;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public LocalDateTime getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(LocalDateTime createDate) {
-        this.createDate = createDate;
-    }
-
-    public LocalDateTime getModifyDate() {
-        return modifyDate;
-    }
-
-    public void setModifyDate(LocalDateTime modifyDate) {
-        this.modifyDate = modifyDate;
-    }
 }
