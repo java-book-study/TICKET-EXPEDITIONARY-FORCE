@@ -2,6 +2,7 @@ package com.ticket.captain.account.dto;
 
 import com.ticket.captain.account.Account;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
+@Getter
 public class AccountCreateDto {
 
     @NotBlank
@@ -35,25 +37,6 @@ public class AccountCreateDto {
     @NotBlank
     private String name;
 
-    public String getLoginId() {
-        return loginId;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getName() {
-        return name;
-    }
 
     @Builder
     public AccountCreateDto(String loginId, String password,String email, String nickname, String name) {

@@ -1,6 +1,7 @@
 package com.ticket.captain.account;
 
 import com.ticket.captain.account.dto.AccountCreateDto;
+import com.ticket.captain.base.ErrorsResource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -65,9 +66,8 @@ public class AccountController {
         return view;
     }
 
-    private ResponseEntity badRequest(Errors errors) throws URISyntaxException {
+    private ResponseEntity badRequest(Errors errors){
 
-        //TODO: 여기 수정해야됨
-        return ResponseEntity.badRequest().body(new ErrorResource(errors));
+        return ResponseEntity.badRequest().body(new ErrorsResource(errors));
     }
 }
