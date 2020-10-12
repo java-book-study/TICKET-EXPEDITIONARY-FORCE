@@ -1,5 +1,6 @@
 package com.ticket.captain.account;
 
+import com.ticket.captain.account.dto.AccountCreateDto;
 import com.ticket.captain.config.AppProperties;
 import com.ticket.captain.mail.EmailMessage;
 import com.ticket.captain.mail.EmailService;
@@ -14,13 +15,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -29,31 +26,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AccountService implements UserDetailsService {
 
-    private final PasswordEncoder passwordEncoder;
     private final AccountRepository accountRepository;
     private final TemplateEngine templateEngine;
     private final AppProperties appProperties;
     private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
-    public Account createAccount(SignUpForm signUpForm){
-        Account newAccount = accountSample(signUpForm);
+    public Account createAccount(AccountCreateDto accountCreateDto){
+        Account newAccount = accountCreateDto.toEntity();
+        newAccount.setPassword(passwordEncoder.encode(accountCreateDto.getPassword()));
+        newAccount.generateEmailCheckToken();
         sendSignUpConfirmEmail(newAccount);
         return accountRepository.save(newAccount);
-    }
-
-    private Account accountSample(SignUpForm signUpForm){
-        Account account = new Account();
-        account.setId(10L);
-        account.setLoginId(signUpForm.getLoginId());
-        account.setEmail(signUpForm.getEmail());
-        account.setName(signUpForm.getName());
-        account.setNickname(signUpForm.getNickname());
-        account.setPassword(passwordEncoder.encode(signUpForm.getPassword()));
-        account.setCreateDate(LocalDateTime.now());
-        account.setPublicIp(getIpInfo()); // session 에 있는 값 가져오기
-        account.generateEmailCheckToken();
-
-        return account;
     }
 
     public void login(Account account){
@@ -71,7 +55,7 @@ public class AccountService implements UserDetailsService {
 
     public void sendSignUpConfirmEmail(Account newAccount){
         Context context = new Context();
-        context.setVariable("link", "/check-email-token?token="+ newAccount.getEmail() +
+        context.setVariable("link", "/check-email-token?token="+ newAccount.getEmailCheckToken() +
                 "&email=" +newAccount.getEmail());
         context.setVariable("name",newAccount.getName());
         context.setVariable("linkName", "회원가입 이메일 인증");
@@ -85,15 +69,6 @@ public class AccountService implements UserDetailsService {
                 .message(message)
                 .build();
         emailService.sendEmail(emailMessage);
-    }
-
-    private String getIpInfo(){
-        HttpServletRequest req = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
-        String ip = req.getHeader("X-FORWARDED-FOR");
-        if(ip == null){
-            ip = req.getRemoteAddr();
-        }
-        return ip;
     }
 
     @Transactional(readOnly = true)

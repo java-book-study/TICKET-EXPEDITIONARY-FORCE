@@ -1,7 +1,7 @@
 package com.ticket.captain.account;
 
+import com.ticket.captain.account.dto.AccountCreateDto;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -26,17 +26,17 @@ public class AccountController {
     private final AccountRepository accountRepository;
 
     @GetMapping
-    public ModelAndView signUpForm(){
-        return new ModelAndView("account/sign-up", "signUpForm", new SignUpForm());
+    public ModelAndView AccountCreateDto(){
+        return new ModelAndView("account/sign-up", "accountCreateDto", new AccountCreateDto());
     }
 
     @PostMapping
-    public ResponseEntity createAccount(@RequestBody @Valid SignUpForm signUpForm, Errors errors) throws URISyntaxException {
-        if(errors.hasErrors()){
+    public ResponseEntity createAccount(@RequestBody @Valid AccountCreateDto accountCreateDto, Errors errors) throws URISyntaxException {
+        if(errors.hasErrors()  ){
             errors.setNestedPath("/");
             return badRequest(errors);
         }
-        Account account = accountService.createAccount(signUpForm);
+        Account account = accountService.createAccount(accountCreateDto);
         accountService.login(account);
         return ResponseEntity.created(new URI("/sign-up/complete")).body(account);
     }
@@ -67,6 +67,7 @@ public class AccountController {
 
     private ResponseEntity badRequest(Errors errors) throws URISyntaxException {
 
-        return ResponseEntity.badRequest().body(errors);
+        //TODO: 여기 수정해야됨
+        return ResponseEntity.badRequest().body(new ErrorResource(errors));
     }
 }

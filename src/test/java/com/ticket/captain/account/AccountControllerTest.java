@@ -1,6 +1,7 @@
 package com.ticket.captain.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ticket.captain.account.dto.AccountCreateDto;
 import com.ticket.captain.mail.EmailMessage;
 import com.ticket.captain.mail.EmailService;
 import org.junit.jupiter.api.DisplayName;
@@ -51,12 +52,12 @@ class AccountControllerTest {
     @DisplayName("회원가입 - 입력값 정상")
     @Test
     public void createAccount_correct_input() throws Exception {
-        SignUpForm signUpForm = signUpFormSample();
+        AccountCreateDto accountCreateDto = accountCreateDtoSample();
 
         mockMvc.perform(post("/sign-up/")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                .content(new ObjectMapper().writeValueAsString(signUpForm))
+                .content(new ObjectMapper().writeValueAsString(accountCreateDto))
                 .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -70,7 +71,7 @@ class AccountControllerTest {
     @DisplayName("회원가입 - 입력값 오류")
     @Test
     public void createAccount_wrong_input() throws Exception {
-        SignUpForm signUpForm = SignUpForm.builder()
+        AccountCreateDto accountCreateDto = AccountCreateDto.builder()
                     .name("sonnie")
                     .password("111")
                     .email("email..")
@@ -81,7 +82,7 @@ class AccountControllerTest {
         mockMvc.perform(post("/sign-up/")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                .content(new ObjectMapper().writeValueAsString(signUpForm))
+                .content(new ObjectMapper().writeValueAsString(accountCreateDto))
                 .with(csrf()))
                 .andExpect(status().isBadRequest())
                 .andExpect(unauthenticated());
@@ -123,13 +124,13 @@ class AccountControllerTest {
 
     }
 
-    private SignUpForm signUpFormSample(){
-        return SignUpForm.builder()
-                .email("modunaeggu@naver.com")
+    private AccountCreateDto accountCreateDtoSample(){
+        return AccountCreateDto.builder()
                 .loginId("shahn2")
-                .nickname("sonnie")
-                .name("안소현")
                 .password("1qaz2wsx")
+                .email("modunaeggu@naver.com")
+                .nickname("sonnie")
+                .name("sohyun")
                 .build();
     }
 
