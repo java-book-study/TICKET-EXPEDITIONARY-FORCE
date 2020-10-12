@@ -1,16 +1,14 @@
 package com.ticket.captain.account;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import com.ticket.captain.base.Address;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Builder
+@Builder @Getter
 @EqualsAndHashCode(of = "id")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,78 +29,13 @@ public class Account {
     private String emailCheckToken;
     private boolean emailVerified;
     private int point;
-    private String city;
-    private String street;
-    private String zipcode;
+    @Embedded
+    Address homeAddress;
 
     @Enumerated(EnumType.STRING)
     @Transient
     @Builder.Default
     private AccountStatus accountStatus = AccountStatus.ROLE_USER;
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getPublicIp() {
-        return publicIp;
-    }
-
-    public String getLoginId() {
-        return loginId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public LocalDateTime getCreateDate() {
-        return createDate;
-    }
-
-    public LocalDateTime getModifyDate() {
-        return modifyDate;
-    }
-
-    public LocalDateTime getEmailCheckTokenGeneratedAt() {
-        return emailCheckTokenGeneratedAt;
-    }
-
-    public String getEmailCheckToken() {
-        return emailCheckToken;
-    }
-
-    public int getPoint() {
-        return point;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public String getZipcode() {
-        return zipcode;
-    }
-
-    public AccountStatus getAccountStatus() {
-        return accountStatus;
-    }
 
     public void setPassword(String password) {
         this.password = password;
@@ -125,5 +58,4 @@ public class Account {
         this.emailVerified = true;
         this.createDate = LocalDateTime.now();
     }
-
 }
