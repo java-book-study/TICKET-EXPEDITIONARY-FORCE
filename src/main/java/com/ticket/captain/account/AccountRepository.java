@@ -13,7 +13,5 @@ public interface AccountRepository extends JpaRepository<Account, Long>, Queryds
     boolean existsByLoginId(String loginId);
 
     Account findByEmail(String email);
-
-    Account findByNickname(String nickname);
 }
 

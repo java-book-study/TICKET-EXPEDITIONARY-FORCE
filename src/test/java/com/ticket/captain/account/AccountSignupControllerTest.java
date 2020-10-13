@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 //@ContextConfiguration(classes = SecurityConfig.class)
-class AccountControllerTest {
+class AccountSignupControllerTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -43,7 +43,7 @@ class AccountControllerTest {
     @DisplayName("회원가입 화면 보이는지 테스트")
     @Test
     public void signUpForm_success() throws Exception {
-        mockMvc.perform(get("/sign-up"))
+        mockMvc.perform(get("/account/sign-up"))
                 .andExpect(view().name("account/sign-up"))
                 .andExpect(model().attributeExists("signUpForm"))
                 .andExpect(unauthenticated());
@@ -54,7 +54,7 @@ class AccountControllerTest {
     public void createAccount_correct_input() throws Exception {
         AccountCreateDto accountCreateDto = accountCreateDtoSample();
 
-        mockMvc.perform(post("/sign-up/")
+        mockMvc.perform(post("/account/sign-up/")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(accountCreateDto))
@@ -79,7 +79,7 @@ class AccountControllerTest {
                     .loginId("shahn2")
                     .build();
 
-        mockMvc.perform(post("/sign-up/")
+        mockMvc.perform(post("/account/sign-up/")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(accountCreateDto))
@@ -93,7 +93,7 @@ class AccountControllerTest {
     void checkEmailToken_success() throws Exception {
         Account newAccount = accountSample();
 
-        mockMvc.perform(get("/sign-up/check-email-token")
+        mockMvc.perform(get("/account/sign-up/check-email-token")
                 .param("token", newAccount.getEmailCheckToken())
                 .param("email", newAccount.getEmail()))
                 .andExpect(status().isOk())
@@ -107,7 +107,7 @@ class AccountControllerTest {
     @DisplayName("인증 메일 확인 - 입력값 오류")
     @Test
     void checkEmailToken_with_wrong_input() throws Exception {
-        mockMvc.perform(get("/sign-up/check-email-token")
+        mockMvc.perform(get("/account/sign-up/check-email-token")
                 .param("token", "1qaz")
                 .param("email", "email@email.com"))
                 .andExpect(status().isOk())

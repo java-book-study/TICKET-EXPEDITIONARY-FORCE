@@ -21,7 +21,7 @@ import java.net.URISyntaxException;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping(value="/sign-up", produces = MediaType.APPLICATION_JSON_VALUE)
-public class AccountController {
+public class AccountSignupController {
 
     private final AccountService accountService;
     private final AccountRepository accountRepository;
@@ -38,7 +38,7 @@ public class AccountController {
             return badRequest(errors);
         }
         Account account = accountService.createAccount(accountCreateDto);
-        return ResponseEntity.created(new URI("/sign-up/complete")).body(account);
+        return ResponseEntity.created(new URI("/account/sign-up/complete")).body(account);
     }
 
     @GetMapping("/complete")

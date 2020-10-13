@@ -10,19 +10,12 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/login")
 @Slf4j
 public class AccountLoginController {
 
     private final AccountService accountService;
     private final AccountRepository accountRepository;
-
-    @PostMapping("/testregister")
-    public ResponseEntity simple_register(@RequestBody AccountCreateDto accountCreateDto, Errors errors) {
-        log.info("accepeted");
-        Account account = accountCreateDto.toEntity();
-        Account savedAccount = accountRepository.save(account);
-        return ResponseEntity.ok(savedAccount);
-    }
 
     @PostMapping("/testlogin")
     public ResponseEntity simple_login(@RequestBody AccountCreateDto accountCreateDto, Errors errors) {

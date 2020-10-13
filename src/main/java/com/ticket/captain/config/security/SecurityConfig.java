@@ -14,14 +14,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests()
-                .mvcMatchers("/", "/login","/sign-up/**").permitAll()
-                .mvcMatchers(HttpMethod.GET).permitAll()
-                .anyRequest().authenticated();
-
-        http.formLogin().loginPage("/login").permitAll();
-
-        http.logout().logoutSuccessUrl("/");
+        http
+                .authorizeRequests()
+                    .mvcMatchers("/", "/login","/sign-up/**").permitAll()
+                    .mvcMatchers(HttpMethod.GET).permitAll()
+                    .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                    .loginPage("/login")
+                    .successHandler(new MyLoginSuccessHandler())
+                    .failureHandler(new MyLoginFailureHandler())
+                .and()
+                .logout()
+                    .logoutUrl("/logout")
+                    .logoutSuccessUrl("/login")
+                .and()
+                .exceptionHandling().accessDeniedPage("/denied")
+        ;
     }
 
     @Override
