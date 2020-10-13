@@ -36,11 +36,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 public class AccountApiControllerTest {
 
-    @Autowired private MockMvc mockMvc;
-    @Autowired private AccountService accountService;
-    @Autowired private PasswordEncoder passwordEncoder;
-    @Autowired private AccountRepository accountRepository;
-    @Autowired private ObjectMapper objectMapper;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private AccountService accountService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private AccountRepository accountRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public static final String ACCOUNT_EMAIL = "test@email.com";
 
@@ -49,7 +54,7 @@ public class AccountApiControllerTest {
     public static Long testId;
 
     @Before
-    public void setUp(){
+    public void setUp() {
 
         Account account = Account.builder()
                 .email(ACCOUNT_EMAIL)
@@ -70,7 +75,7 @@ public class AccountApiControllerTest {
     }
 
     @After
-    public void after(){
+    public void after() {
         accountRepository.deleteById(testId);
     }
 
@@ -80,12 +85,12 @@ public class AccountApiControllerTest {
     public void 회원목록() throws Exception {
 
         Pageable page = PageRequest.of(0, 10);
-        String AccountListAsString = objectMapper.writeValueAsString( accountService.findAccountList(page) );
+        String AccountListAsString = objectMapper.writeValueAsString(accountService.findAccountList(page));
 
         MvcResult mvcResult = mockMvc.perform(get("/api/account")
                 .contentType(MediaType.APPLICATION_JSON)
-                .param("page", String.valueOf(page.getPageNumber() ))
-                .param("size", String.valueOf(page.getPageSize() )))
+                .param("page", String.valueOf(page.getPageNumber()))
+                .param("size", String.valueOf(page.getPageSize())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(AccountListAsString))
@@ -113,13 +118,13 @@ public class AccountApiControllerTest {
     @DisplayName("한 회원 대한 응답이 정상이 아닌 경우 테스트")
     @Test
     @Order(3)
-    public void 회원_상세조회_실패() throws Exception{
+    public void 회원_상세조회_실패() throws Exception {
 
         //when
-        mockMvc.perform(get("/api/account/"+errId))
-            .andDo(print())
-            .andExpect(jsonPath("statusCode").exists())
-            .andExpect(jsonPath("message").exists())
+        mockMvc.perform(get("/api/account/" + errId))
+                .andDo(print())
+                .andExpect(jsonPath("code").exists())
+                .andExpect(jsonPath("message").exists())
                 .andExpect(status().isBadRequest());
     }
 
@@ -151,19 +156,19 @@ public class AccountApiControllerTest {
     @DisplayName("회원 수정 오류시 값이 변경 되었는지 확인하는 테스트")
     @Test
     @Order(5)
-    public void 회원_수정_실패() throws Exception{
+    public void 회원_수정_실패() throws Exception {
 
         //given
         AccountUpdateRequestDto updateRequestDto =
                 new AccountUpdateRequestDto("update@email.com", "update", Role.ROLE_ADMIN);
 
         //when + then
-        mockMvc.perform(post("/api/account/"+errId)
+        mockMvc.perform(post("/api/account/" + errId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequestDto))
                 .with(csrf()))
                 .andDo(print())
-                .andExpect(jsonPath("statusCode").exists())
+                .andExpect(jsonPath("code").exists())
                 .andExpect(jsonPath("message").exists())
                 .andExpect(status().isBadRequest());
 
