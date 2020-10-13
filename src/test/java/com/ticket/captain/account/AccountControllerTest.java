@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,7 +46,7 @@ class AccountControllerTest {
     public void signUpForm_success() throws Exception {
         mockMvc.perform(get("/sign-up"))
                 .andExpect(view().name("account/sign-up"))
-                .andExpect(model().attributeExists("signUpForm"))
+                .andExpect(model().attributeExists("accountCreateDto"))
                 .andExpect(unauthenticated());
     }
 

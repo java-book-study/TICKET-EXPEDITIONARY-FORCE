@@ -73,15 +73,11 @@ public class AccountService implements UserDetailsService {
 
     @Transactional(readOnly = true)
     @Override
-    public UserDetails loadUserByUsername(String emailOrNickname) throws UsernameNotFoundException {
-        Account account = accountRepository.findByEmail(emailOrNickname);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Account account = accountRepository.findByEmail(email);
 
         if(account == null){
-            account = accountRepository.findByNickname(emailOrNickname);
-        }
-
-        if(account == null){
-            throw new UsernameNotFoundException(emailOrNickname);
+            throw new UsernameNotFoundException(email);
         }
         return new UserAccount(account);
     }
