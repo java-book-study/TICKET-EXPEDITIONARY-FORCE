@@ -1,4 +1,4 @@
-package com.ticket.captain.base;
+package com.ticket.captain.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

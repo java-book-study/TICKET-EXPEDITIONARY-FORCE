@@ -1,17 +1,16 @@
 package com.ticket.captain.account;
 
 import com.ticket.captain.account.dto.AccountCreateDto;
-import com.ticket.captain.base.ErrorsResource;
+import com.ticket.captain.common.ErrorsResource;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
@@ -25,6 +24,8 @@ public class AccountSignupController {
 
     private final AccountService accountService;
     private final AccountRepository accountRepository;
+//    @Autowired
+//    AccountCreateDtoValidator accountCreateDtoValidator;
 
     @GetMapping
     public ModelAndView AccountCreateDto(){
@@ -33,12 +34,17 @@ public class AccountSignupController {
 
     @PostMapping
     public ResponseEntity createAccount(@RequestBody @Valid AccountCreateDto accountCreateDto, Errors errors) throws URISyntaxException {
-        if(errors.hasErrors()  ){
+        if(errors.hasErrors()){
             errors.setNestedPath("/");
+//            return ResponseEntity.badRequest().body(errors);
             return badRequest(errors);
         }
+//        accountCreateDtoValidator.validate(accountCreateDto, errors);
+//        if (errors.hasErrors()) {
+//            return badRequest(errors);
+//        }
         Account account = accountService.createAccount(accountCreateDto);
-        return ResponseEntity.created(new URI("/account/sign-up/complete")).body(account);
+        return ResponseEntity.created(new URI("/sign-up/complete")).body(account);
     }
 
     @GetMapping("/complete")
@@ -72,5 +78,11 @@ public class AccountSignupController {
     private ResponseEntity badRequest(Errors errors){
 
         return ResponseEntity.badRequest().body(new ErrorsResource(errors));
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        AccountCreateDtoValidator validator=new AccountCreateDtoValidator(accountRepository);
+        binder.addValidators(validator);
     }
 }

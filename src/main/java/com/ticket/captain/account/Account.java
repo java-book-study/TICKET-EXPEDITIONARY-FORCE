@@ -1,6 +1,6 @@
 package com.ticket.captain.account;
 
-import com.ticket.captain.base.Address;
+import com.ticket.captain.common.Address;
 import lombok.*;
 
 import javax.persistence.*;

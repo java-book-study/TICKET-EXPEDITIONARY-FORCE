@@ -36,6 +36,8 @@ class AccountSignupControllerTest {
     MockMvc mockMvc;
     @Autowired
     AccountRepository accountRepository;
+    @Autowired
+    AccountService accountService;
 
     @MockBean
     EmailService emailService;
@@ -54,14 +56,13 @@ class AccountSignupControllerTest {
     public void createAccount_correct_input() throws Exception {
         AccountCreateDto accountCreateDto = accountCreateDtoSample();
 
-        mockMvc.perform(post("/account/sign-up/")
+        mockMvc.perform(post("/sign-up/")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(accountCreateDto))
                 .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(authenticated().withUsername("sonnie"))
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(redirectedUrl("/sign-up/complete"));
 
@@ -79,13 +80,32 @@ class AccountSignupControllerTest {
                     .loginId("shahn2")
                     .build();
 
-        mockMvc.perform(post("/account/sign-up/")
+        mockMvc.perform(post("/sign-up/")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(accountCreateDto))
                 .with(csrf()))
                 .andExpect(status().isBadRequest())
-                .andExpect(unauthenticated());
+                .andExpect(unauthenticated())
+                .andDo(print())
+        ;
+    }
+
+    @DisplayName("이미 가입되어있는 이메일로 가입 시 validate 처리가 잘 되는지")
+    @Test
+    public void createAccount_sameEmail() throws Exception{
+        //given
+        AccountCreateDto accountCreateDto = accountCreateDtoSample();
+        accountService.createAccount(accountCreateDto);
+        AccountCreateDto accountCreateDto2 = accountCreateDtoSample();
+        //when&then
+        mockMvc.perform(post("/sign-up")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .content(new ObjectMapper().writeValueAsString(accountCreateDto2))
+                .with(csrf()))
+                .andDo(print())
+                ;
     }
 
     @DisplayName("인증 메일 확인 - 입력값 정상")
@@ -93,7 +113,7 @@ class AccountSignupControllerTest {
     void checkEmailToken_success() throws Exception {
         Account newAccount = accountSample();
 
-        mockMvc.perform(get("/account/sign-up/check-email-token")
+        mockMvc.perform(get("/sign-up/check-email-token")
                 .param("token", newAccount.getEmailCheckToken())
                 .param("email", newAccount.getEmail()))
                 .andExpect(status().isOk())
@@ -107,7 +127,7 @@ class AccountSignupControllerTest {
     @DisplayName("인증 메일 확인 - 입력값 오류")
     @Test
     void checkEmailToken_with_wrong_input() throws Exception {
-        mockMvc.perform(get("/account/sign-up/check-email-token")
+        mockMvc.perform(get("/sign-up/check-email-token")
                 .param("token", "1qaz")
                 .param("email", "email@email.com"))
                 .andExpect(status().isOk())

@@ -1,4 +1,4 @@
-package com.ticket.captain.base;
+package com.ticket.captain.common;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import org.springframework.hateoas.RepresentationModel;
