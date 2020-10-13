@@ -16,7 +16,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .mvcMatchers("/", "/login", "/sign-up", "/swagger/**").permitAll()
 //                .mvcMatchers(HttpMethod.GET).permitAll()
 //                .anyRequest().authenticated();
-
 //        http.formLogin().loginPage("/login").permitAll();
 //
 //        http.logout().logoutSuccessUrl("/");
@@ -25,8 +24,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/**");
-
-
 //        web.ignoring()
 //                .mvcMatchers("/node_modules/**")
 //                .mvcMatchers("/h2-console/**")

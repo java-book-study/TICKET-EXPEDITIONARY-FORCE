@@ -35,7 +35,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.modelmapper:modelmapper:2.3.0'
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.h2database:h2'
@@ -47,9 +46,6 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.4'
     testCompileOnly 'org.projectlombok:lombok:1.18.4'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.4'
-    //Swagger
-    compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
-    compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
     //ModelMapper
     compile 'org.modelmapper:modelmapper:2.3.3'
     //Spring AOP
