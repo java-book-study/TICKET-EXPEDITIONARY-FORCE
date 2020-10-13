@@ -16,17 +16,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .mvcMatchers("/", "/login", "/sign-up", "/swagger/**").permitAll()
 //                .mvcMatchers(HttpMethod.GET).permitAll()
 //                .anyRequest().authenticated();
-
-//        http.formLogin().loginPage("/login").permitAll();
-//
-//        http.logout().logoutSuccessUrl("/");
-//    }
-
+  
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/**");
-
-
+// 시큐리티 설정 해제위해 주석처리
 //        web.ignoring()
 //                .mvcMatchers("/node_modules/**")
 //                .mvcMatchers("/h2-console/**")
