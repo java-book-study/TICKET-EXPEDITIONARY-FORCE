@@ -1,0 +1,38 @@
+ifndef::snippets[]
+:snippets: ../../../build/generated-snippets
+endif::[]
+= API Document
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:sectlinks:
+:docinfo: shared-head
+
+[[introduction]]
+== 소개
+
+티켓 API
+
+== 티켓 등록 [post]
+
+티켓 등록
+
+include::{snippets}/ticket/add/curl-request.adoc[]
+
+=== 요청 구조
+
+include::{snippets}/ticket/add/http-request.adoc[]
+
+==== 요청 파라미터들
+
+include::{snippets}/ticket/add/request-fields.adoc[]
+
+=== 응답 구조
+
+include::{snippets}/ticket/add/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::{snippets}/ticket/add/response-fields-data.adoc[]
