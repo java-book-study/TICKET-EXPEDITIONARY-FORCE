@@ -20,11 +20,11 @@ public class TicketController {
 
     @PostMapping("/ticket")
     public ApiResponseDto<TicketDto> add(@RequestBody TicketCreateDto create) {
-        return ApiResponseDto.createOK(ticketService.add(create.toDto()));
+        return ApiResponseDto.OK(ticketService.add(create.toDto()));
     }
 
     @PutMapping("/ticket/{id}")
     public ApiResponseDto<TicketDto> update(Long id, @Valid TicketUpdateDto update) {
-        return ApiResponseDto.createOK(ticketService.update(id, update.toDto()));
+        return ApiResponseDto.OK(ticketService.update(id, update.toDto()));
     }
 }
