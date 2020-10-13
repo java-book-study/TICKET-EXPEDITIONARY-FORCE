@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -40,17 +41,8 @@ public class AccountService implements UserDetailsService {
         return accountRepository.save(newAccount);
     }
 
-    public void login(Account account){
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                new UserAccount(account),
-                account.getPassword(),
-                List.of(new SimpleGrantedAuthority("ROLE_USER")));
-        SecurityContextHolder.getContext().setAuthentication(token);
-    }
-
     public void completeSignUp(Account account) {
         account.completeSignUp();
-        login(account);
     }
 
     public void sendSignUpConfirmEmail(Account newAccount){
@@ -73,16 +65,12 @@ public class AccountService implements UserDetailsService {
 
     @Transactional(readOnly = true)
     @Override
-    public UserDetails loadUserByUsername(String emailOrNickname) throws UsernameNotFoundException {
-        Account account = accountRepository.findByEmail(emailOrNickname);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Account account = accountRepository.findByEmail(email);
 
         if(account == null){
-            account = accountRepository.findByNickname(emailOrNickname);
+            throw new UsernameNotFoundException(email);
         }
-
-        if(account == null){
-            throw new UsernameNotFoundException(emailOrNickname);
-        }
-        return new UserAccount(account);
+        return new User(account.getEmail(), account.getPassword(), List.of(new SimpleGrantedAuthority("ROLE_USER")));
     }
 }

@@ -38,7 +38,6 @@ public class AccountController {
             return badRequest(errors);
         }
         Account account = accountService.createAccount(accountCreateDto);
-        accountService.login(account);
         return ResponseEntity.created(new URI("/sign-up/complete")).body(account);
     }
 
@@ -62,6 +61,10 @@ public class AccountController {
             return view;
         }
 
+        /**
+         * completeSignUp 내부의 login 메서드 제외함. 해당 view 에서는 이메일 인증 완료의 여부에 대한 내용이 있어야 하며,
+         * login을 할 수 있는 페이지로 갈 수 있어야함
+         */
         accountService.completeSignUp(account);
         return view;
     }

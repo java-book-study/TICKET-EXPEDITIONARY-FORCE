@@ -20,23 +20,23 @@ public class AccountRepositoryCustomImpl implements AccountRepositoryCustom{
         return queryFactory
                 .selectFrom(account)
                 .where(
-                        emailAndpwdEq(email,password)
+                        emailAndpwdEqual(email,password)
                 )
                 .fetchOne();
     }
 
-    private BooleanBuilder emailAndpwdEq(String email, String pwd) {
+    private BooleanBuilder emailAndpwdEqual(String email, String pwd) {
         BooleanBuilder bb = new BooleanBuilder();
-        bb.and(emailEq(email));
-        bb.and(pwdEq(pwd));
+        bb.and(emailEqual(email));
+        bb.and(pwdEqual(pwd));
         return bb;
     }
 
-    private BooleanExpression emailEq(String email) {
+    private BooleanExpression emailEqual(String email) {
         return account.email.eq(email);
     }
 
-    private BooleanExpression pwdEq(String pwd){
+    private BooleanExpression pwdEqual(String pwd){
         return account.password.eq(pwd);
     }
 }
