@@ -32,7 +32,6 @@ public class AccountSignupController {
     @PostMapping
     public ResponseEntity createAccount(@RequestBody @Valid AccountCreateDto accountCreateDto, Errors errors) throws URISyntaxException {
         if(errors.hasErrors()){
-            errors.setNestedPath("/");
             return badRequest(errors);
         }
         Account account = accountService.createAccount(accountCreateDto);
