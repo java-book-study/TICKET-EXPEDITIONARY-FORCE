@@ -64,6 +64,7 @@ class AccountSignupControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
+                .andExpect(unauthenticated())
                 .andExpect(redirectedUrl("/sign-up/complete"));
 
         then(emailService).should().sendEmail(any(EmailMessage.class));
@@ -119,7 +120,7 @@ class AccountSignupControllerTest {
                 .param("email", newAccount.getEmail()))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeDoesNotExist("error"))
-                .andExpect(authenticated().withUsername("sonnie"))
+                .andExpect(unauthenticated())
                 .andExpect(view().name("account/checked-email"));
 
         assertTrue(newAccount.isEmailVerified());

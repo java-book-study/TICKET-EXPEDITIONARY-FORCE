@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @SpringBootTest
@@ -57,7 +58,7 @@ class AccountLoginControllerTest {
 
         //then
         mockMvc.perform(formLogin().user("kangsy763@naver.com").password("asdfasdf"))
-                .andExpect(authenticated())
+                .andExpect(unauthenticated())
                 .andDo(print())
         ;
     }
@@ -73,7 +74,7 @@ class AccountLoginControllerTest {
 
         //then
         mockMvc.perform(formLogin().user("kangsy763@gmail.com").password("1qaz2wsx"))
-                .andExpect(authenticated())
+                .andExpect(unauthenticated())
                 .andDo(print())
         ;
     }
