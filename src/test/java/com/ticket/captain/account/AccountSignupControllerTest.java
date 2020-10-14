@@ -97,6 +97,7 @@ class AccountSignupControllerTest {
         //given
         AccountCreateDto accountCreateDto = accountCreateDtoSample();
         accountService.createAccount(accountCreateDto);
+        //then
         AccountCreateDto accountCreateDto2 = accountCreateDtoSample();
         //when&then
         mockMvc.perform(post("/sign-up")

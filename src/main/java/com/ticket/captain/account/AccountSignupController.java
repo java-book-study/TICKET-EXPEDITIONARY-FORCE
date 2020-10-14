@@ -3,7 +3,6 @@ package com.ticket.captain.account;
 import com.ticket.captain.account.dto.AccountCreateDto;
 import com.ticket.captain.common.ErrorsResource;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -24,8 +23,6 @@ public class AccountSignupController {
 
     private final AccountService accountService;
     private final AccountRepository accountRepository;
-//    @Autowired
-//    AccountCreateDtoValidator accountCreateDtoValidator;
 
     @GetMapping
     public ModelAndView AccountCreateDto(){
@@ -36,13 +33,8 @@ public class AccountSignupController {
     public ResponseEntity createAccount(@RequestBody @Valid AccountCreateDto accountCreateDto, Errors errors) throws URISyntaxException {
         if(errors.hasErrors()){
             errors.setNestedPath("/");
-//            return ResponseEntity.badRequest().body(errors);
             return badRequest(errors);
         }
-//        accountCreateDtoValidator.validate(accountCreateDto, errors);
-//        if (errors.hasErrors()) {
-//            return badRequest(errors);
-//        }
         Account account = accountService.createAccount(accountCreateDto);
         return ResponseEntity.created(new URI("/sign-up/complete")).body(account);
     }
