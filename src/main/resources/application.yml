@@ -3,8 +3,8 @@ spring:
     active: local
 
   datasource:
-    url: jdbc:h2:tcp://localhost/~/captain;
-    username: sa
+    url: ENC(SHZ3Wn9WLIBcQXX3hG5/7WHoIvkR+UF0fYYerwztivYoE8ec6vM4wAKLxhjRjSMS)
+    username: ENC(DoImz8/fXhvry9F7FEcOaA==)
     password:
     driver-class-name: org.h2.Driver
 
@@ -24,10 +24,10 @@ spring:
         max-page-size: 50
 
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: modunaeggu@gmail.com
-    password: jsxtgzwirzbvctix
+    host: ENC(yN+XfJun4RecByeznoGO7QEOTcM6+2+M)
+    port: ENC(4/NPDDsnnj0TN7KERdiqaw==)
+    username: ENC(GRbXHqkdbpNf/CdRciHi5LYzmJFqK4oGcZtCvtM/iY0=)
+    password: ENC(bvzIvuO8/SlbwPboeyntvdFrViF//vtY0KqcruBYUQI=)
     properties:
       mail:
         smtp:
