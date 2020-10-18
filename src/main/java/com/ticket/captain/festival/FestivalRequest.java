@@ -1,9 +1,14 @@
 package com.ticket.captain.festival;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.time.LocalDateTime;
 
+@Builder
+@Getter @Setter
 public class FestivalRequest {
 
     private String name;
@@ -20,30 +25,6 @@ public class FestivalRequest {
 
     public Festival newFestival() {
         return new Festival(name, content, winners, Thumbnail, startDate, endDate);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getThumbnail() {
-        return Thumbnail;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public int getWinners() {
-        return winners;
-    }
-
-    public LocalDateTime getStartDate() {
-        return startDate;
-    }
-
-    public LocalDateTime getEndDate() {
-        return endDate;
     }
 
     @Override
