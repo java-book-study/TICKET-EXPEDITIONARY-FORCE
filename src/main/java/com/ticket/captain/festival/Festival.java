@@ -1,10 +1,13 @@
 package com.ticket.captain.festival;
 
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -14,12 +17,11 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 @Builder
 @Entity
-@Table(name = "Festival")
-@EqualsAndHashCode(of = "id")
+@Getter
 public class Festival {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue
     @Column(name = "festival_id")
     private Long id;
 
@@ -46,38 +48,6 @@ public class Festival {
 
     public Festival() {
 
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getThumbnail() {
-        return Thumbnail;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public int getWinners() {
-        return winners;
-    }
-
-    public LocalDateTime getStartDate() {
-        return startDate;
-    }
-
-    public LocalDateTime getEndDate() {
-        return endDate;
-    }
-
-    public LocalDateTime getCreateDate() {
-        return createDate;
     }
 
 
@@ -113,6 +83,25 @@ public class Festival {
         this.startDate = startDate;
         this.endDate = endDate;
         this.createDate = defaultIfNull(createDate, now());
+    }
+
+    public void update(FestivalRequest requestDto) {
+        checkArgument(isNotEmpty(name), "name must be provided.");
+        checkArgument(
+                name.length() >= 1 && name.length() <= 20,
+                "name length must be between 1 and 10 characters."
+        );
+        checkArgument(isNotEmpty(content), "content must be provided.");
+        checkArgument(
+                content.length() >= 1 && content.length() <= 1000,
+                "content length must be between 1 and 1000 characters."
+        );
+        this.name = requestDto.getName();
+        this.Thumbnail = requestDto.getThumbnail();
+        this.content = requestDto.getContent();
+        this.winners = requestDto.getWinners();
+        this.startDate = requestDto.getStartDate();
+        this.endDate = requestDto.getEndDate();
     }
 
     @Override

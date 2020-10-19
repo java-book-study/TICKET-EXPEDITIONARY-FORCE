@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class FestivalService {
 
     private final FestivalRepository festivalRepository;
@@ -16,16 +17,26 @@ public class FestivalService {
         this.festivalRepository = festivalRepository;
     }
 
-    @Transactional
     public Festival generate(Festival newFestival) {
         return festivalRepository.save(newFestival);
     }
 
+    public Festival updateFestival(Long festivalId, FestivalRequest festivalRequest) {
+        Festival festival = festivalRepository.findById(festivalId)
+                .orElseThrow(NullPointerException::new);
+        festival.update(festivalRequest);
+        return festivalRepository.save(festival);
+    }
 
     @Transactional(readOnly = true)
-    public Optional<Festival> findById(Long fastival_id) {
-        return festivalRepository.findById(fastival_id);
+    public Optional<Festival> findById(Long festival_id) {
+        return festivalRepository.findById(festival_id);
     }
+
+    public void deleteFestival(Long festivalId) {
+        festivalRepository.deleteById(festivalId);
+    }
+
 
     @Transactional(readOnly = true)
     public List<Festival> getFestivals(Pageable pageable) {
