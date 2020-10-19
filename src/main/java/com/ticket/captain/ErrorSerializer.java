@@ -1,4 +1,4 @@
-package com.ticket.captain.common;
+package com.ticket.captain;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;

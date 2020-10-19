@@ -3,8 +3,8 @@ spring:
     active: local
 
   datasource:
-    url: ENC(SHZ3Wn9WLIBcQXX3hG5/7WHoIvkR+UF0fYYerwztivYoE8ec6vM4wAKLxhjRjSMS)
-    username: ENC(DoImz8/fXhvry9F7FEcOaA==)
+    url: ENC(rQecxq76FUO/5o6kuRB6HN2rvpEsNEvkVOmIYB4SaPTEg+VAbpDruexsIiVNdUhY)
+    username: ENC(IZSRvcQaaczvCMyqihUC2g==)
     password:
     driver-class-name: org.h2.Driver
 

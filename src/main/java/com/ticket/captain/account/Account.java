@@ -1,5 +1,6 @@
 package com.ticket.captain.account;
 
+import com.ticket.captain.account.dto.AccountUpdateRequestDto;
 import com.ticket.captain.common.Address;
 import lombok.*;
 
@@ -57,5 +58,11 @@ public class Account {
     public void completeSignUp() {
         this.emailVerified = true;
         this.createDate = LocalDateTime.now();
+    }
+
+    public void update(AccountUpdateRequestDto requestDto) {
+        this.email = requestDto.getEmail();
+        this.name = requestDto.getName();
+//        this.role = requestDto.getRole();
     }
 }

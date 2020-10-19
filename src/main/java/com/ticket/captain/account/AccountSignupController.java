@@ -1,5 +1,6 @@
 package com.ticket.captain.account;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ticket.captain.account.dto.AccountCreateDto;
 import com.ticket.captain.common.ErrorsResource;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.net.URISyntaxException;
 @RequestMapping(value="/sign-up", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AccountSignupController {
 
+    private final ObjectMapper objectMapper;
     private final AccountService accountService;
     private final AccountRepository accountRepository;
 

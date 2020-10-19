@@ -45,9 +45,9 @@ class AccountSignupControllerTest {
     @DisplayName("회원가입 화면 보이는지 테스트")
     @Test
     public void signUpForm_success() throws Exception {
-        mockMvc.perform(get("/account/sign-up"))
+        mockMvc.perform(get("/sign-up"))
                 .andExpect(view().name("account/sign-up"))
-                .andExpect(model().attributeExists("signUpForm"))
+                .andExpect(model().attributeExists("accountCreateDto"))
                 .andExpect(unauthenticated());
     }
 
