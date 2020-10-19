@@ -74,9 +74,23 @@ public class FestivalServiceTest {
     @Test
     @Order(3)
     void festivals () {
-        PageRequest pageable = PageRequest.of(0, 12, Sort.by("createDate").descending());
+        PageRequest pageable = PageRequest.of(0, 1, Sort.by("createDate").descending());
         List<Festival> festivalList = festivalService.getFestivals(pageable);
         assertThat(festivalList, is(notNullValue()));
         logger.info("Festivals {}", festivalList);
+    }
+
+    @Test
+    @Order(4)
+    void delFestival () {
+        String name = randomAlphabetic(10);
+        String Thumbnail = randomAlphabetic(10);
+        String content = randomAlphabetic(40);
+        int winners = 0;
+        LocalDateTime startDate = LocalDateTime.now();
+        LocalDateTime endDate = LocalDateTime.now();
+        Festival festival = festivalService.generate(new Festival(name, content, winners, Thumbnail, startDate, endDate));
+        festivalService.deleteFestival(festival.getId());
+        assertThat(festivalService.findById(festival.getId()), is(Optional.empty()));
     }
 }
