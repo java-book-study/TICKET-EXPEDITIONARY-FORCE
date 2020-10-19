@@ -4,7 +4,6 @@ import com.ticket.captain.utils.EnumType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-
 @Getter
 @RequiredArgsConstructor
 public enum ApiResponseCode implements EnumType {

@@ -1,6 +1,5 @@
 package com.ticket.captain.config.security;
 
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,11 +31,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().accessDeniedPage("/denied")
         ;
     }
-
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring()
-                .mvcMatchers("/node_modules/**")
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+        web.ignoring().antMatchers("/**");
+// 시큐리티 설정 해제위해 주석처리
+//        web.ignoring()
+//                .mvcMatchers("/node_modules/**")
+//                .mvcMatchers("/h2-console/**")
+//                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 }

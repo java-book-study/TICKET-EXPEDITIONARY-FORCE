@@ -11,10 +11,10 @@ import java.util.UUID;
 @Builder @Getter
 @EqualsAndHashCode(of = "id")
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Account {
 
-    @Id
+    @Id @Column(name="account_id")
     @GeneratedValue
     private Long id;
     private String publicIp;
