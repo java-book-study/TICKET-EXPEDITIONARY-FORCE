@@ -30,7 +30,7 @@
 - [ ] reference가 있다면 추가했는가?
 - [ ] 관련 issue가 있다면 추가했는가?
 - [ ] 유의미한 Label을 추가했는가?
-- [ ] Assginees를 추가했는가?
+- [ ] Assignees를 추가했는가?
 - [ ] Estimate를 추가했는가?
 - [ ] 관련 Milestone이 있다면 추가했는가?
 - [ ] 관련 Epics가 있다면 추가했는가?
