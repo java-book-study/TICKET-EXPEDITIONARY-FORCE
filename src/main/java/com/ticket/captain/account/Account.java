@@ -31,7 +31,7 @@ public class Account {
     private boolean emailVerified;
     private int point;
     @Embedded
-    Address homeAddress;
+    private Address address;
 
     @Enumerated(EnumType.STRING)
     @Transient

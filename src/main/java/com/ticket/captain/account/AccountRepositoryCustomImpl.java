@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 
 import static com.ticket.captain.account.QAccount.account;
 
+
 public class AccountRepositoryCustomImpl implements AccountRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 

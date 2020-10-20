@@ -25,11 +25,7 @@ class AccountLoginControllerTest {
     @Autowired
     MockMvc mockMvc;
     @Autowired
-    AccountRepository accountRepository;
-    @Autowired
     AccountService accountService;
-    @MockBean
-    EmailService emailService;
 
 //    @Test
 //    @DisplayName("아이디 비밀번호 일치할 때의 로그인 테스트")

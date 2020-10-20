@@ -23,14 +23,14 @@ public class FestivalRestController {
     @PostMapping("/manager/generate")
     public ApiResponseDto<FestivalDto> generate(@RequestBody FestivalRequest request) {
 
-        return ApiResponseDto.OK(
+        return ApiResponseDto.createOK(
                 new FestivalDto(
                 festivalService.generate(request.newFestival())));
     }
 
     @GetMapping("/manager/{festivalId}/info")
     public ApiResponseDto<FestivalDto> festivalInfo(@PathVariable Long festivalId) {
-        return ApiResponseDto.OK(
+        return ApiResponseDto.createOK(
                 festivalService.findById(festivalId)
                 .map(FestivalDto::new)
                 .orElseThrow(RuntimeException::new)
@@ -42,7 +42,7 @@ public class FestivalRestController {
     public ApiResponseDto<List<FestivalDto>> getFestivals(int page, int size) {
         PageRequest pageRequest = PageRequest.of(
                 page, size, Sort.by("createDate").descending());
-        return ApiResponseDto.OK(
+        return ApiResponseDto.createOK(
                 festivalService.getFestivals(pageRequest).stream()
                         .map(FestivalDto::new)
                         .collect(Collectors.toList())
@@ -52,7 +52,7 @@ public class FestivalRestController {
     @PutMapping("manager/{festivalId}/update")
     public ApiResponseDto<FestivalDto> updateFestival(@PathVariable Long festivalId, FestivalRequest festivalRequest) {
         Festival festival = festivalService.updateFestival(festivalId, festivalRequest);
-        return ApiResponseDto.OK(
+        return ApiResponseDto.createOK(
                 new FestivalDto(festival));
     }
 
