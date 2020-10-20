@@ -1,4 +1,4 @@
-package com.ticket.captain.config;
+package com.ticket.captain.config.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,19 +13,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .anyRequest().authenticated()
-                .mvcMatchers("/", "/login", "/sign-up", "/swagger/**").permitAll()
-                .mvcMatchers(HttpMethod.GET).permitAll()
-                .anyRequest().authenticated();
-        http.formLogin().loginPage("/login").permitAll();
-
-        http.logout().logoutSuccessUrl("/");
+        http
+                .authorizeRequests()
+                    .mvcMatchers("/", "/login","/sign-up/**").permitAll()
+                    .mvcMatchers(HttpMethod.GET).permitAll()
+                    .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                    .successHandler(new MyLoginSuccessHandler())
+                    .failureHandler(new MyLoginFailureHandler())
+                .and().httpBasic()
+                .and()
+                .logout()
+                    .logoutUrl("/logout")
+                    .logoutSuccessUrl("/login")
+                .and()
+                .exceptionHandling().accessDeniedPage("/denied")
+        ;
     }
-
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/**");
+// 시큐리티 설정 해제위해 주석처리
 //        web.ignoring()
 //                .mvcMatchers("/node_modules/**")
 //                .mvcMatchers("/h2-console/**")

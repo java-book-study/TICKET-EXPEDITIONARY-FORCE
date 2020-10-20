@@ -1,5 +1,44 @@
 spring:
+  profiles:
+    active: local
+
   datasource:
-    url: ENC(ahw18zDs3VK5yHnlD63tdEGLsuc+1nVGxgSPn/nAKVXPVqELBIlsmSPhhSzUpXg3TZAg13Ga3JOUerSfAqK4UQ==)
-    username: ENC(71M9V6VbtB6S0i/S/HcxPmy/TTiqAsrY)
-    password: ENC(zJWvcj62mjMzbiFJEacMGw==)
+    url: ENC(rQecxq76FUO/5o6kuRB6HN2rvpEsNEvkVOmIYB4SaPTEg+VAbpDruexsIiVNdUhY)
+    username: ENC(IZSRvcQaaczvCMyqihUC2g==)
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        #show_sql: true
+        format_sql: true
+        use_sql_comments: true
+
+  data:
+    web:
+      pageable:
+        default-page-size: 10
+        max-page-size: 50
+
+  mail:
+    host: ENC(yN+XfJun4RecByeznoGO7QEOTcM6+2+M)
+    port: ENC(4/NPDDsnnj0TN7KERdiqaw==)
+    username: ENC(GRbXHqkdbpNf/CdRciHi5LYzmJFqK4oGcZtCvtM/iY0=)
+    password: ENC(bvzIvuO8/SlbwPboeyntvdFrViF//vtY0KqcruBYUQI=)
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000
+          starttls.enable: true
+
+loggin.lvel:
+  root: info
+  org.hibernate.SQL: debug
+  org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  #org.hibernate.type: trace
+
+app.host: http://localhost:8080

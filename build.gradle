@@ -1,8 +1,10 @@
 plugins {
     id 'org.springframework.boot' version '2.3.4.RELEASE'
     id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
     id 'java'
-    id "org.asciidoctor.convert" version "1.5.6"
+
+    id'org.asciidoctor.convert' version '1.5.8'
 }
 
 group = 'com.ticket'
@@ -24,10 +26,14 @@ repositories {
 }
 
 ext {
+    set('snippetsDir', file("build/generated-snippets"))
     set('testcontainersVersion', "1.14.3")
 }
 
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-hateoas'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
     implementation 'org.springframework.boot:spring-boot-starter-batch'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
@@ -35,12 +41,17 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'com.querydsl:querydsl-jpa'
+    implementation 'org.apache.commons:commons-lang3:3.10'
+    implementation 'commons-io:commons-io:2.6'
     testImplementation('org.springframework.boot:spring-boot-starter-test')
+
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.h2database:h2'
     testImplementation 'org.springframework.batch:spring-batch-test'
     testCompile 'org.springframework.security:spring-security-test'
     testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.mockito:mockito-inline:2.13.0'
     //Lombok
     compileOnly 'org.projectlombok:lombok:1.18.4'
     annotationProcessor 'org.projectlombok:lombok:1.18.4'
@@ -69,6 +80,7 @@ dependencyManagement {
 }
 
 test {
+    outputs.dir snippetsDir
     useJUnitPlatform()
     systemProperty "jasypt.encryptor.password", System.getProperty("jasypt.encryptor.password")
 }
@@ -84,8 +96,35 @@ task copyDocument(type: Copy) {
 build {
     dependsOn copyDocument
 }
-// ==
 
+task npmInstall(type: Exec) {
+    workingDir 'src/main/webapp'
+    commandLine 'npm', 'install'
+}
+
+asciidoctor {
+    inputs.dir snippetsDir
+    dependsOn test
+}
+
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+    jpa = true
+    querydslSourcesDir = querydslDir
+}
+
+sourceSets {
+    main.java.srcDir querydslDir
+}
+
+configurations {
+    querydsl.extendsFrom compileClasspath
+}
+
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
+}
 // Front nodeJs
 //task npmInstall(type: Exec) {
 //    workingDir 'src/main/webapp'
