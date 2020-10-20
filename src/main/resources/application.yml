@@ -3,10 +3,11 @@ spring:
     active: local
 
   datasource:
-    url: ENC(+VRS6lhYMqjdVzowZpLfloOqNOGGCqhD7KGK8r6JbxizsfXjU0eRN0yoCKUAm3OZ)
-    username: ENC(s7BzeFTxMuknyopkozWZ5A==)
-    password:
+    url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
 
   jpa:
     hibernate:
@@ -26,8 +27,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: modunaeggu@gmail.com
-    password: jsxtgzwirzbvctix
+    username: xe00123@gmail.com
+    password: qjbsxmgegpwnyxdo
     properties:
       mail:
         smtp:
@@ -35,7 +36,7 @@ spring:
           timeout: 5000
           starttls.enable: true
 
-loggin.lvel:
+logging.level:
   root: info
   org.hibernate.SQL: debug
   org.hibernate.type.descriptor.sql.BasicBinder: TRACE
