@@ -44,6 +44,8 @@ dependencies {
     implementation 'com.querydsl:querydsl-jpa'
     implementation 'org.apache.commons:commons-lang3:3.10'
     implementation 'commons-io:commons-io:2.6'
+    //query문 처리할 때 내부 param 값 보여주는 라이브러리
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.7'
     testImplementation('org.springframework.boot:spring-boot-starter-test')
 
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"

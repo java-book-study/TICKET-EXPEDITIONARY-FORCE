@@ -103,7 +103,8 @@ public class AccountApiControllerTest {
     public void 회원_상세조회() throws Exception {
 
         //when
-        MvcResult mvcResult = mockMvc.perform(get("/api/account/" + testId))
+        MvcResult mvcResult = mockMvc.perform(get("/api/account/" + testId)
+                                                .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();

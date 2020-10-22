@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -30,6 +31,7 @@ public class FestivalRestController {
 
     @GetMapping("/manager/{festivalId}/info")
     public ApiResponseDto<FestivalDto> festivalInfo(@PathVariable Long festivalId) {
+        Optional<Festival> byId = festivalService.findById(1L);
         return ApiResponseDto.createOK(
                 festivalService.findById(festivalId)
                 .map(FestivalDto::new)

@@ -16,7 +16,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .mvcMatchers("/", "/login","/sign-up/**").permitAll()
+                .mvcMatchers("/", "/login","/sign-up/**","/api/**","/ticket").permitAll()
                 .mvcMatchers(HttpMethod.GET).permitAll()
                 .anyRequest().authenticated()
                 .and()
