@@ -41,7 +41,8 @@ public class FestivalControllerTest {
     @BeforeAll
     void beforeAll () {
         Festival festival = new Festival( randomAlphabetic(10), randomAlphabetic(40), 10);
-        festivalService.generate(festival);
+        Festival generate = festivalService.generate(festival);
+        System.out.println(generate.getContent());
         festivalRepository.save(festival);
     }
 
