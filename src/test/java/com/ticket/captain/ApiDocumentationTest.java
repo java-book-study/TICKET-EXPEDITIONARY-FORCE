@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(controllers = {
         TicketController.class
 })
-
 @AutoConfigureRestDocs
 public abstract class ApiDocumentationTest {
     @Autowired

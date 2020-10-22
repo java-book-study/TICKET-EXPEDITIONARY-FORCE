@@ -8,8 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Optional;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -38,7 +41,8 @@ public class FestivalControllerTest {
     @BeforeAll
     void beforeAll () {
         Festival festival = new Festival( randomAlphabetic(10), randomAlphabetic(40), 10);
-        festivalService.generate(festival);
+        Festival generate = festivalService.generate(festival);
+        System.out.println(generate.getContent());
         festivalRepository.save(festival);
     }
 

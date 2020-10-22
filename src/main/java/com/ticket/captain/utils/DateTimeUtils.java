@@ -1,4 +1,4 @@
-package com.ticket.captain.util;
+package com.ticket.captain.utils;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;

@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * 은성님 dto 코드
+ */
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -19,6 +22,6 @@ public class AccountResponseDto {
     public AccountResponseDto(Account account){
         name = account.getName();
         email = account.getEmail();
-        role = account.getRole();
+//        role = account.getRole();
     }
 }
