@@ -1,4 +1,4 @@
-package com.ticket.captain.account;
+package com.ticket.captain.common;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -12,9 +12,7 @@ import javax.persistence.Embeddable;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Address {
-
     private String city;
     private String street;
     private String zipcode;
-
 }
