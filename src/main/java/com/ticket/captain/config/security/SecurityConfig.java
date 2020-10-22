@@ -13,23 +13,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests()
-                    .mvcMatchers("/", "/login","/sign-up/**").permitAll()
-                    .mvcMatchers(HttpMethod.GET).permitAll()
-                    .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                    .successHandler(new MyLoginSuccessHandler())
-                    .failureHandler(new MyLoginFailureHandler())
-                .and().httpBasic()
-                .and()
-                .logout()
-                    .logoutUrl("/logout")
-                    .logoutSuccessUrl("/login")
-                .and()
-                .exceptionHandling().accessDeniedPage("/denied")
-        ;
+//        http
+//                .authorizeRequests()
+//                    .mvcMatchers("/", "/login","/sign-up/**").permitAll()
+//                    .mvcMatchers(HttpMethod.GET).permitAll()
+//                    .anyRequest().authenticated()
+//                .and()
+//                .formLogin()
+//                    .successHandler(new MyLoginSuccessHandler())
+//                    .failureHandler(new MyLoginFailureHandler())
+//                .and().httpBasic()
+//                .and()
+//                .logout()
+//                    .logoutUrl("/logout")
+//                    .logoutSuccessUrl("/login")
+//                .and()
+//                .exceptionHandling().accessDeniedPage("/denied")
+//        ;
     }
     @Override
     public void configure(WebSecurity web) throws Exception {
