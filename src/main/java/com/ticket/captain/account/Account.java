@@ -6,6 +6,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -33,10 +35,10 @@ public class Account {
     @Embedded
     private Address address;
 
+    //해당 부분 AccountStatus, Role 중복인데 이거 선택해야될듯
     @Enumerated(EnumType.STRING)
-    @Transient
     @Builder.Default
-    private AccountStatus accountStatus = AccountStatus.ROLE_USER;
+    private Role role = Role.ROLE_USER;
 
     public void setPassword(String password) {
         this.password = password;
@@ -64,5 +66,9 @@ public class Account {
         this.email = requestDto.getEmail();
         this.name = requestDto.getName();
 //        this.role = requestDto.getRole();
+    }
+
+    public void addRole(Role role){
+        this.role=role;
     }
 }
