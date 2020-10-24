@@ -1,14 +1,17 @@
 package com.ticket.captain.festival;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.ticket.captain.festival.dto.FestivalCreateDto;
+import com.ticket.captain.review.Review;
 import lombok.Builder;
 import lombok.Getter;
+import org.checkerframework.common.aliasing.qual.Unique;
 import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.time.LocalDateTime.now;
@@ -22,29 +25,35 @@ public class Festival {
 
     @Id
     @GeneratedValue
-    @Column(name = "festival_id")
+    @Column
     private Long id;
 
-    @Column(name = "festival_name")
+    @Column
+    @Unique
     private String name;
 
     private String Thumbnail;
 
-    @Column(name = "content")
+    @Column
     private String content;
 
-    @Column(name = "winners")
+    @Column
     private int winners;
 
-    @Column(name = "festival_start_date")
+    @Column
     private LocalDateTime startDate;
 
-    @Column(name = "festival_end_date")
+    @Column
     private LocalDateTime endDate;
 
     @CreationTimestamp
-    @Column(name = "create_date")
+    @Column
     private LocalDateTime createDate;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "festival", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties({"festival"})
+    @OrderBy("id desc")
+    private final List<Review> review = new ArrayList<>();
 
     public Festival() {
 
@@ -52,6 +61,7 @@ public class Festival {
 
 
     public Festival(String name, String content, int winners) {
+
         this(null, name, null, content, winners, null, null, null);
     }
 
@@ -85,7 +95,7 @@ public class Festival {
         this.createDate = defaultIfNull(createDate, now());
     }
 
-    public void update(FestivalRequest requestDto) {
+    public void update(FestivalCreateDto requestDto) {
         checkArgument(isNotEmpty(name), "name must be provided.");
         checkArgument(
                 name.length() >= 1 && name.length() <= 20,
