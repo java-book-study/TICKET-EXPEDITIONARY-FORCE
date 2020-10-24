@@ -1,7 +1,5 @@
-package com.ticket.captain.Festival;
+package com.ticket.captain.festival;
 
-import com.ticket.captain.festival.Festival;
-import com.ticket.captain.festival.FestivalService;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
