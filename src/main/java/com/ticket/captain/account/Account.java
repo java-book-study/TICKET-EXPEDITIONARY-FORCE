@@ -34,9 +34,7 @@ public class Account {
     private Address address;
 
     @Enumerated(EnumType.STRING)
-    @Transient
-    @Builder.Default
-    private AccountStatus accountStatus = AccountStatus.ROLE_USER;
+    private Role role;
 
     public void setPassword(String password) {
         this.password = password;
