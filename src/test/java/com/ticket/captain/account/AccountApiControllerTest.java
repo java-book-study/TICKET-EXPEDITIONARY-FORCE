@@ -1,9 +1,9 @@
 package com.ticket.captain.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ticket.captain.account.dto.AccountResponseDto;
-import com.ticket.captain.account.dto.AccountUpdateRequestDto;
+import com.ticket.captain.account.dto.AccountDto;
 import com.ticket.captain.common.Address;
+import com.ticket.captain.exception.NotFoundException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,9 +29,10 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
@@ -59,7 +60,7 @@ public class AccountApiControllerTest {
     public void setUp() {
         Address adrs = new Address("seoul", "mapo", "03951");
 
-        Account account = Account.builder()
+        Account account = com.ticket.captain.account.Account.builder()
                 .email(ACCOUNT_EMAIL)
                 .name("test")
                 .password(passwordEncoder.encode("1111"))
@@ -109,7 +110,7 @@ public class AccountApiControllerTest {
                 .andReturn();
 
         String contentAsString = mvcResult.getResponse().getContentAsString();
-        AccountResponseDto accountResponseDto = objectMapper.readValue(contentAsString, AccountResponseDto.class);
+        AccountDto.Response accountResponseDto = objectMapper.readValue(contentAsString, AccountDto.Response.class);
 
         assertEquals(accountService.findAccountDetail(TEST_ID).getEmail(), accountResponseDto.getEmail());
 
@@ -118,11 +119,11 @@ public class AccountApiControllerTest {
     @DisplayName("회원 수정 시 값이 정상적으로 보냈는지 테스트")
     @Test
     @Order(4)
-    public void 회원_수정() throws Exception {
+    public void 회원_수정_성공() throws Exception {
 
         //given
-        AccountUpdateRequestDto updateRequestDto =
-                new AccountUpdateRequestDto("update@email.com", "update", Role.ROLE_ADMIN);
+        AccountDto.Update updateRequestDto =
+                new AccountDto.Update("update","update@email.com", Role.ROLE_ADMIN);
 
         //when
         mockMvc.perform(post(API_ACCOUNT_URL + TEST_ID)
@@ -132,7 +133,7 @@ public class AccountApiControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        Account account = accountRepository.findById(TEST_ID).orElseGet(Account::new);
+        Account account = accountRepository.findById(TEST_ID).orElseThrow(NotFoundException::new);
 
         //then
         assertEquals("update@email.com", account.getEmail());
@@ -146,8 +147,8 @@ public class AccountApiControllerTest {
     public void 회원_수정_실패() throws Exception {
 
         //given
-        AccountUpdateRequestDto updateRequestDto =
-                new AccountUpdateRequestDto("update@email.com", "update", Role.ROLE_ADMIN);
+        AccountDto.Update updateRequestDto =
+                new AccountDto.Update("update","update@email.com", Role.ROLE_ADMIN);
 
         //when + then
         mockMvc.perform(post(API_ACCOUNT_URL + ERROR_ID)

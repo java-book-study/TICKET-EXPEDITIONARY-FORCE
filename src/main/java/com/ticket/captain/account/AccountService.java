@@ -1,8 +1,7 @@
 package com.ticket.captain.account;
 
 import com.ticket.captain.account.dto.AccountCreateDto;
-import com.ticket.captain.account.dto.AccountResponseDto;
-import com.ticket.captain.account.dto.AccountUpdateRequestDto;
+import com.ticket.captain.account.dto.AccountDto;
 import com.ticket.captain.config.AppProperties;
 import com.ticket.captain.exception.NotFoundException;
 import com.ticket.captain.mail.EmailMessage;
@@ -80,27 +79,23 @@ public class AccountService implements UserDetailsService {
         return new User(account.getEmail(), account.getPassword(), List.of(new SimpleGrantedAuthority("ROLE_USER")));
     }
 
-    public Page<AccountResponseDto> findAccountList(Pageable pageable) {
+    public Page<AccountDto.Response> findAccountList(Pageable pageable) {
 
-        Page<AccountResponseDto> result = accountRepository.findAll(pageable)
-                .map(AccountResponseDto::new);
-
-        return result;
+        return accountRepository.findAll(pageable).map(AccountDto.Response::new);
     }
 
-    public AccountResponseDto findAccountDetail(Long id){
+    public AccountDto.Response findAccountDetail(Long id){
 
         Account account = accountRepository.findById(id).orElseThrow(NotFoundException::new);
-        AccountResponseDto result = modelMapper.map(account, AccountResponseDto.class);
 
-        return result;
+        return modelMapper.map(account, AccountDto.Response.class);
     }
 
-    public void accountUpdate(Long id, AccountUpdateRequestDto requestDto) {
+    public void accountUpdate(Long id, AccountDto.Update updateRequestDto) {
 
         Account account = accountRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        account.update(requestDto);
+        account.update(updateRequestDto);
         accountRepository.save(account);
     }
 }

@@ -1,6 +1,6 @@
 package com.ticket.captain.account;
 
-import com.ticket.captain.account.dto.AccountUpdateRequestDto;
+import com.ticket.captain.account.dto.AccountDto;
 import com.ticket.captain.common.Address;
 import lombok.*;
 
@@ -15,7 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Account {
 
-    @Id @Column(name="account_id")
+    @Id
     @GeneratedValue
     private Long id;
     private String publicIp;
@@ -29,7 +29,9 @@ public class Account {
     private LocalDateTime emailCheckTokenGeneratedAt;
     private String emailCheckToken;
     private boolean emailVerified;
-    private int point;
+
+    @Builder.Default
+    private int point = 0;
     @Embedded
     private Address address;
 
@@ -58,9 +60,9 @@ public class Account {
         this.createDate = LocalDateTime.now();
     }
 
-    public void update(AccountUpdateRequestDto requestDto) {
-        this.email = requestDto.getEmail();
-        this.name = requestDto.getName();
-//        this.role = requestDto.getRole();
+    public void update(AccountDto.Update updateRequestDto){
+        this.name = updateRequestDto.getName();
+        this.email = updateRequestDto.getEmail();
+        this.role = updateRequestDto.getRole();
     }
 }
