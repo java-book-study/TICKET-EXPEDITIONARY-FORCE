@@ -20,7 +20,7 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/api/account/")
+@RequestMapping("/api/account/**")
 public class AccountApiController {
 
     private final AccountService accountService;

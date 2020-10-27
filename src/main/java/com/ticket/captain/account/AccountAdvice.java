@@ -1,5 +1,6 @@
 package com.ticket.captain.account;
 
+import com.ticket.captain.exception.NotFoundException;
 import com.ticket.captain.response.ApiResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,9 +15,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class AccountAdvice {
 
-    @ExceptionHandler(NullPointerException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ApiResponseDto nullPointException(RuntimeException e) {
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public ApiResponseDto<?> notFoundException(RuntimeException e) {
         return ApiResponseDto.NOT_FOUND(e);
     }
 

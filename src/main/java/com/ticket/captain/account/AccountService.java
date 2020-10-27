@@ -4,10 +4,12 @@ import com.ticket.captain.account.dto.AccountCreateDto;
 import com.ticket.captain.account.dto.AccountResponseDto;
 import com.ticket.captain.account.dto.AccountUpdateRequestDto;
 import com.ticket.captain.config.AppProperties;
+import com.ticket.captain.exception.NotFoundException;
 import com.ticket.captain.mail.EmailMessage;
 import com.ticket.captain.mail.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -34,6 +36,8 @@ public class AccountService implements UserDetailsService {
     private final AppProperties appProperties;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
+
+    private final ModelMapper modelMapper;
 
     public Account createAccount(AccountCreateDto accountCreateDto){
         Account newAccount = accountCreateDto.toEntity();
@@ -86,18 +90,16 @@ public class AccountService implements UserDetailsService {
 
     public AccountResponseDto findAccountDetail(Long id){
 
-        AccountResponseDto result = accountRepository.findById(id)
-                .map(AccountResponseDto::new)
-                .orElseThrow(NullPointerException::new);
+        Account account = accountRepository.findById(id).orElseThrow(NotFoundException::new);
+        AccountResponseDto result = modelMapper.map(account, AccountResponseDto.class);
 
         return result;
     }
 
-    @Transactional
     public void accountUpdate(Long id, AccountUpdateRequestDto requestDto) {
 
         Account account = accountRepository.findById(id)
-                .orElseThrow(NullPointerException::new);
+                .orElseThrow(NotFoundException::new);
         account.update(requestDto);
         accountRepository.save(account);
     }
