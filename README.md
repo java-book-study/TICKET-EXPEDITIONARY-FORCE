@@ -1,17 +1,50 @@
-# 티켓 원정대
+# 🎫티켓 원정대
+> TDD를 적용하여 만드는 티켓 판매 사이트
 
+RESTApi, TDD를 준수하며 백엔드를 우선으로 만들어 보는 프로젝트.
 
-100명에게 Ticket을 배포하는 프로그램을 RESTful방식 개발합니다
-*신청시 확률에 따라 티켓을 획득 하거나 꽝이 됩니다  
-• 티켓:100매  
-• 로그인도 추가하기 (카카오, 네이버)  
-• 공인 IP당 1회 신청가능  
-• 30%확률로티켓획득가능  
-• WAS는 2대 이상 이용한다고 가정  
-* 테스트 코드 작성 필수   
-• Spring framework   
-• Gradle 사용  
-• RESTful 방식 이용  
-• DB는 RDB를 기준  
-• Mysql,Maria,MS,Oracle...  
+---
 
+[![NPM Version][npm-image]][npm-url]
+[![Build Status][travis-image]][travis-url]
+[![Downloads Stats][npm-downloads]][npm-url]
+
+## 최소한의 규칙
+
+- [설계 원칙](./design/README.md)
+
+- [커밋 컨벤션](./conventions/commit/README.md)
+
+- [코드 리뷰](./conventions/code-review/README.md)
+
+- [기술부채 관리 전략](./technical-debt/README.md)
+
+## 기술 스택
+
+- Spring Boot
+- Spring Security
+- Mustache
+- RestDocs
+
+## Release History
+
+* 0.0.1
+    * 진행중
+
+## Contributors
+
+<a href="https://github.com/java-book-study/TICKET-EXPEDITIONARY-FORCE/graphs/contributors">
+  <img src="https://contributors-img.web.app/image?repo=java-book-study/TICKET-EXPEDITIONARY-FORCE" />
+</a>
+
+#### Back-End
+
+👩🏻‍💻 **안소현** - [@ahnzhx](https://github.com/ahnzhx)
+
+👩🏻‍💻 **나현성** - [@HyunSung-Na](https://github.com/HyunSung-Na)
+
+👩🏻‍💻 **이민현** - [@9m1i9n1](https://github.com/9m1i9n1)
+
+👩🏻‍💻 **전은성** - [@dmstjd1024](https://github.com/dmstjd1024)
+
+👩🏻‍💻 **강승윤** - [@Be-poz](https://github.com/Be-poz)
