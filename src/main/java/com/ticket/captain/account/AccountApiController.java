@@ -2,6 +2,7 @@ package com.ticket.captain.account;
 
 import com.ticket.captain.account.dto.AccountResponseDto;
 import com.ticket.captain.account.dto.AccountUpdateRequestDto;
+import com.ticket.captain.response.ApiResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,32 +20,33 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@RequestMapping("/api/account/")
 public class AccountApiController {
 
     private final AccountService accountService;
 
-    @GetMapping("/api/account")
-    public ResponseEntity accountList(@PageableDefault Pageable pageable){
+    @GetMapping("")
+    public ApiResponseDto<?> accountList(@PageableDefault Pageable pageable){
 
         Page<AccountResponseDto> result = accountService.findAccountList(pageable);
 
-        return new ResponseEntity(result, HttpStatus.OK);
+        return ApiResponseDto.createOK(result);
     }
 
-    @GetMapping("/api/account/{id}")
-    public ResponseEntity accountDetail(@PathVariable Long id){
+    @GetMapping("{id}")
+    public ApiResponseDto<?> accountDetail(@PathVariable Long id){
 
         AccountResponseDto result = accountService.findAccountDetail(id);
 
-        return new ResponseEntity(result, HttpStatus.OK);
+        return ApiResponseDto.createOK(result);
     }
 
-    @PostMapping("/api/account/{id}")
-    public ResponseEntity accountUpdate(@PathVariable Long id, @RequestBody @Valid AccountUpdateRequestDto updateRequestDto){
+    @PostMapping("{id}")
+    public ApiResponseDto<?> accountUpdate(@PathVariable Long id, @RequestBody @Valid AccountUpdateRequestDto updateRequestDto){
 
         accountService.accountUpdate(id, updateRequestDto);
 
-        return new ResponseEntity<>("success", HttpStatus.OK);
+        return ApiResponseDto.DEFAULT_OK;
     }
 
 }
