@@ -99,6 +99,10 @@ public class AccountService implements UserDetailsService {
         Account account = accountRepository.findById(id)
                 .orElseThrow(NullPointerException::new);
         account.update(requestDto);
-        accountRepository.save(account);
+    }
+
+    public void managerAppoint(Long id) {
+        Account findAccount = accountRepository.findById(id).orElseThrow(NullPointerException::new);
+        findAccount.addRole(Role.ROLE_MANAGER);
     }
 }
