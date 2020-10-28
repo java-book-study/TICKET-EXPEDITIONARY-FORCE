@@ -96,5 +96,6 @@ public class AccountService implements UserDetailsService {
         Account account = accountRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         account.update(updateRequestDto);
+
     }
 }
