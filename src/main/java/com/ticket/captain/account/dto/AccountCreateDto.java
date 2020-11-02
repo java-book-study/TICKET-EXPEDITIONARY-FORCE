@@ -47,11 +47,9 @@ public class AccountCreateDto {
 
     public Account toEntity(){
         return Account.builder()
-                .loginId(loginId)
                 .email(email)
                 .nickname(nickname)
                 .name(name)
-                .publicIp(getIpInfo())
                 .createDate(LocalDateTime.now())
                 .build();
     }
