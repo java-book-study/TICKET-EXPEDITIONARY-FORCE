@@ -14,6 +14,7 @@ public enum ApiResponseCode implements EnumType {
     SERVER_ERROR("서버 에러입니다.");
 
     private final String message;
+    private final int httpStatus;
 
     @Override
     public String getId() {
@@ -23,5 +24,10 @@ public enum ApiResponseCode implements EnumType {
     @Override
     public String getText() {
         return message;
+    }
+
+    @Override
+    public int getHttpStatus() {
+        return httpStatus;
     }
 }

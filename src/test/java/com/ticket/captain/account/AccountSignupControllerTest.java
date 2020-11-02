@@ -41,21 +41,12 @@ class AccountSignupControllerTest {
     @MockBean
     EmailService emailService;
 
-    @DisplayName("회원가입 화면 보이는지 테스트")
-    @Test
-    public void signUpForm_success() throws Exception {
-        mockMvc.perform(get("/sign-up"))
-                .andExpect(view().name("account/sign-up"))
-                .andExpect(model().attributeExists("accountCreateDto"))
-                .andExpect(unauthenticated());
-    }
-
     @DisplayName("회원가입 - 입력값 정상")
     @Test
     public void createAccount_correct_input() throws Exception {
         AccountCreateDto accountCreateDto = accountCreateDtoSample();
 
-        mockMvc.perform(post("/sign-up/")
+        MvcResult mvcResult = mockMvc.perform(post("/api/sign-up")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(accountCreateDto))
@@ -100,7 +91,7 @@ class AccountSignupControllerTest {
         //then
         AccountCreateDto accountCreateDto2 = accountCreateDtoSample();
         //when&then
-        mockMvc.perform(post("/sign-up")
+        mockMvc.perform(post("/api/sign-up")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(accountCreateDto2))
@@ -114,7 +105,7 @@ class AccountSignupControllerTest {
     void checkEmailToken_success() throws Exception {
         Account newAccount = accountSample();
 
-        mockMvc.perform(get("/sign-up/check-email-token")
+        mockMvc.perform(get("/api/sign-up/check-email-token")
                 .param("token", newAccount.getEmailCheckToken())
                 .param("email", newAccount.getEmail()))
                 .andExpect(status().isOk())
