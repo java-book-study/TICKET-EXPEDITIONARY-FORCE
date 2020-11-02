@@ -17,7 +17,7 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/api/account/**")
+@RequestMapping("/api/account")
 public class AccountApiController {
 
     private final AccountService accountService;
@@ -50,10 +50,7 @@ public class AccountApiController {
         return ApiResponseDto.DEFAULT_OK;
     }
 
-    //해당 appoint로 한 이유는 이 api는 ADMIN만 접근할 수 있게끔 할 것이다.
-    //SecurityConfig 내에서 /api/account/ 는 permitAll이기 때문에(일시적임, 마무리 때에 수정해야 할 사항)
-    // /api/appoint/ 는 ADMIN 접근으로 설정해둠
-    @PutMapping("/api/appoint/{id}")
+    @PutMapping("admin/appoint/{id}")
     public ApiResponseDto<Account> managerAppoint(@PathVariable Long id){
         accountService.managerAppoint(id);
         //밑에 2줄은 테스트코드를 위한 코드

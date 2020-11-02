@@ -6,8 +6,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -38,8 +36,9 @@ public class Account {
     private Address address;
 
     //해당 부분 AccountStatus, Role 중복인데 이거 선택해야될듯
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private Role role = Role.ROLE_USER;
 
     public void setPassword(String password) {
         this.password = password;
@@ -66,7 +65,6 @@ public class Account {
     public void update(AccountDto.Update updateRequestDto){
         this.name = updateRequestDto.getName();
         this.email = updateRequestDto.getEmail();
-        this.role = updateRequestDto.getRole();
     }
 
     public void addRole(Role role){
