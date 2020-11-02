@@ -1,47 +1,49 @@
-package com.ticket.captain.festival;
+package com.ticket.captain.festival.dto;
 
+import com.ticket.captain.festival.Festival;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
-import static org.springframework.beans.BeanUtils.copyProperties;
-
+@Builder
 @Getter @Setter
-public class FestivalDto {
+public class FestivalCreateDto {
 
-    private Long id;
-
+    @NotBlank
+    @Length(min = 2, max = 20)
     private String name;
 
     private String Thumbnail;
 
+    @NotBlank
+    @Length(min = 2, max = 1000)
     private String content;
 
+    @NotBlank
     private int winners;
 
     private LocalDateTime startDate;
 
     private LocalDateTime endDate;
 
-    private LocalDateTime createDate;
-
-    public FestivalDto(Festival source) {
-        copyProperties(source, this);
+    public Festival newFestival() {
+        return new Festival(name, content, winners, Thumbnail, startDate, endDate);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("id", id)
                 .append("name", name)
                 .append("Thumbnail", Thumbnail)
                 .append("content", content)
                 .append("winners", winners)
                 .append("startDate", startDate)
                 .append("endDate", endDate)
-                .append("createDate", createDate)
                 .toString();
     }
 }

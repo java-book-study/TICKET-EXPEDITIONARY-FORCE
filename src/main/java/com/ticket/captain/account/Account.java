@@ -1,6 +1,6 @@
 package com.ticket.captain.account;
 
-import com.ticket.captain.account.dto.AccountUpdateRequestDto;
+import com.ticket.captain.account.dto.AccountDto;
 import com.ticket.captain.common.Address;
 import lombok.*;
 
@@ -15,7 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Account {
 
-    @Id @Column(name="account_id")
+    @Id
     @GeneratedValue
     private Long id;
     private String publicIp;
@@ -29,14 +29,16 @@ public class Account {
     private LocalDateTime emailCheckTokenGeneratedAt;
     private String emailCheckToken;
     private boolean emailVerified;
-    private int point;
+
+    @Builder.Default
+    private int point = 0;
     @Embedded
     private Address address;
 
-    @Enumerated(EnumType.STRING)
-    @Transient
+    //해당 부분 AccountStatus, Role 중복인데 이거 선택해야될듯
     @Builder.Default
-    private AccountStatus accountStatus = AccountStatus.ROLE_USER;
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.ROLE_USER;
 
     public void setPassword(String password) {
         this.password = password;
@@ -60,9 +62,12 @@ public class Account {
         this.createDate = LocalDateTime.now();
     }
 
-    public void update(AccountUpdateRequestDto requestDto) {
-        this.email = requestDto.getEmail();
-        this.name = requestDto.getName();
-//        this.role = requestDto.getRole();
+    public void update(AccountDto.Update updateRequestDto){
+        this.name = updateRequestDto.getName();
+        this.email = updateRequestDto.getEmail();
+    }
+
+    public void addRole(Role role){
+        this.role=role;
     }
 }
