@@ -2,8 +2,11 @@ package com.ticket.captain.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ticket.captain.account.dto.AccountCreateDto;
+import com.ticket.captain.account.dto.AccountDto;
 import com.ticket.captain.mail.EmailMessage;
 import com.ticket.captain.mail.EmailService;
+import com.ticket.captain.response.ApiResponseCode;
+import com.ticket.captain.response.ApiResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +15,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.spring5.expression.Mvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
@@ -40,30 +45,23 @@ class AccountSignupControllerTest {
     @MockBean
     EmailService emailService;
 
-    @DisplayName("회원가입 화면 보이는지 테스트")
-    @Test
-    public void signUpForm_success() throws Exception {
-        mockMvc.perform(get("/sign-up"))
-                .andExpect(view().name("account/sign-up"))
-                .andExpect(model().attributeExists("accountCreateDto"))
-                .andExpect(unauthenticated());
-    }
-
     @DisplayName("회원가입 - 입력값 정상")
     @Test
     public void createAccount_correct_input() throws Exception {
         AccountCreateDto accountCreateDto = accountCreateDtoSample();
 
-        mockMvc.perform(post("/sign-up/")
+        MvcResult mvcResult = mockMvc.perform(post("/api/sign-up")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(accountCreateDto))
                 .with(csrf()))
                 .andDo(print())
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").exists())
-                .andExpect(unauthenticated())
-                .andExpect(redirectedUrl("/sign-up/complete"));
+                .andReturn();
+
+        String contentAsString = mvcResult.getResponse().getContentAsString();
+        ApiResponseDto<?> apiResponseDto = new ObjectMapper().readValue(contentAsString, ApiResponseDto.class);
+
+        assertEquals(200, apiResponseDto.getCode().getHttpStatus());
 
         then(emailService).should().sendEmail(any(EmailMessage.class));
     }
@@ -79,15 +77,17 @@ class AccountSignupControllerTest {
                     .loginId("shahn2")
                     .build();
 
-        mockMvc.perform(post("/sign-up/")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-                .content(new ObjectMapper().writeValueAsString(accountCreateDto))
-                .with(csrf()))
-                .andExpect(status().isBadRequest())
-                .andExpect(unauthenticated())
-                .andDo(print())
-        ;
+        MvcResult mvcResult = mockMvc.perform(post("/api/sign-up/")
+                                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                .accept(MediaType.APPLICATION_JSON_VALUE)
+                                .content(new ObjectMapper().writeValueAsString(accountCreateDto))
+                                .with(csrf()))
+                                .andReturn();
+
+        String contentAsString = mvcResult.getResponse().getContentAsString();
+        ApiResponseDto<?> apiResponseDto = new ObjectMapper().readValue(contentAsString, ApiResponseDto.class);
+
+        assertEquals(400, apiResponseDto.getCode().getHttpStatus());
     }
 
     @DisplayName("이미 가입되어있는 이메일로 가입 시 validate 처리가 잘 되는지")
@@ -99,13 +99,12 @@ class AccountSignupControllerTest {
         //then
         AccountCreateDto accountCreateDto2 = accountCreateDtoSample();
         //when&then
-        mockMvc.perform(post("/sign-up")
+        mockMvc.perform(post("/api/sign-up")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(accountCreateDto2))
                 .with(csrf()))
-                .andDo(print())
-                ;
+                .andDo(print());
     }
 
     @DisplayName("인증 메일 확인 - 입력값 정상")
@@ -113,25 +112,28 @@ class AccountSignupControllerTest {
     void checkEmailToken_success() throws Exception {
         Account newAccount = accountSample();
 
-        mockMvc.perform(get("/sign-up/check-email-token")
+        mockMvc.perform(get("/api/sign-up/check-email-token")
                 .param("token", newAccount.getEmailCheckToken())
                 .param("email", newAccount.getEmail()))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeDoesNotExist("error"))
                 .andExpect(unauthenticated())
                 ;
+
     }
 
     @DisplayName("인증 메일 확인 - 입력값 오류")
     @Test
     void checkEmailToken_with_wrong_input() throws Exception {
-        mockMvc.perform(get("/sign-up/check-email-token")
-                .param("token", "1qaz")
-                .param("email", "email@email.com"))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("error"))
-                .andExpect(view().name("account/checked-email"))
-                .andExpect(unauthenticated());
+        MvcResult mvcResult = mockMvc.perform(get("/api/sign-up/check-email-token")
+                                .param("token", "1qaz")
+                                .param("email", "email@email.com"))
+                                .andReturn();
+
+        String contentAsString = mvcResult.getResponse().getContentAsString();
+        ApiResponseDto<?> apiResponseDto = new ObjectMapper().readValue(contentAsString, ApiResponseDto.class);
+
+        assertEquals(400, apiResponseDto.getCode().getHttpStatus());
     }
 
     //TODO : 로그인 유지 되었는지,

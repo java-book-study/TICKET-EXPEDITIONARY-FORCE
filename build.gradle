@@ -54,6 +54,7 @@ dependencies {
     runtimeOnly 'com.h2database:h2'
     testImplementation 'org.springframework.batch:spring-batch-test'
     testCompile 'org.springframework.security:spring-security-test'
+    testCompile "org.testcontainers:postgresql:1.15.0-rc2"
     testImplementation 'org.testcontainers:junit-jupiter'
     testImplementation 'org.mockito:mockito-inline:2.13.0'
     //Lombok

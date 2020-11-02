@@ -2,16 +2,11 @@ spring:
   profiles:
     active: local
 
-  datasource:
-    url: jdbc:h2:tcp://localhost/~/captain
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-
+  ## 이 파일 올리면 안됨!!
 
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
     properties:
       hibernate:
         #show_sql: true
@@ -43,3 +38,9 @@ logging.level:
   #org.hibernate.type: trace
 
 app.host: http://localhost:8080
+
+#datasource:
+#  driver-class-name: org.postgresql.Driver
+#  url: jdbc:postgresql://dolph.myqnapcloud.com:5432/ticket
+#  username: ticketadmin
+#  password: 3687
