@@ -14,7 +14,7 @@ public class AccountCreateDtoValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return clazz.isAssignableFrom(AccountCreateDto.class);
+        return clazz.equals(AccountCreateDto.class);
     }
 
     @Override
@@ -24,7 +24,7 @@ public class AccountCreateDtoValidator implements Validator {
             errors.rejectValue("nickname", "invalid.Nickname", new Object[]{accountCreateDto.getNickname()}, "이미 사용중인 닉네임입니다.");
         }
         if(accountRepository.existsByEmail(accountCreateDto.getEmail())){
-            errors.rejectValue("email", "invalid,Email", new Object[]{accountCreateDto.getEmail()}, "이미 사용중인 이메일입니다.");
+            errors.rejectValue("email", "invalid.Email", new Object[]{accountCreateDto.getEmail()}, "이미 사용중인 이메일입니다.");
         }
         if(accountRepository.existsByLoginId(accountCreateDto.getLoginId())){
             errors.rejectValue("loginId", "invalid.LoginId", new Object[]{accountCreateDto.getLoginId()}, "이미 사용중인 아이디입니다.");

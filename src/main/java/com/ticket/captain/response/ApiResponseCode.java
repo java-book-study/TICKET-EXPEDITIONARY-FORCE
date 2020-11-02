@@ -7,13 +7,15 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum ApiResponseCode implements EnumType {
-    OK("요청이 성공하였습니다."),
-    BAD_PARAMETER("요청 파라미터가 잘못되었습니다."),
-    NOT_FOUND("리소스를 찾지 못했습니다."),
-    UNAUTHORIZED("인증에 실패하였습니다."),
-    SERVER_ERROR("서버 에러입니다.");
+    OK("요청이 성공하였습니다.", 200),
+    BAD_REQUEST("잘못된 요청.", 400),
+    NOT_FOUND("리소스를 찾지 못했습니다.", 404),
+    UNAUTHORIZED("인증에 실패하였습니다.",401),
+    SERVER_ERROR("서버 에러입니다.",500);
+
 
     private final String message;
+    private final int httpStatus;
 
     @Override
     public String getId() {
@@ -23,5 +25,10 @@ public enum ApiResponseCode implements EnumType {
     @Override
     public String getText() {
         return message;
+    }
+
+    @Override
+    public int getHttpStatus() {
+        return httpStatus;
     }
 }
