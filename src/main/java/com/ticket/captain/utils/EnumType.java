@@ -4,4 +4,5 @@ public interface EnumType {
     String getId();
 
     String getText();
+    int getHttpStatus();
 }

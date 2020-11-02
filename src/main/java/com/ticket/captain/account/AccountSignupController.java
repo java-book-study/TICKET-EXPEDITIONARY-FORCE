@@ -1,8 +1,9 @@
 package com.ticket.captain.account;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ticket.captain.account.dto.AccountCreateDto;
+import com.ticket.captain.account.dto.AccountDto;
 import com.ticket.captain.common.ErrorsResource;
+import com.ticket.captain.response.ApiResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.validation.Errors;
@@ -14,22 +15,20 @@ import java.net.URISyntaxException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value="/sign-up", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value="/api/sign-up", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AccountSignupController {
 
-    private final ObjectMapper objectMapper;
     private final AccountService accountService;
     private final AccountRepository accountRepository;
 
     @PostMapping
-    public ResponseEntity createAccount(@RequestBody @Valid AccountCreateDto accountCreateDto, Errors errors) throws URISyntaxException {
+    public ApiResponseDto<?> createAccount( @RequestBody @Valid AccountCreateDto accountCreateDto, Errors errors) {
         if(errors.hasErrors()){
             return badRequest(errors);
         }
         Account account = accountService.createAccount(accountCreateDto);
-        return ResponseEntity.created(new URI("/sign-up/complete")).body(account);
+        return ApiResponseDto.createOK(new AccountDto.Response(account));
     }
-
 
     @GetMapping("/check-email-token")
     public ApiResponseDto<?> checkEmailToken(String token, String email) {
@@ -50,9 +49,8 @@ public class AccountSignupController {
         return ApiResponseDto.createOK(new AccountDto.Response(account));
     }
 
-    private ResponseEntity badRequest(Errors errors){
-
-        return ResponseEntity.badRequest().body(new ErrorsResource(errors));
+    private ApiResponseDto<?> badRequest(Errors errors){
+        return ApiResponseDto.BAD_REQUEST(new ErrorsResource(errors));
     }
 
     @InitBinder
