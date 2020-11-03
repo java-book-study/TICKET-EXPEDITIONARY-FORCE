@@ -17,5 +17,5 @@ public interface FestivalRepository extends JpaRepository<Festival, Long> {
     @Override
     void deleteById(Long festivalId);
 
-    boolean existsByName(String name);
+    boolean existsByTitle(String title);
 }
