@@ -1,12 +1,18 @@
 spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ENC(ahw18zDs3VK5yHnlD63tdEGLsuc+1nVGxgSPn/nAKVXPVqELBIlsmSPhhSzUpXg3TZAg13Ga3JOUerSfAqK4UQ==)
+    username: ENC(71M9V6VbtB6S0i/S/HcxPmy/TTiqAsrY)
+    password: ENC(zJWvcj62mjMzbiFJEacMGw==)
+    hikari:
+      schema: ticket
+
   profiles:
     active: local
 
-  ## 이 파일 올리면 안됨!!
-
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
     properties:
       hibernate:
         #show_sql: true
@@ -39,8 +45,3 @@ logging.level:
 
 app.host: http://localhost:8080
 
-#datasource:
-#  driver-class-name: org.postgresql.Driver
-#  url: jdbc:postgresql://dolph.myqnapcloud.com:5432/ticket
-#  username: ticketadmin
-#  password: 3687
