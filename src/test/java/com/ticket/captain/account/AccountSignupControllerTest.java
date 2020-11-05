@@ -19,8 +19,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.spring5.expression.Mvc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -119,10 +117,9 @@ class AccountSignupControllerTest {
                 .param("email", newAccount.getEmail()))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeDoesNotExist("error"))
-                .andExpect(unauthenticated());
+                .andExpect(unauthenticated())
+                ;
 
-
-        assertTrue(newAccount.isEmailVerified());
     }
 
     @DisplayName("인증 메일 확인 - 입력값 오류")
@@ -159,10 +156,10 @@ class AccountSignupControllerTest {
 
     private Account accountSample(){
         Account account = Account.builder()
-                .loginId("sonnie1")
                 .email("sonnie@email.com")
                 .password("1qaz2wsx")
                 .nickname("sonnie")
+                .name("회의록")
                 .build();
         Account newAccount = accountRepository.save(account);
         newAccount.generateEmailCheckToken();

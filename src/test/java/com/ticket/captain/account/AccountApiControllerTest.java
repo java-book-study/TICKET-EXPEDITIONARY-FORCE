@@ -61,7 +61,7 @@ public class AccountApiControllerTest {
     public void setUp() {
         Address adrs = new Address("seoul", "mapo", "03951");
 
-        Account account = com.ticket.captain.account.Account.builder()
+        Account account = Account.builder()
                 .email(ACCOUNT_EMAIL)
                 .name("test")
                 .password(passwordEncoder.encode("1111"))
@@ -185,7 +185,7 @@ public class AccountApiControllerTest {
 
     @DisplayName("addRole메서드 테스트")
     @Test
-    public void addRoleTEst() throws Exception{
+    public void addRoleTest() throws Exception{
         //given
         Address adrs = new Address("seoul", "mapo", "03951");
 
@@ -198,6 +198,7 @@ public class AccountApiControllerTest {
                 .point(5000)
                 .address(adrs)
                 .build();
+
         Account savedAccount = accountRepository.save(adminAccount);
         //when
         savedAccount.addRole(Role.ROLE_MANAGER);

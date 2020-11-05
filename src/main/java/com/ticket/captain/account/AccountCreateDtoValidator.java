@@ -26,8 +26,5 @@ public class AccountCreateDtoValidator implements Validator {
         if(accountRepository.existsByEmail(accountCreateDto.getEmail())){
             errors.rejectValue("email", "invalid.Email", new Object[]{accountCreateDto.getEmail()}, "이미 사용중인 이메일입니다.");
         }
-        if(accountRepository.existsByLoginId(accountCreateDto.getLoginId())){
-            errors.rejectValue("loginId", "invalid.LoginId", new Object[]{accountCreateDto.getLoginId()}, "이미 사용중인 아이디입니다.");
-        }
     }
 }
