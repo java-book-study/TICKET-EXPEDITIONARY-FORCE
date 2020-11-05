@@ -39,9 +39,9 @@ public class FestivalService {
     }
 
     @Transactional(readOnly = true)
-    public Boolean existsByName(String name) {
-        checkNotNull(name, "name must be provided.");
-        return festivalRepository.existsByName(name);}
+    public Boolean existsByName(String title) {
+        checkNotNull(title, "title must be provided.");
+        return festivalRepository.existsByTitle(title);}
 
     public void deleteFestival(Long festivalId) {
         checkNotNull(festivalId, "festivalId must be provided.");

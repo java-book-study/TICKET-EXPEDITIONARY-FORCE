@@ -32,17 +32,5 @@ public class FestivalResponseDto {
         copyProperties(source, this);
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("name", name)
-                .append("Thumbnail", Thumbnail)
-                .append("content", content)
-                .append("winners", winners)
-                .append("startDate", startDate)
-                .append("endDate", endDate)
-                .append("createDate", createDate)
-                .toString();
-    }
+
 }
