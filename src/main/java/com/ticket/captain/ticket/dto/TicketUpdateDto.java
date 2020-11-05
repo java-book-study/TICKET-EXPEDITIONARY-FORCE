@@ -7,20 +7,20 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TicketUpdateDto {
-    private Integer amount;
+    private Long stateCode;
 
     @Builder
-    private TicketUpdateDto(Integer amount) {
-        this.amount = amount;
+    private TicketUpdateDto(Long stateCode) {
+        this.stateCode = stateCode;
     }
 
     public TicketUpdateDto toDto() {
         return TicketUpdateDto.builder()
-                .amount(amount)
+                .stateCode(stateCode)
                 .build();
     }
 
     public void apply(Ticket ticket) {
-        ticket.update(amount);
+        ticket.update(stateCode);
     }
 }

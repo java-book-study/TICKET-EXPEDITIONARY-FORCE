@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.math.BigDecimal;
 
 @Entity
 @Getter
@@ -16,22 +17,38 @@ import javax.persistence.Id;
 public class Ticket {
     @Id
     @GeneratedValue
-    private Long id;
+    private Long ticketId;
 
     @Column(nullable = false)
-    private String title;
+    private String ticketNo;
 
     @Column(nullable = false)
-    private Integer amount;
+    private String orderNo;
+
+    @Column(nullable = false)
+    private Long festivalId;
+
+    @Column(nullable = false)
+    private Long festivalSq;
+
+    @Column(nullable = false)
+    private Long statusCode;
+
+    @Column(nullable = false)
+    private BigDecimal price;
 
     @Builder
-    private Ticket(Long id, String title, Integer amount) {
-        this.id = id;
-        this.title = title;
-        this.amount = amount;
+    private Ticket(Long ticketId, String ticketNo, String orderNo, Long festivalId, Long festivalSq, Long statusCode, BigDecimal price) {
+        this.ticketId = ticketId;
+        this.ticketNo = ticketNo;
+        this.orderNo = orderNo;
+        this.festivalId = festivalId;
+        this.festivalSq = festivalSq;
+        this.statusCode = statusCode;
+        this.price = price;
     }
 
-    public void update(Integer amount) {
-        this.amount = amount;
+    public void update(Long statusCode) {
+        this.statusCode = statusCode;
     }
 }

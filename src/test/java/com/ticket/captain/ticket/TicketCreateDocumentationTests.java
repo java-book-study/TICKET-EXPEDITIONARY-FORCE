@@ -7,9 +7,12 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
+
+import java.math.BigDecimal;
 
 import static com.ticket.captain.document.utils.ApiDocumentUtils.getDocumentRequest;
 import static com.ticket.captain.document.utils.ApiDocumentUtils.getDocumentResponse;
@@ -23,18 +26,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class TicketCreateDocumentationTests extends ApiDocumentationTest {
     @Test
+    @DisplayName("Ticket Add 테스트")
     public void add() throws Exception {
 
         given(ticketService.add(any(TicketCreateDto.class)))
                 .willReturn(TicketDto.builder()
-                        .id(1L)
-                        .title("Ticket1")
-                        .amount(10)
+                        .ticketId(2L)
+                        .ticketNo("IU00000002")
+                        .orderNo("20110100000000002")
+                        .festivalId(1L)
+                        .festivalSq(1L)
+                        .statusCode(2L)
+                        .price(new BigDecimal(110000))
                         .build());
 
         Request request = new Request();
-        request.title = "Ticket1";
-        request.amount = "10";
+        request.ticketNo = "IU00000002";
+        request.orderNo = "20110100000000002";
+        request.festivalId = "1";
+        request.festivalSq = "1";
+        request.statusCode = "2";
+        request.price = "110000";
 
         ResultActions result = this.mockMvc.perform(
                 post("/ticket")
@@ -64,7 +76,11 @@ public class TicketCreateDocumentationTests extends ApiDocumentationTest {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
-        String title;
-        String amount;
+        String ticketNo;
+        String orderNo;
+        String festivalId;
+        String festivalSq;
+        String statusCode;
+        String price;
     }
 }
