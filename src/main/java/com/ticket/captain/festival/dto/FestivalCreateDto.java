@@ -4,16 +4,15 @@ import com.ticket.captain.festival.Festival;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Builder
 @Getter @Setter
+@ToString
 public class FestivalCreateDto {
 
     @NotBlank
@@ -26,12 +25,16 @@ public class FestivalCreateDto {
     @Length(min = 2, max = 1000)
     private String content;
 
+    @NotBlank
     private LocalDateTime salesStartDate;
 
+    @NotBlank
     private LocalDateTime salesEndDate;
 
+    @NotBlank
     private Long createId;
 
+    @NotBlank
     private LocalDateTime createDate;
 
     private LocalDateTime modifyDate;
@@ -42,18 +45,4 @@ public class FestivalCreateDto {
         return new Festival(title, content, Thumbnail, salesStartDate, salesEndDate, createId, modifyDate, modifyId);
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("title", title)
-                .append("Thumbnail", Thumbnail)
-                .append("content", content)
-                .append("salesStartDate", salesStartDate)
-                .append("salesEndDate", salesEndDate)
-                .append("createId", createId)
-                .append("createDate", createDate)
-                .append("modifyDate", modifyDate)
-                .append("modifyId", modifyId)
-                .toString();
-    }
 }

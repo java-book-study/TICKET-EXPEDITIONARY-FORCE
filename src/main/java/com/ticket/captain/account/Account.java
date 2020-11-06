@@ -46,7 +46,7 @@ public class Account {
 
     private LocalDateTime emailCheckTokenGenDate;
 
-    private String createId;
+    private Long createId;
 
     @CreationTimestamp
     private LocalDateTime createDate;
@@ -54,7 +54,7 @@ public class Account {
     @UpdateTimestamp
     private LocalDateTime modifyDate;
 
-    private String modifyId;
+    private Long modifyId;
 
     public void setPassword(String password) {
         this.password = password;

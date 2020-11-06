@@ -8,6 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
+
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -32,9 +34,13 @@ public class FestivalControllerTest {
     @Autowired
     FestivalRepository festivalRepository;
 
+    public static Long FESTIVAL_TEST_ID = 1L;
+
+    public static final String API_MANAGER_URL = "/api/manager/";
+
     @BeforeAll
     void beforeAll () {
-        Festival festival = new Festival( randomAlphabetic(10), randomAlphabetic(40), 10);
+        Festival festival = new Festival( randomAlphabetic(10), randomAlphabetic(10), LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(), FESTIVAL_TEST_ID);
         Festival generate = festivalService.generate(festival);
         System.out.println(generate.getContent());
         festivalRepository.save(festival);
@@ -43,7 +49,7 @@ public class FestivalControllerTest {
     @Test
     @Order(1)
     void festivalInfo() throws Exception {
-        mockMvc.perform(get("/api/manager/1/info")
+        mockMvc.perform(get(API_MANAGER_URL + "1/info")
                 .param("festivalId", "1")
                 .with(csrf()))
                 .andDo(print())
@@ -53,7 +59,7 @@ public class FestivalControllerTest {
     @Test
     @Order(2)
     void festivals () throws Exception {
-        mockMvc.perform(get("/api/manager/festivals")
+        mockMvc.perform(get(API_MANAGER_URL +"festivals")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("page", "0")
                         .param("size", "5")
@@ -65,7 +71,7 @@ public class FestivalControllerTest {
     @Test
     @Order(3)
     void deleteFestival () throws Exception {
-        mockMvc.perform(delete("/api/manager/1/del")
+        mockMvc.perform(delete(API_MANAGER_URL + "1/del")
                 .param("festivalId", "1L")
                 .with(csrf()))
                 .andExpect(status().is(204))

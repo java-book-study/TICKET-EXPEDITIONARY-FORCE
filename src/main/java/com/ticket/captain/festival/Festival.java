@@ -4,10 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ticket.captain.festival.dto.FestivalCreateDto;
 import com.ticket.captain.festivalCategory.FestivalCategory;
 import com.ticket.captain.festivalDetail.FestivalDetail;
-import com.ticket.captain.review.Review;
 import lombok.Builder;
 import lombok.Getter;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -16,12 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.time.LocalDateTime.now;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 @Builder
 @Entity
 @Getter
+@ToString
 public class Festival {
 
     @Id
@@ -62,16 +61,16 @@ public class Festival {
     @OrderBy("id desc")
     private final List<FestivalDetail> festival_details = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "festival", cascade = CascadeType.ALL)
-    @JsonIgnoreProperties({"festival"})
-    @OrderBy("id desc")
-    private final List<Review> review = new ArrayList<>();
-
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "category_id")
     private FestivalCategory festivalCategory;
 
     public Festival() {
 
+    }
+
+    public Festival(String title, String content, LocalDateTime salesStartDate, LocalDateTime salesEndDate,LocalDateTime modifyDate, Long modifyId) {
+        this(null, title, null, content, salesStartDate, salesEndDate, null, null, modifyDate, modifyId, null);
     }
 
     public Festival(String title, String content, String thumbnail, LocalDateTime salesStartDate, LocalDateTime salesEndDate, Long createId, LocalDateTime modifyDate, Long modifyId) {
@@ -86,7 +85,7 @@ public class Festival {
         this.modifyDate = modifyDate;
     }
 
-    public Festival(Long id, String title, String thumbnail, String content, LocalDateTime salesStartDate, LocalDateTime salesEndDate, Long createId, LocalDateTime createDate, LocalDateTime modifyDate, Long modifyId) {
+    public Festival(Long id, String title, String thumbnail, String content, LocalDateTime salesStartDate, LocalDateTime salesEndDate, Long createId, LocalDateTime createDate, LocalDateTime modifyDate, Long modifyId, FestivalCategory festivalCategory) {
         this.id = id;
         this.title = title;
         Thumbnail = thumbnail;
@@ -97,6 +96,7 @@ public class Festival {
         this.createDate = createDate;
         this.modifyDate = modifyDate;
         this.modifyId = modifyId;
+        this.festivalCategory = festivalCategory;
     }
 
     public void update(FestivalCreateDto requestDto) {
@@ -120,22 +120,4 @@ public class Festival {
         this.modifyId = requestDto.getModifyId();
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("title", title)
-                .append("Thumbnail", Thumbnail)
-                .append("content", content)
-                .append("salesStartDate", salesStartDate)
-                .append("salesEndDate", salesEndDate)
-                .append("createId", createId)
-                .append("createDate", createDate)
-                .append("modifyDate", modifyDate)
-                .append("modifyId", modifyId)
-                .append("festival_details", festival_details)
-                .append("review", review)
-                .append("festivalCategory", festivalCategory)
-                .toString();
-    }
 }
