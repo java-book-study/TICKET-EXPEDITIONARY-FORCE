@@ -28,42 +28,42 @@ public class FestivalServiceTest {
     private FestivalService festivalService;
 
     @BeforeAll
-    void setUp() {
-
-    }
+    void setUp() { }
 
     @Test
     @Order(1)
     void createFestival() {
-        String name = randomAlphabetic(10);
-        String Thumbnail = randomAlphabetic(10);
+
+        String title = randomAlphabetic(10);
         String content = randomAlphabetic(40);
-        int winners = 0;
-        LocalDateTime startDate = LocalDateTime.now();
-        LocalDateTime endDate = LocalDateTime.now();
-        Festival festival = festivalService.generate(new Festival(name, content, winners, Thumbnail, startDate, endDate));
+        LocalDateTime salesStartDate = LocalDateTime.now();
+        LocalDateTime salesEndDate = LocalDateTime.now();
+        LocalDateTime modifyDate = LocalDateTime.now();
+        Festival festival = new Festival(title, content, salesStartDate, salesEndDate, modifyDate, null);
+        festivalService.generate(festival);
         assertThat(festival, is(notNullValue()));
-        assertThat(festival.getName(), is(notNullValue()));
+        assertThat(festival.getTitle(), is(notNullValue()));
         assertThat(festival.getContent(), is(notNullValue()));
-        assertThat(festival.getWinners(), is(winners));
-        assertThat(festival.getThumbnail(), is(notNullValue()));
-        assertThat(festival.getStartDate(), is(notNullValue()));
-        assertThat(festival.getEndDate(), is(notNullValue()));
+        assertThat(festival.getCreateDate(), is(notNullValue()));
+        assertThat(festival.getSalesStartDate(), is(notNullValue()));
+        assertThat(festival.getSalesEndDate(), is(notNullValue()));
         logger.info("Festival create {}", festival);
     }
 
     @Test
     @Order(2)
     void festivalInfo() {
-        String name = randomAlphabetic(10);
-        String Thumbnail = randomAlphabetic(10);
-        String content = randomAlphabetic(40);
-        int winners = 0;
-        LocalDateTime startDate = LocalDateTime.now();
-        LocalDateTime endDate = LocalDateTime.now();
-        Festival newFestival = festivalService.generate(new Festival(name, content, winners, Thumbnail, startDate, endDate));
 
-        Optional<Festival> firstFestival = festivalService.findById(newFestival.getId());
+        String title = randomAlphabetic(10);
+        String content = randomAlphabetic(40);
+        LocalDateTime salesStartDate = LocalDateTime.now();
+        LocalDateTime salesEndDate = LocalDateTime.now();
+        LocalDateTime modifyDate = LocalDateTime.now();
+        Festival festival = new Festival(title, content, salesStartDate, salesEndDate, modifyDate, null);
+
+        festivalService.generate(festival);
+
+        Optional<Festival> firstFestival = festivalService.findById(festival.getId());
         assertThat(firstFestival, is(notNullValue()));
         assertThat(firstFestival.isEmpty(), is(false));
         logger.info("Festival Info {}", firstFestival);
@@ -81,13 +81,14 @@ public class FestivalServiceTest {
     @Test
     @Order(4)
     void delFestival () {
-        String name = randomAlphabetic(10);
-        String Thumbnail = randomAlphabetic(10);
+
+        String title = randomAlphabetic(10);
         String content = randomAlphabetic(40);
-        int winners = 0;
-        LocalDateTime startDate = LocalDateTime.now();
-        LocalDateTime endDate = LocalDateTime.now();
-        Festival festival = festivalService.generate(new Festival(name, content, winners, Thumbnail, startDate, endDate));
+        LocalDateTime salesStartDate = LocalDateTime.now();
+        LocalDateTime salesEndDate = LocalDateTime.now();
+        LocalDateTime modifyDate = LocalDateTime.now();
+        Festival festival = new Festival(title, content, salesStartDate, salesEndDate, modifyDate, null);
+        festivalService.generate(festival);
         festivalService.deleteFestival(festival.getId());
         assertThat(festivalService.findById(festival.getId()), is(Optional.empty()));
     }

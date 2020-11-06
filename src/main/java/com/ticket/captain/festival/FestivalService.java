@@ -1,5 +1,6 @@
 package com.ticket.captain.festival;
 
+import com.ticket.captain.exception.NotFoundException;
 import com.ticket.captain.festival.dto.FestivalCreateDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class FestivalService {
     public Festival updateFestival(Long festivalId, FestivalCreateDto festivalCreateDto) {
         checkNotNull(festivalId, "festivalId must be provided.");
         Festival festival = festivalRepository.findById(festivalId)
-                .orElseThrow(NullPointerException::new);
+                .orElseThrow(NotFoundException::new);
         festival.update(festivalCreateDto);
         return festivalRepository.save(festival);
     }

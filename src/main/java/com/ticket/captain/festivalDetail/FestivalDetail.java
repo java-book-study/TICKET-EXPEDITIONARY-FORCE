@@ -4,7 +4,7 @@ import com.ticket.captain.festival.Festival;
 import com.ticket.captain.salesType.SalesType;
 import lombok.Builder;
 import lombok.Getter;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 @Entity(name = "festival_detail")
 @Getter
+@ToString
 public class FestivalDetail {
 
     @Id
@@ -44,9 +45,11 @@ public class FestivalDetail {
     private Long modifyId;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "festival_id")
     private Festival festival;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "sales_type_id")
     private SalesType salesType;
 
     public FestivalDetail() {
@@ -67,20 +70,5 @@ public class FestivalDetail {
         this.salesType = salesType;
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("processDate", processDate)
-                .append("amount", amount)
-                .append("price", price)
-                .append("drawDate", drawDate)
-                .append("createDate", createDate)
-                .append("createId", createId)
-                .append("modifyDate", modifyDate)
-                .append("modifyId", modifyId)
-                .append("festival", festival)
-                .append("salesType", salesType)
-                .toString();
-    }
+
 }
