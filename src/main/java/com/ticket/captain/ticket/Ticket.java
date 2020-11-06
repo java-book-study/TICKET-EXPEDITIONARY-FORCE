@@ -38,6 +38,7 @@ public class Ticket {
 
     @Builder
     private Ticket(Long ticketId, String ticketNo, String orderNo, Long festivalId, Long festivalSq, Long statusCode, Long price) {
+
         this.ticketId = ticketId;
         this.ticketNo = ticketNo;
         this.orderNo = orderNo;
