@@ -18,13 +18,13 @@ public class TicketController {
     private final TicketService ticketService;
 
     @GetMapping({"", "/"})
-    public ApiResponseDto<List<TicketDto>> ticketList(Long id) {
+    public ApiResponseDto<List<TicketDto>> ticketList(Long ticketId) {
         return ApiResponseDto.createOK(ticketService.findAll());
     }
 
-    @GetMapping("{id}")
-    public ApiResponseDto<TicketDto> ticketDetail(Long id) {
-        return ApiResponseDto.createOK(ticketService.findById(id));
+    @GetMapping("{ticketId}")
+    public ApiResponseDto<TicketDto> ticketDetail(Long ticketId) {
+        return ApiResponseDto.createOK(ticketService.findById(ticketId));
     }
 
     @PostMapping({"", "/"})
@@ -32,8 +32,8 @@ public class TicketController {
         return ApiResponseDto.createOK(ticketService.add(create.toDto()));
     }
 
-    @PutMapping("{id}")
-    public ApiResponseDto<TicketDto> ticketUpdate(Long id, @Valid TicketUpdateDto update) {
-        return ApiResponseDto.createOK(ticketService.update(id, update.toDto()));
+    @PutMapping("{ticketId}")
+    public ApiResponseDto<TicketDto> ticketUpdate(Long ticketId, @Valid TicketUpdateDto update) {
+        return ApiResponseDto.createOK(ticketService.update(ticketId, update.toDto()));
     }
 }

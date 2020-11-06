@@ -10,9 +10,8 @@ import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.ResultActions;
-
-import java.math.BigDecimal;
 
 import static com.ticket.captain.document.utils.ApiDocumentUtils.getDocumentRequest;
 import static com.ticket.captain.document.utils.ApiDocumentUtils.getDocumentResponse;
@@ -25,7 +24,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TicketCreateDocumentationTests extends ApiDocumentationTest {
+
     @Test
+    @WithMockUser(value = "mock-user", roles = "USER")
     @DisplayName("Ticket Add 테스트")
     public void add() throws Exception {
 
@@ -37,7 +38,7 @@ public class TicketCreateDocumentationTests extends ApiDocumentationTest {
                         .festivalId(1L)
                         .festivalSq(1L)
                         .statusCode(2L)
-                        .price(new BigDecimal(110000))
+                        .price(110000L)
                         .build());
 
         Request request = new Request();
@@ -49,7 +50,7 @@ public class TicketCreateDocumentationTests extends ApiDocumentationTest {
         request.price = "110000";
 
         ResultActions result = this.mockMvc.perform(
-                post("/ticket")
+                post("/api/ticket")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -57,17 +58,25 @@ public class TicketCreateDocumentationTests extends ApiDocumentationTest {
         );
 
         result.andExpect(status().isOk())
-                .andDo(document("ticket/{method-name}",
+                .andDo(document("/api/ticket/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestFields(
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("티켓명"),
-                                fieldWithPath("amount").type(JsonFieldType.STRING).description("티켓개수").optional()
+                                fieldWithPath("ticketNo").type(JsonFieldType.STRING).description("티켓번호"),
+                                fieldWithPath("orderNo").type(JsonFieldType.STRING).description("주문번호"),
+                                fieldWithPath("festivalId").type(JsonFieldType.STRING).description("축제 ID"),
+                                fieldWithPath("festivalSq").type(JsonFieldType.STRING).description("축제 순번"),
+                                fieldWithPath("statusCode").type(JsonFieldType.STRING).description("주문상태코드"),
+                                fieldWithPath("price").type(JsonFieldType.STRING).description("티켓가격")
                         ),
                         responseFields(beneathPath("data").withSubsectionId("data"),
-                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("아이디"),
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("티켓명"),
-                                fieldWithPath("amount").type(JsonFieldType.NUMBER).description("티켓개수")
+                                fieldWithPath("ticketId").type(JsonFieldType.NUMBER).description("티켓 ID"),
+                                fieldWithPath("ticketNo").type(JsonFieldType.STRING).description("티켓번호"),
+                                fieldWithPath("orderNo").type(JsonFieldType.STRING).description("주문번호"),
+                                fieldWithPath("festivalId").type(JsonFieldType.NUMBER).description("축제 ID"),
+                                fieldWithPath("festivalSq").type(JsonFieldType.NUMBER).description("축제 순번"),
+                                fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("주문상태코드"),
+                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("티켓가격")
                         )
                 ));
 

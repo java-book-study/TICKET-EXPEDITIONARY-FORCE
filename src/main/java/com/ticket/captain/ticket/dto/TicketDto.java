@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TicketDto {
@@ -17,10 +15,10 @@ public class TicketDto {
     private Long festivalId;
     private Long festivalSq;
     private Long statusCode;
-    private BigDecimal price;
+    private Long price;
 
     @Builder
-    private TicketDto(Long ticketId, String ticketNo, String orderNo, Long festivalId, Long festivalSq, Long statusCode, BigDecimal price) {
+    private TicketDto(Long ticketId, String ticketNo, String orderNo, Long festivalId, Long festivalSq, Long statusCode, Long price) {
         this.ticketId = ticketId;
         this.ticketNo = ticketNo;
         this.orderNo = orderNo;

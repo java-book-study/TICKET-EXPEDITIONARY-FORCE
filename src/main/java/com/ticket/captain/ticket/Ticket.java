@@ -9,7 +9,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import java.math.BigDecimal;
 
 @Entity
 @Getter
@@ -35,10 +34,10 @@ public class Ticket {
     private Long statusCode;
 
     @Column(nullable = false)
-    private BigDecimal price;
+    private Long price;
 
     @Builder
-    private Ticket(Long ticketId, String ticketNo, String orderNo, Long festivalId, Long festivalSq, Long statusCode, BigDecimal price) {
+    private Ticket(Long ticketId, String ticketNo, String orderNo, Long festivalId, Long festivalSq, Long statusCode, Long price) {
         this.ticketId = ticketId;
         this.ticketNo = ticketNo;
         this.orderNo = orderNo;
