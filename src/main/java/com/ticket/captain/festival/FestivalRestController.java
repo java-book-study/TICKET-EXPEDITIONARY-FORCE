@@ -1,7 +1,7 @@
 package com.ticket.captain.festival;
 
-import com.ticket.captain.festival.dto.FestivalResponseDto;
 import com.ticket.captain.festival.dto.FestivalCreateDto;
+import com.ticket.captain.festival.dto.FestivalResponseDto;
 import com.ticket.captain.festival.validator.FestivalCreateValidator;
 import com.ticket.captain.response.ApiResponseDto;
 import org.springframework.data.domain.PageRequest;
@@ -13,11 +13,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/festival")
+@RequestMapping("/api/manager")
 public class FestivalRestController {
 
     private final FestivalService festivalService;
