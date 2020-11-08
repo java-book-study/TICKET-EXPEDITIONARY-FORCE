@@ -2,10 +2,8 @@ package com.ticket.captain.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ticket.captain.account.dto.AccountCreateDto;
-import com.ticket.captain.account.dto.AccountDto;
 import com.ticket.captain.mail.EmailMessage;
 import com.ticket.captain.mail.EmailService;
-import com.ticket.captain.response.ApiResponseCode;
 import com.ticket.captain.response.ApiResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
-import org.thymeleaf.spring5.expression.Mvc;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,7 +24,7 @@ import static org.springframework.security.test.web.servlet.response.SecurityMoc
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // TODO: 단위 테스트로 바꾸기
 @SpringBootTest
@@ -113,13 +110,18 @@ class AccountSignupControllerTest {
     void checkEmailToken_success() throws Exception {
         Account newAccount = accountSample();
 
-        mockMvc.perform(get("/api/sign-up/check-email-token")
+        MvcResult mvcResult = mockMvc.perform(get("/api/sign-up/check-email-token")
                 .param("token", newAccount.getEmailCheckToken())
                 .param("email", newAccount.getEmail()))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeDoesNotExist("error"))
                 .andExpect(unauthenticated())
-                ;
+                .andReturn();
+
+        String contentAsString = mvcResult.getResponse().getContentAsString();
+        ApiResponseDto<?> apiResponseDto = new ObjectMapper().readValue(contentAsString, ApiResponseDto.class);
+
+        assertEquals(200, apiResponseDto.getCode().getHttpStatus());
+
 
     }
 
