@@ -1,11 +1,9 @@
 package com.ticket.captain.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ticket.captain.account.dto.AccountCreateDto;
 import com.ticket.captain.account.dto.AccountDto;
 import com.ticket.captain.mail.EmailMessage;
 import com.ticket.captain.mail.EmailService;
-import com.ticket.captain.response.ApiResponseCode;
 import com.ticket.captain.response.ApiResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
-import org.thymeleaf.spring5.expression.Mvc;
+
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,7 +26,7 @@ import static org.springframework.security.test.web.servlet.response.SecurityMoc
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // TODO: 단위 테스트로 바꾸기
 @SpringBootTest
@@ -49,7 +48,7 @@ class AccountSignupControllerTest {
     @DisplayName("회원가입 - 입력값 정상")
     @Test
     public void createAccount_correct_input() throws Exception {
-        AccountCreateDto accountCreateDto = accountCreateDtoSample();
+        AccountDto.Create accountCreateDto = accountCreateDtoSample();
 
         MvcResult mvcResult = mockMvc.perform(post("/api/sign-up")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -70,20 +69,19 @@ class AccountSignupControllerTest {
     @DisplayName("회원가입 - 입력값 오류")
     @Test
     public void createAccount_wrong_input() throws Exception {
-        AccountCreateDto accountCreateDto = AccountCreateDto.builder()
-                    .name("sonnie")
-                    .password("111")
-                    .email("email..")
-                    .nickname("eeee")
-                    .loginId("shahn2")
-                    .build();
+        AccountDto.Create accountCreateDto = AccountDto.Create.builder()
+                .email("email..")
+                .name("sonnie")
+                .password("111")
+                .nickname("eeee")
+                .build();
 
         MvcResult mvcResult = mockMvc.perform(post("/api/sign-up/")
-                                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                .accept(MediaType.APPLICATION_JSON_VALUE)
-                                .content(new ObjectMapper().writeValueAsString(accountCreateDto))
-                                .with(csrf()))
-                                .andReturn();
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .content(new ObjectMapper().writeValueAsString(accountCreateDto))
+                .with(csrf()))
+                .andReturn();
 
         String contentAsString = mvcResult.getResponse().getContentAsString();
         ApiResponseDto<?> apiResponseDto = new ObjectMapper().readValue(contentAsString, ApiResponseDto.class);
@@ -93,12 +91,12 @@ class AccountSignupControllerTest {
 
     @DisplayName("이미 가입되어있는 이메일로 가입 시 validate 처리가 잘 되는지")
     @Test
-    public void createAccount_sameEmail() throws Exception{
+    public void createAccount_sameEmail() throws Exception {
         //given
-        AccountCreateDto accountCreateDto = accountCreateDtoSample();
+        AccountDto.Create accountCreateDto = accountCreateDtoSample();
         accountService.createAccount(accountCreateDto);
         //then
-        AccountCreateDto accountCreateDto2 = accountCreateDtoSample();
+        AccountDto.Create accountCreateDto2 = accountCreateDtoSample();
         //when&then
         mockMvc.perform(post("/api/sign-up")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -117,19 +115,40 @@ class AccountSignupControllerTest {
                 .param("token", newAccount.getEmailCheckToken())
                 .param("email", newAccount.getEmail()))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeDoesNotExist("error"))
                 .andExpect(unauthenticated())
-                ;
+        ;
 
     }
 
-    @DisplayName("인증 메일 확인 - 입력값 오류")
+    @DisplayName("인증 메일 확인 - 계정 존재하지 않을 때")
+    @Test
+    void checkEmailToken_with_account_null() throws Exception {
+
+        AccountDto.Create accountCreateDto = accountCreateDtoSample();
+        Account account = accountService.createAccount(accountCreateDto);
+
+        MvcResult mvcResult = mockMvc.perform(get("/api/sign-up/check-email-token")
+                .param("token", account.getEmailCheckToken())
+                .param("email", "email@email.com"))
+                .andReturn();
+
+        String contentAsString = mvcResult.getResponse().getContentAsString();
+        ApiResponseDto<?> apiResponseDto = new ObjectMapper().readValue(contentAsString, ApiResponseDto.class);
+
+        assertEquals(404, apiResponseDto.getCode().getHttpStatus());
+    }
+
+    @DisplayName("인증 메일 확인 - 토큰값 오류")
     @Test
     void checkEmailToken_with_wrong_input() throws Exception {
+
+        AccountDto.Create accountCreateDto = accountCreateDtoSample();
+        Account account = accountService.createAccount(accountCreateDto);
+
         MvcResult mvcResult = mockMvc.perform(get("/api/sign-up/check-email-token")
-                                .param("token", "1qaz")
-                                .param("email", "email@email.com"))
-                                .andReturn();
+                .param("token", UUID.randomUUID().toString())
+                .param("email", account.getEmail()))
+                .andReturn();
 
         String contentAsString = mvcResult.getResponse().getContentAsString();
         ApiResponseDto<?> apiResponseDto = new ObjectMapper().readValue(contentAsString, ApiResponseDto.class);
@@ -141,21 +160,20 @@ class AccountSignupControllerTest {
     // TODO : was 2대에 로그인 잘 되어있는지
     @DisplayName("header에 로그인 token 저장 성공")
     @Test
-    void check_login_token_in_Header_success(){
+    void check_login_token_in_Header_success() {
 
     }
 
-    private AccountCreateDto accountCreateDtoSample(){
-        return AccountCreateDto.builder()
-                .loginId("shahn2")
-                .password("1qaz2wsx")
+    private AccountDto.Create accountCreateDtoSample() {
+        return AccountDto.Create.builder()
                 .email("modunaeggu@naver.com")
+                .password("1qaz2wsx")
                 .nickname("sonnie")
                 .name("sohyun")
                 .build();
     }
 
-    private Account accountSample(){
+    private Account accountSample() {
         Account account = Account.builder()
                 .email("sonnie@email.com")
                 .password("1qaz2wsx")

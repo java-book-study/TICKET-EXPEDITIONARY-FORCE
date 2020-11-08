@@ -1,6 +1,6 @@
 package com.ticket.captain.account;
 
-import com.ticket.captain.account.dto.AccountCreateDto;
+import com.ticket.captain.account.dto.AccountDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -14,17 +14,18 @@ public class AccountCreateDtoValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return clazz.equals(AccountCreateDto.class);
+        return clazz.equals(AccountDto.Create.class);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
-        AccountCreateDto accountCreateDto = (AccountCreateDto) target;
+        AccountDto.Create accountCreateDto = (AccountDto.Create) target;
         if(accountRepository.existsByNickname(accountCreateDto.getNickname())){
             errors.rejectValue("nickname", "invalid.Nickname", new Object[]{accountCreateDto.getNickname()}, "이미 사용중인 닉네임입니다.");
         }
         if(accountRepository.existsByEmail(accountCreateDto.getEmail())){
             errors.rejectValue("email", "invalid.Email", new Object[]{accountCreateDto.getEmail()}, "이미 사용중인 이메일입니다.");
         }
+
     }
 }
