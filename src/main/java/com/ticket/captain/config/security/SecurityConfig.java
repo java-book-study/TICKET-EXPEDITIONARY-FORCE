@@ -1,0 +1,41 @@
+package com.ticket.captain.config.security;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+
+@EnableWebSecurity
+@Configuration
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .authorizeRequests()
+                .mvcMatchers("/", "/login", "/api/sign-up/**", "/api/account/**", "/api/manager/**").permitAll()
+                .mvcMatchers("/api/ticket/**").hasAnyRole("ADMIN", "MANAGER", "USER")
+                .mvcMatchers("/api/appointment/**").hasAnyRole("ADMIN", "MANAGER")
+                .mvcMatchers(HttpMethod.GET).permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                .successHandler(new MyLoginSuccessHandler())
+                .failureHandler(new MyLoginFailureHandler())
+                .and().httpBasic()
+                .and()
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login")
+                .and()
+                .exceptionHandling().accessDeniedPage("/denied")
+        ;
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring()
+                .mvcMatchers("/node_modules/**")
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+    }
+}

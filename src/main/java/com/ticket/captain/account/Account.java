@@ -1,90 +1,83 @@
 package com.ticket.captain.account;
 
-import javax.persistence.Column;
-import java.time.LocalDateTime;
+import com.ticket.captain.account.dto.AccountDto;
+import com.ticket.captain.common.Address;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Entity
+@Builder @Getter
+@EqualsAndHashCode(of = "id")
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Account {
 
-    @Column(name="account_id")
+    @Id
+    @GeneratedValue
+    @Column(name = "account_id")
     private Long id;
-    private String publicIp;
-    private String accountLoginId;
-    private String accountPassword;
-    private String accountName;
-    private String nickname;
+
     private String email;
+
+    private String password;
+
+    private String profile_image;
+
+    private String name;
+
+    private String nickname;
+
+    @Builder.Default
+    private int point = 0;
+
+    @Embedded
+    private Address address;
+
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.ROLE_USER;
+
+    private String emailCheckToken;
+
+    private LocalDateTime emailCheckTokenGenDate;
+
+    private Long createId;
+
+    @CreationTimestamp
     private LocalDateTime createDate;
+
+    @UpdateTimestamp
     private LocalDateTime modifyDate;
 
-    public Long getId() {
-        return id;
+    private Long modifyId;
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void generateEmailCheckToken() {
+        this.emailCheckToken = UUID.randomUUID().toString();
     }
 
-    public String getPublicIp() {
-        return publicIp;
+    public boolean isValidToken(String token) {
+        return this.emailCheckToken.equals(token);
     }
 
-    public void setPublicIp(String publicIp) {
-        this.publicIp = publicIp;
+    public void completeSignUp() {
+        this.createDate = LocalDateTime.now();
     }
 
-    public String getAccountLoginId() {
-        return accountLoginId;
+    public void update(AccountDto.Update updateRequestDto){
+        this.name = updateRequestDto.getName();
+        this.email = updateRequestDto.getEmail();
     }
 
-    public void setAccountLoginId(String accountLoginId) {
-        this.accountLoginId = accountLoginId;
-    }
-
-    public String getAccountPassword() {
-        return accountPassword;
-    }
-
-    public void setAccountPassword(String accountPassword) {
-        this.accountPassword = accountPassword;
-    }
-
-    public String getAccountName() {
-        return accountName;
-    }
-
-    public void setAccountName(String accountName) {
-        this.accountName = accountName;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public LocalDateTime getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(LocalDateTime createDate) {
-        this.createDate = createDate;
-    }
-
-    public LocalDateTime getModifyDate() {
-        return modifyDate;
-    }
-
-    public void setModifyDate(LocalDateTime modifyDate) {
-        this.modifyDate = modifyDate;
+    public void addRole(Role role){
+        this.role=role;
     }
 }

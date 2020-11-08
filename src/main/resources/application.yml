@@ -1,0 +1,45 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ENC(ahw18zDs3VK5yHnlD63tdEGLsuc+1nVGxgSPn/nAKVXPVqELBIlsmSPhhSzUpXg3TZAg13Ga3JOUerSfAqK4UQ==)
+    username: ENC(71M9V6VbtB6S0i/S/HcxPmy/TTiqAsrY)
+    password: ENC(zJWvcj62mjMzbiFJEacMGw==)
+    hikari:
+      schema: ticket
+
+  profiles:
+    active: local
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        #show_sql: true
+        format_sql: true
+        use_sql_comments: true
+
+  data:
+    web:
+      pageable:
+        default-page-size: 10
+        max-page-size: 50
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: xe00123@gmail.com
+    password: qjbsxmgegpwnyxdo
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000
+          starttls.enable: true
+
+logging.level:
+  root: info
+  org.hibernate.SQL: debug
+  org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  #org.hibernate.type: trace
+
