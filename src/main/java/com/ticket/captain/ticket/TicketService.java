@@ -17,14 +17,13 @@ public class TicketService {
     private final TicketRepository ticketRepository;
 
     public List<TicketDto> findAll() {
-
         return ticketRepository.findAll().stream()
                 .map(TicketDto::of)
                 .collect(Collectors.toList());
     }
 
-    public TicketDto findById(Long id) {
-        return ticketRepository.findById(id)
+    public TicketDto findById(Long ticketId) {
+        return ticketRepository.findById(ticketId)
                 .map(TicketDto::of)
                 .orElseThrow(NotFoundException::new);
     }
@@ -36,16 +35,16 @@ public class TicketService {
         return TicketDto.of(created);
     }
 
-    public void delete(Long id) {
-        Ticket ticket = ticketRepository.findById(id)
+    public void delete(Long ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(NotFoundException::new);
 
         ticketRepository.delete(ticket);
     }
 
     @Transactional
-    public TicketDto update(Long id, TicketUpdateDto update) {
-        Ticket ticket = ticketRepository.findById(id)
+    public TicketDto update(Long ticketId, TicketUpdateDto update) {
+        Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(NotFoundException::new);
 
         update.apply(ticket);
