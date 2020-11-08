@@ -1,6 +1,5 @@
 package com.ticket.captain.account;
 
-import com.ticket.captain.account.dto.AccountCreateDto;
 import com.ticket.captain.account.dto.AccountDto;
 import com.ticket.captain.config.AppProperties;
 import com.ticket.captain.exception.NotFoundException;
@@ -38,7 +37,7 @@ public class AccountService implements UserDetailsService {
 
     private final ModelMapper modelMapper;
 
-    public Account createAccount(AccountCreateDto accountCreateDto){
+    public Account createAccount(AccountDto.Create accountCreateDto){
         Account newAccount = accountCreateDto.toEntity();
         newAccount.setPassword(passwordEncoder.encode(accountCreateDto.getPassword()));
         newAccount.generateEmailCheckToken();
@@ -71,7 +70,8 @@ public class AccountService implements UserDetailsService {
     @Transactional(readOnly = true)
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Account account = accountRepository.findByEmail(email);
+
+            Account account = accountRepository.findByEmail(email);
 
         if (account == null) {
             throw new UsernameNotFoundException(email);
