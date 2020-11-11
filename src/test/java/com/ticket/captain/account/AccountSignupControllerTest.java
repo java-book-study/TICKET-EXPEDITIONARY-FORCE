@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
+
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -111,12 +112,18 @@ class AccountSignupControllerTest {
     void checkEmailToken_success() throws Exception {
         Account newAccount = accountSample();
 
-        mockMvc.perform(get("/api/sign-up/check-email-token")
+        MvcResult mvcResult = mockMvc.perform(get("/api/sign-up/check-email-token")
                 .param("token", newAccount.getEmailCheckToken())
                 .param("email", newAccount.getEmail()))
                 .andExpect(status().isOk())
                 .andExpect(unauthenticated())
-        ;
+                .andReturn();
+
+        String contentAsString = mvcResult.getResponse().getContentAsString();
+        ApiResponseDto<?> apiResponseDto = new ObjectMapper().readValue(contentAsString, ApiResponseDto.class);
+
+        assertEquals(200, apiResponseDto.getCode().getHttpStatus());
+
 
     }
 
