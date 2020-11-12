@@ -1,7 +1,7 @@
 package com.ticket.captain.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ticket.captain.account.dto.AccountDto;
+import com.ticket.captain.account.dto.AccountUpdateDto;
 import com.ticket.captain.common.Address;
 import com.ticket.captain.exception.NotFoundException;
 import org.junit.After;
@@ -110,11 +110,6 @@ public class AccountApiControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String contentAsString = mvcResult.getResponse().getContentAsString();
-        AccountDto.Response accountResponseDto = objectMapper.readValue(contentAsString, AccountDto.Response.class);
-
-        assertEquals(accountService.findAccountDetail(TEST_ID).getEmail(), accountResponseDto.getEmail());
-
     }
 
     @DisplayName("회원 수정 시 값이 정상적으로 보냈는지 테스트")
@@ -123,8 +118,8 @@ public class AccountApiControllerTest {
     public void 회원_수정_성공() throws Exception {
 
         //given
-        AccountDto.Update updateRequestDto =
-                new AccountDto.Update("update","update@email.com", Role.ROLE_ADMIN);
+        AccountUpdateDto updateRequestDto =
+                new AccountUpdateDto("update","update@email.com");
 
         //when
         mockMvc.perform(post(API_ACCOUNT_URL + TEST_ID)
@@ -148,8 +143,8 @@ public class AccountApiControllerTest {
     public void 회원_수정_실패() throws Exception {
 
         //given
-        AccountDto.Update updateRequestDto =
-                new AccountDto.Update("update","update@email.com", Role.ROLE_ADMIN);
+        AccountUpdateDto updateRequestDto =
+                new AccountUpdateDto("update","update@email.com");
 
         //when + then
         mockMvc.perform(post(API_ACCOUNT_URL + ERROR_ID)

@@ -1,6 +1,6 @@
 package com.ticket.captain.account;
 
-import com.ticket.captain.account.dto.AccountDto;
+import com.ticket.captain.account.dto.AccountUpdateDto;
 import com.ticket.captain.common.Address;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -26,7 +26,7 @@ public class Account {
 
     private String password;
 
-    private String profile_image;
+    private String profileImage;
 
     private String name;
 
@@ -45,8 +45,6 @@ public class Account {
     private String emailCheckToken;
 
     private LocalDateTime emailCheckTokenGenDate;
-
-    private Long createId;
 
     @CreationTimestamp
     private LocalDateTime createDate;
@@ -72,7 +70,7 @@ public class Account {
         this.createDate = LocalDateTime.now();
     }
 
-    public void update(AccountDto.Update updateRequestDto){
+    public void update(AccountUpdateDto updateRequestDto){
         this.name = updateRequestDto.getName();
         this.email = updateRequestDto.getEmail();
     }

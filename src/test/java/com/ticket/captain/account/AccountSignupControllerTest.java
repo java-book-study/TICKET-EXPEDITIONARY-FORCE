@@ -1,7 +1,7 @@
 package com.ticket.captain.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ticket.captain.account.dto.AccountDto;
+import com.ticket.captain.account.dto.AccountCreateDto;
 import com.ticket.captain.mail.EmailMessage;
 import com.ticket.captain.mail.EmailService;
 import com.ticket.captain.response.ApiResponseDto;
@@ -15,7 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
-
 
 import java.util.UUID;
 
@@ -49,7 +48,7 @@ class AccountSignupControllerTest {
     @DisplayName("회원가입 - 입력값 정상")
     @Test
     public void createAccount_correct_input() throws Exception {
-        AccountDto.Create accountCreateDto = accountCreateDtoSample();
+        AccountCreateDto accountCreateDto = accountCreateDtoSample();
 
         MvcResult mvcResult = mockMvc.perform(post("/api/sign-up")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -70,7 +69,7 @@ class AccountSignupControllerTest {
     @DisplayName("회원가입 - 입력값 오류")
     @Test
     public void createAccount_wrong_input() throws Exception {
-        AccountDto.Create accountCreateDto = AccountDto.Create.builder()
+        AccountCreateDto accountCreateDto = AccountCreateDto.builder()
                 .email("email..")
                 .name("sonnie")
                 .password("111")
@@ -94,10 +93,10 @@ class AccountSignupControllerTest {
     @Test
     public void createAccount_sameEmail() throws Exception {
         //given
-        AccountDto.Create accountCreateDto = accountCreateDtoSample();
+        AccountCreateDto accountCreateDto = accountCreateDtoSample();
         accountService.createAccount(accountCreateDto);
         //then
-        AccountDto.Create accountCreateDto2 = accountCreateDtoSample();
+        AccountCreateDto accountCreateDto2 = accountCreateDtoSample();
         //when&then
         mockMvc.perform(post("/api/sign-up")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -131,7 +130,7 @@ class AccountSignupControllerTest {
     @Test
     void checkEmailToken_with_account_null() throws Exception {
 
-        AccountDto.Create accountCreateDto = accountCreateDtoSample();
+        AccountCreateDto accountCreateDto = accountCreateDtoSample();
         Account account = accountService.createAccount(accountCreateDto);
 
         MvcResult mvcResult = mockMvc.perform(get("/api/sign-up/check-email-token")
@@ -149,7 +148,7 @@ class AccountSignupControllerTest {
     @Test
     void checkEmailToken_with_wrong_input() throws Exception {
 
-        AccountDto.Create accountCreateDto = accountCreateDtoSample();
+        AccountCreateDto accountCreateDto = accountCreateDtoSample();
         Account account = accountService.createAccount(accountCreateDto);
 
         MvcResult mvcResult = mockMvc.perform(get("/api/sign-up/check-email-token")
@@ -171,8 +170,8 @@ class AccountSignupControllerTest {
 
     }
 
-    private AccountDto.Create accountCreateDtoSample() {
-        return AccountDto.Create.builder()
+    private AccountCreateDto accountCreateDtoSample() {
+        return AccountCreateDto.builder()
                 .email("modunaeggu@naver.com")
                 .password("1qaz2wsx")
                 .nickname("sonnie")
