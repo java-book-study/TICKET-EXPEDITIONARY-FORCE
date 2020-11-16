@@ -1,6 +1,7 @@
 package com.ticket.captain.account;
 
 import com.ticket.captain.account.dto.AccountDto;
+import com.ticket.captain.account.dto.AccountUpdateDto;
 import com.ticket.captain.response.ApiResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +27,7 @@ public class AccountApiController {
     @GetMapping("")
     public ApiResponseDto<?> accountList(@PageableDefault Pageable pageable){
 
-
-        Page<AccountDto.Response> result = accountService.findAccountList(pageable);
+        Page<AccountDto> result = accountService.findAccountList(pageable);
 
         return ApiResponseDto.createOK(result);
     }
@@ -35,15 +35,13 @@ public class AccountApiController {
     @GetMapping("{id}")
     public ApiResponseDto<?> accountDetail(@PathVariable Long id){
 
-
-        AccountDto.Response result = accountService.findAccountDetail(id);
+        AccountDto result = accountService.findAccountDetail(id);
 
         return ApiResponseDto.createOK(result);
     }
 
     @PostMapping("{id}")
-    public ApiResponseDto<?> accountUpdate(@PathVariable Long id, @RequestBody @Valid AccountDto.Update updateRequestDto){
-
+    public ApiResponseDto<?> accountUpdate(@PathVariable Long id, @RequestBody @Valid AccountUpdateDto updateRequestDto){
 
         accountService.accountUpdate(id, updateRequestDto);
 
