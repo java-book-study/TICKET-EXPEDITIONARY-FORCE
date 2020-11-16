@@ -3,6 +3,8 @@ package com.ticket.captain.order;
 import com.ticket.captain.account.Account;
 import com.ticket.captain.festivalDetail.FestivalDetail;
 import com.ticket.captain.ticket.Ticket;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
@@ -11,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order {
 
     @Id @GeneratedValue
