@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Builder
 @Entity(name = "festival_detail")
 @Getter
 @ToString
@@ -61,7 +60,7 @@ public class FestivalDetail {
     public FestivalDetail() {
 
     }
-
+    @Builder
     public FestivalDetail(Long id, LocalDateTime processDate, Long amount, Long price, LocalDateTime drawDate, LocalDateTime createDate, Long createId, LocalDateTime modifyDate, Long modifyId, Festival festival, SalesType salesType) {
         this.id = id;
         this.processDate = processDate;

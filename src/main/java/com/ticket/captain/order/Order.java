@@ -14,6 +14,7 @@ import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "OrderTable")
 public class Order {
 
     @Id @GeneratedValue
