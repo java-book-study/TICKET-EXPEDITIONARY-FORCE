@@ -1,56 +1,82 @@
 package com.ticket.captain.festival;
 
+import com.ticket.captain.festival.dto.FestivalCreateDto;
+import com.ticket.captain.festival.dto.FestivalDto;
+import com.ticket.captain.festivalCategory.FestivalCategory;
+import com.ticket.captain.festivalCategory.FestivalCategoryRepository;
+import com.ticket.captain.festivalCategory.FestivalCategoryService;
+import com.ticket.captain.festivalCategory.dto.FestivalCategoryCreateDto;
+import com.ticket.captain.festivalCategory.dto.FestivalCategoryDto;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@AutoConfigureRestDocs
+@Transactional
 public class FestivalControllerTest {
 
     @Autowired
     MockMvc mockMvc;
 
     @Autowired
-    FestivalService festivalService;
+    private FestivalService festivalService;
 
     @Autowired
-    FestivalRepository festivalRepository;
+    private FestivalCategoryService festivalCategoryService;
 
-    public static Long FESTIVAL_TEST_ID = 1L;
+    private Festival festival;
 
-    public static final String API_MANAGER_URL = "/api/manager/";
+    private FestivalCategory festivalCategory;
+
+    public static final String API_MANAGER_URL = "/api/manager/festival";
 
     @BeforeAll
-    void beforeAll () {
-        Festival festival = new Festival( randomAlphabetic(10), randomAlphabetic(10), LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(), FESTIVAL_TEST_ID);
-        Festival generate = festivalService.generate(festival);
-        System.out.println(generate.getContent());
-        festivalRepository.save(festival);
+    void beforeAll() {
+        FestivalCategoryCreateDto categoryCreateDto = FestivalCategoryCreateDto.builder()
+                .categoryName("오페라")
+                .createId(1L)
+                .build();
+
+        FestivalCategoryDto festivalCategoryDto = festivalCategoryService.add(categoryCreateDto);
+        festivalCategory = festivalCategoryService.findByCategoryName(festivalCategoryDto.getCategoryName());
+
+        FestivalCreateDto createDto = FestivalCreateDto.builder()
+                .title("오페라의 유령")
+                .content("오페라로 당신을 초대합니다.")
+                .createDate(LocalDateTime.now())
+                .createId(1L)
+                .salesStartDate(LocalDateTime.now())
+                .salesEndDate(LocalDateTime.now())
+                .modifyDate(LocalDateTime.now())
+                .modifyId(1L)
+                .categoryId(festivalCategory.getId())
+                .build();
+
+        FestivalDto festivalDto = festivalService.add(createDto);
+        festival = festivalService.findByTitle(festivalDto.getTitle());
     }
 
     @Test
     @Order(1)
+    @WithMockUser(value = "mock-manager", roles = "MANAGER")
     void festivalInfo() throws Exception {
-        mockMvc.perform(get(API_MANAGER_URL + "1/info")
-                .param("festivalId", "1")
+        mockMvc.perform(get(API_MANAGER_URL + "/info/" + festival.getId())
+                .param("festivalId", String.valueOf(festival.getId()))
                 .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -58,24 +84,34 @@ public class FestivalControllerTest {
 
     @Test
     @Order(2)
-    void festivals () throws Exception {
-        mockMvc.perform(get(API_MANAGER_URL +"festivals")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("page", "0")
-                        .param("size", "5")
-                        .with(csrf()))
-                        .andExpect(status().isOk())
-                        .andDo(print());
+    @WithMockUser(value = "mock-manager", roles = "MANAGER")
+    void festivals() throws Exception {
+        mockMvc.perform(get(API_MANAGER_URL +"/festivals")
+                .param("offset", String.valueOf(0))
+                .param("limit", String.valueOf(1))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andDo(print());
     }
 
     @Test
     @Order(3)
-    void deleteFestival () throws Exception {
-        mockMvc.perform(delete(API_MANAGER_URL + "1/del")
-                .param("festivalId", "1L")
+    @WithMockUser(value = "mock-manager", roles = "MANAGER")
+    void deleteFestival() throws Exception {
+        mockMvc.perform(delete(API_MANAGER_URL + "/delete/" + festival.getId())
+                .param("festivalId", String.valueOf(festival.getId()))
                 .with(csrf()))
-                .andExpect(status().is(204))
+                .andExpect(status().is(200))
                 .andDo(print());
 
     }
+
+
+    @AfterAll
+    void afterAll() {
+        festivalService.delete(festival.getId());
+        festivalCategoryService.delete(festivalCategory.getId());
+    }
+
 }
