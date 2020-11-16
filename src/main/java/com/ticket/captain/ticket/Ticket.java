@@ -1,14 +1,12 @@
 package com.ticket.captain.ticket;
 
+import com.ticket.captain.order.Order;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -17,6 +15,10 @@ public class Ticket {
     @Id
     @GeneratedValue
     private Long ticketId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_no")
+    private Order order;
 
     @Column(nullable = false)
     private String ticketNo;
