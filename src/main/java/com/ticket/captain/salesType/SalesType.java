@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
 
 @Entity(name = "sales_type")
 @Getter
-@Builder
-@ToString
 public class SalesType {
 
     @Id
@@ -40,7 +38,8 @@ public class SalesType {
 
     }
 
-    public SalesType(Long id, String name, LocalDateTime createDate, Long createId, LocalDateTime modifyDate, Long modifyId) {
+    @Builder
+    private SalesType(Long id, String name, LocalDateTime createDate, Long createId, LocalDateTime modifyDate, Long modifyId) {
         this.id = id;
         this.name = name;
         this.createDate = createDate;
@@ -49,4 +48,9 @@ public class SalesType {
         this.modifyId = modifyId;
     }
 
+    public void update(String name, LocalDateTime modifyDate, Long modifyId) {
+        this.name = name;
+        this.modifyDate = modifyDate;
+        this.modifyId = modifyId;
+    }
 }
