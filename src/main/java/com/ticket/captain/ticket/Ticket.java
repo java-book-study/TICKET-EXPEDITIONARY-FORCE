@@ -24,9 +24,6 @@ public class Ticket {
     private String ticketNo;
 
     @Column(nullable = false)
-    private String orderNo;
-
-    @Column(nullable = false)
     private Long festivalId;
 
     @Column(nullable = false)
@@ -39,11 +36,10 @@ public class Ticket {
     private Long price;
 
     @Builder
-    private Ticket(Long ticketId, String ticketNo, String orderNo, Long festivalId, Long festivalSq, Long statusCode, Long price) {
+    private Ticket(Long ticketId, String ticketNo, Long festivalId, Long festivalSq, Long statusCode, Long price) {
 
         this.ticketId = ticketId;
         this.ticketNo = ticketNo;
-        this.orderNo = orderNo;
         this.festivalId = festivalId;
         this.festivalSq = festivalSq;
         this.statusCode = statusCode;
