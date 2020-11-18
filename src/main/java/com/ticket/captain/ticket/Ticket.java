@@ -1,6 +1,7 @@
 package com.ticket.captain.ticket;
 
 import com.ticket.captain.order.Order;
+import com.ticket.captain.order.StatusCode;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,14 +30,14 @@ public class Ticket {
     @Column(nullable = false)
     private Long festivalSq;
 
-    @Column(nullable = false)
-    private Long statusCode;
+    @Enumerated(EnumType.ORDINAL)
+    private StatusCode statusCode;
 
     @Column(nullable = false)
     private Long price;
 
     @Builder
-    private Ticket(Long ticketId, String ticketNo, Long festivalId, Long festivalSq, Long statusCode, Long price) {
+    private Ticket(Long ticketId, String ticketNo, Long festivalId, Long festivalSq, StatusCode statusCode, Long price) {
 
         this.ticketId = ticketId;
         this.ticketNo = ticketNo;
@@ -46,7 +47,7 @@ public class Ticket {
         this.price = price;
     }
 
-    public void update(Long statusCode) {
+    public void update(StatusCode statusCode) {
         this.statusCode = statusCode;
     }
 }

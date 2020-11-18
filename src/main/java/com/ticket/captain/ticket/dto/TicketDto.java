@@ -1,5 +1,6 @@
 package com.ticket.captain.ticket.dto;
 
+import com.ticket.captain.order.StatusCode;
 import com.ticket.captain.ticket.Ticket;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -13,11 +14,11 @@ public class TicketDto {
     private String ticketNo;
     private Long festivalId;
     private Long festivalSq;
-    private Long statusCode;
+    private StatusCode statusCode;
     private Long price;
 
     @Builder
-    private TicketDto(Long ticketId, String ticketNo, Long festivalId, Long festivalSq, Long statusCode, Long price) {
+    private TicketDto(Long ticketId, String ticketNo, Long festivalId, Long festivalSq, StatusCode statusCode, Long price) {
         this.ticketId = ticketId;
         this.ticketNo = ticketNo;
         this.festivalId = festivalId;

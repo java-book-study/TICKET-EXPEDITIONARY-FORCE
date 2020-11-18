@@ -1,5 +1,6 @@
 package com.ticket.captain.ticket.dto;
 
+import com.ticket.captain.order.StatusCode;
 import com.ticket.captain.ticket.Ticket;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -7,10 +8,10 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TicketUpdateDto {
-    private Long stateCode;
+    private StatusCode stateCode;
 
     @Builder
-    private TicketUpdateDto(Long stateCode) {
+    private TicketUpdateDto(StatusCode stateCode) {
         this.stateCode = stateCode;
     }
 
