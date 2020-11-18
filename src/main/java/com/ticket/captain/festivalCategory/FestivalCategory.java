@@ -1,17 +1,13 @@
 package com.ticket.captain.festivalCategory;
 
-import com.ticket.captain.festival.Festival;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity(name = "festival_category")
 @Getter
-@Builder
-@ToString
 public class FestivalCategory {
 
     @Id
@@ -38,11 +34,18 @@ public class FestivalCategory {
 
     }
 
-    public FestivalCategory(Long id, String categoryName, LocalDateTime createDate, Long createId, LocalDateTime modifyDate, Long modifyId) {
+    @Builder
+    private FestivalCategory(Long id, String categoryName, LocalDateTime createDate, Long createId, LocalDateTime modifyDate, Long modifyId) {
         this.id = id;
         this.categoryName = categoryName;
         this.createDate = createDate;
         this.createId = createId;
+        this.modifyDate = modifyDate;
+        this.modifyId = modifyId;
+    }
+
+    public void update(String categoryName, LocalDateTime modifyDate, Long modifyId) {
+        this.categoryName = categoryName;
         this.modifyDate = modifyDate;
         this.modifyId = modifyId;
     }

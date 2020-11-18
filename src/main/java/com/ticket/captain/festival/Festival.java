@@ -1,26 +1,19 @@
 package com.ticket.captain.festival;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.ticket.captain.festival.dto.FestivalCreateDto;
 import com.ticket.captain.festivalCategory.FestivalCategory;
 import com.ticket.captain.festivalDetail.FestivalDetail;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
-@Builder
 @Entity
 @Getter
-@ToString
 public class Festival {
 
     @Id
@@ -32,7 +25,7 @@ public class Festival {
     private String title;
 
     @Column(name = "thumbnail")
-    private String Thumbnail;
+    private String thumbnail;
 
     @Column(name = "content")
     private String content;
@@ -59,9 +52,9 @@ public class Festival {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "festival", cascade = CascadeType.ALL)
     @JsonIgnoreProperties({"festival"})
     @OrderBy("id desc")
-    private final List<FestivalDetail> festival_details = new ArrayList<>();
+    private final Set<FestivalDetail> festival_details = new HashSet<>();
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private FestivalCategory festivalCategory;
 
@@ -69,26 +62,11 @@ public class Festival {
 
     }
 
-    public Festival(String title, String content, LocalDateTime salesStartDate, LocalDateTime salesEndDate,LocalDateTime modifyDate, Long modifyId) {
-        this(null, title, null, content, salesStartDate, salesEndDate, null, null, modifyDate, modifyId, null);
-    }
-
-    public Festival(String title, String content, String thumbnail, LocalDateTime salesStartDate, LocalDateTime salesEndDate, Long createId, LocalDateTime modifyDate, Long modifyId) {
-
-        this.title = title;
-        this.content = content;
-        this.Thumbnail = thumbnail;
-        this.salesStartDate = salesStartDate;
-        this.salesEndDate = salesEndDate;
-        this.createId = createId;
-        this.modifyId = modifyId;
-        this.modifyDate = modifyDate;
-    }
-
-    public Festival(Long id, String title, String thumbnail, String content, LocalDateTime salesStartDate, LocalDateTime salesEndDate, Long createId, LocalDateTime createDate, LocalDateTime modifyDate, Long modifyId, FestivalCategory festivalCategory) {
+    @Builder
+    private Festival(Long id, String title, String thumbnail, String content, LocalDateTime salesStartDate, LocalDateTime salesEndDate, Long createId, LocalDateTime createDate, LocalDateTime modifyDate, Long modifyId, FestivalCategory festivalCategory) {
         this.id = id;
         this.title = title;
-        Thumbnail = thumbnail;
+        this.thumbnail = thumbnail;
         this.content = content;
         this.salesStartDate = salesStartDate;
         this.salesEndDate = salesEndDate;
@@ -99,25 +77,18 @@ public class Festival {
         this.festivalCategory = festivalCategory;
     }
 
-    public void update(FestivalCreateDto requestDto) {
-        checkArgument(isNotEmpty(title), "name must be provided.");
-        checkArgument(
-                title.length() >= 1 && title.length() <= 20,
-                "title length must be between 1 and 10 characters."
-        );
-        checkArgument(isNotEmpty(content), "content must be provided.");
-        checkArgument(
-                content.length() >= 1 && content.length() <= 1000,
-                "content length must be between 1 and 1000 characters."
-        );
-        this.title = requestDto.getTitle();
-        this.Thumbnail = requestDto.getThumbnail();
-        this.content = requestDto.getContent();
-        this.salesStartDate = requestDto.getSalesStartDate();
-        this.salesEndDate = requestDto.getSalesEndDate();
-        this.createId = requestDto.getCreateId();
-        this.modifyDate = requestDto.getModifyDate();
-        this.modifyId = requestDto.getModifyId();
+    public void update(String title, String content, String thumbnail, LocalDateTime salesStartDate, LocalDateTime salesEndDate, LocalDateTime modifyDate, Long modifyId) {
+
+        this.title = title;
+        this.content = content;
+        this.thumbnail = thumbnail;
+        this.salesStartDate = salesStartDate;
+        this.salesEndDate = salesEndDate;
+        this.modifyDate = modifyDate;
+        this.modifyId = modifyId;
     }
 
+    public void addCategory(FestivalCategory category) {
+        this.festivalCategory = category;
+    }
 }

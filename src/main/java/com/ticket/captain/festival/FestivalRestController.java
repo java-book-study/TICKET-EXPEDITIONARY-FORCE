@@ -1,76 +1,68 @@
 package com.ticket.captain.festival;
 
+import com.ticket.captain.exception.NotFoundException;
 import com.ticket.captain.festival.dto.FestivalCreateDto;
-import com.ticket.captain.festival.dto.FestivalResponseDto;
+import com.ticket.captain.festival.dto.FestivalDto;
+import com.ticket.captain.festival.dto.FestivalUpdateDto;
 import com.ticket.captain.festival.validator.FestivalCreateValidator;
+import com.ticket.captain.festivalCategory.FestivalCategory;
+import com.ticket.captain.festivalCategory.FestivalCategoryService;
 import com.ticket.captain.response.ApiResponseDto;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @RestController
-@RequestMapping("/api/manager")
+@RequiredArgsConstructor
+@RequestMapping("/api/manager/festival")
 public class FestivalRestController {
 
     private final FestivalService festivalService;
 
-    public FestivalRestController(FestivalService festivalService) {
-        this.festivalService = festivalService;
-    }
+    private final FestivalCategoryService festivalCategoryService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        FestivalCreateValidator validator=new FestivalCreateValidator(festivalService);
+        FestivalCreateValidator validator = new FestivalCreateValidator(festivalService);
         binder.addValidators(validator);
     }
 
     @PostMapping("generate")
-    public ApiResponseDto<FestivalResponseDto> generate(@RequestBody @Valid FestivalCreateDto request) {
-
-        return ApiResponseDto.createOK(
-                new FestivalResponseDto(
-                festivalService.generate(request.newFestival())));
+    public ApiResponseDto<FestivalDto> generate(@Valid FestivalCreateDto festivalCreateDto) {
+        return ApiResponseDto.createOK(festivalService.add(festivalCreateDto));
     }
-
-    @GetMapping("{festivalId}/info")
-    public ApiResponseDto<FestivalResponseDto> festivalInfo(@PathVariable Long festivalId) {
-        return ApiResponseDto.createOK(
-                festivalService.findById(festivalId)
-                .map(FestivalResponseDto::new)
-                .orElseThrow(RuntimeException::new)
-        );
-    }
-
 
     @GetMapping("festivals")
-    public ApiResponseDto<List<FestivalResponseDto>> getFestivals(int page, int size) {
-        PageRequest pageRequest = PageRequest.of(
-                page, size, Sort.by("createDate").descending());
-        return ApiResponseDto.createOK(
-                festivalService.getFestivals(pageRequest).stream()
-                        .map(FestivalResponseDto::new)
-                        .collect(Collectors.toList())
-        );
+    public ApiResponseDto<List<FestivalDto>> festivals(int offset, int limit) {
+        return ApiResponseDto.createOK(festivalService.findAll(offset, limit));
     }
 
-    @PutMapping("{festivalId}/update")
-    public ApiResponseDto<FestivalResponseDto> updateFestival(@PathVariable Long festivalId, FestivalCreateDto festivalCreateDto) {
-        Festival festival = festivalService.updateFestival(festivalId, festivalCreateDto);
-        return ApiResponseDto.createOK(
-                new FestivalResponseDto(festival));
+    @GetMapping("info/{festivalId}")
+    public ApiResponseDto<FestivalDto> info(@PathVariable Long festivalId) {
+        return ApiResponseDto.createOK(festivalService.findById(festivalId));
     }
 
-    @DeleteMapping("{festivalId}/del")
-    public ResponseEntity<Void> delFestival (@PathVariable Long festivalId) {
-        festivalService.deleteFestival(festivalId);
-        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+    @PutMapping("update/{festivalId}")
+    public ApiResponseDto<FestivalDto> update(@PathVariable Long festivalId, FestivalUpdateDto festivalUpdateDto) {
+        return ApiResponseDto.createOK(festivalService.update(festivalId, festivalUpdateDto));
     }
 
+    @DeleteMapping("delete/{festivalId}")
+    public ApiResponseDto<String> delete(@PathVariable Long festivalId) {
+        festivalService.delete(festivalId);
+
+        return ApiResponseDto.DEFAULT_OK;
+    }
+
+
+    @PostMapping("category/add/{festivalId}")
+    public ApiResponseDto<FestivalDto> addCategory(String categoryName, @PathVariable Long festivalId) {
+        FestivalCategory category = festivalCategoryService.findByCategoryName(categoryName);
+        if (category == null)  throw new NotFoundException();
+        return ApiResponseDto.createOK(festivalService.addCategory(category, festivalId));
+    }
 }

@@ -5,7 +5,6 @@ import com.ticket.captain.order.Order;
 import com.ticket.captain.salesType.SalesType;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,7 +13,6 @@ import java.util.List;
 
 @Entity(name = "festival_detail")
 @Getter
-@ToString
 public class FestivalDetail {
 
     @Id
@@ -53,13 +51,17 @@ public class FestivalDetail {
     @JoinColumn(name = "festival_id")
     private Festival festival;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sales_type_id")
     private SalesType salesType;
+
+    //@OneToMany(mappedBy = "festivalDetail")
+    //private List<Order> orders = new ArrayList<>();
 
     public FestivalDetail() {
 
     }
+
     @Builder
     public FestivalDetail(Long id, LocalDateTime processDate, Long amount, Long price, LocalDateTime drawDate, LocalDateTime createDate, Long createId, LocalDateTime modifyDate, Long modifyId, Festival festival, SalesType salesType) {
         this.id = id;
@@ -76,4 +78,13 @@ public class FestivalDetail {
     }
 
 
+    public void update(LocalDateTime processDate, Long amount, Long price, LocalDateTime drawDate, LocalDateTime modifyDate, Long modifyId, SalesType salesType) {
+        this.processDate = processDate;
+        this.amount = amount;
+        this.price = price;
+        this.drawDate = drawDate;
+        this.modifyDate = modifyDate;
+        this.modifyId = modifyId;
+        this.salesType = salesType;
+    }
 }

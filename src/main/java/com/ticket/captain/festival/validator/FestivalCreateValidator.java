@@ -21,7 +21,7 @@ public class FestivalCreateValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         FestivalCreateDto festivalCreateDto = (FestivalCreateDto) target;
-        if(festivalService.existsByName(festivalCreateDto.getTitle())){
+        if(festivalService.findByTitle(festivalCreateDto.getTitle()) == null){
             errors.rejectValue("title", "invalid.title", new Object[]{festivalCreateDto.getTitle()}, "이미 사용중인 이름입니다.");
         }
     }
