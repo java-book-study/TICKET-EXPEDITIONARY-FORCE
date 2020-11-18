@@ -74,8 +74,6 @@ dependencies {
     implementation "com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3"
     //postgreSQL
     implementation 'org.postgresql:postgresql'
-
-
 }
 
 dependencyManagement {
@@ -102,11 +100,6 @@ build {
     dependsOn copyDocument
 }
 
-task npmInstall(type: Exec) {
-    workingDir 'src/main/webapp'
-    commandLine 'npm', 'install'
-}
-
 asciidoctor {
     inputs.dir snippetsDir
     dependsOn test
@@ -130,8 +123,3 @@ configurations {
 compileQuerydsl {
     options.annotationProcessorPath = configurations.querydsl
 }
-// Front nodeJs
-//task npmInstall(type: Exec) {
-//    workingDir 'src/main/webapp'
-//    commandLine 'npm', 'install'
-//}
