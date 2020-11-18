@@ -1,9 +1,9 @@
 package com.ticket.captain.festival;
 
+
 import com.ticket.captain.festival.dto.FestivalCreateDto;
 import com.ticket.captain.festival.dto.FestivalDto;
 import com.ticket.captain.festivalCategory.FestivalCategory;
-import com.ticket.captain.festivalCategory.FestivalCategoryRepository;
 import com.ticket.captain.festivalCategory.FestivalCategoryService;
 import com.ticket.captain.festivalCategory.dto.FestivalCategoryCreateDto;
 import com.ticket.captain.festivalCategory.dto.FestivalCategoryDto;
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Transactional
-public class FestivalControllerTest {
+public class FestivalUserControllerTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -43,7 +43,7 @@ public class FestivalControllerTest {
 
     private FestivalCategory festivalCategory;
 
-    public static final String API_MANAGER_URL = "/api/manager/festival";
+    public static final String API_ACCOUNT_URL = "/api/account/festival";
 
     @BeforeAll
     void beforeAll() {
@@ -73,9 +73,9 @@ public class FestivalControllerTest {
 
     @Test
     @Order(1)
-    @WithMockUser(value = "mock-manager", roles = "MANAGER")
+    @WithMockUser(value = "mock-user", roles = "USER")
     void festivalInfo() throws Exception {
-        mockMvc.perform(get(API_MANAGER_URL + "/info/" + festival.getId())
+        mockMvc.perform(get(API_ACCOUNT_URL + "/info/" + festival.getId())
                 .param("festivalId", String.valueOf(festival.getId()))
                 .with(csrf()))
                 .andDo(print())
@@ -84,9 +84,9 @@ public class FestivalControllerTest {
 
     @Test
     @Order(2)
-    @WithMockUser(value = "mock-manager", roles = "MANAGER")
+    @WithMockUser(value = "mock-user", roles = "USER")
     void festivals() throws Exception {
-        mockMvc.perform(get(API_MANAGER_URL +"/festivals")
+        mockMvc.perform(get(API_ACCOUNT_URL +"/festivals")
                 .param("offset", String.valueOf(0))
                 .param("limit", String.valueOf(1))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -95,23 +95,10 @@ public class FestivalControllerTest {
                 .andDo(print());
     }
 
-    @Test
-    @Order(3)
-    @WithMockUser(value = "mock-manager", roles = "MANAGER")
-    void deleteFestival() throws Exception {
-        mockMvc.perform(delete(API_MANAGER_URL + "/delete/" + festival.getId())
-                .param("festivalId", String.valueOf(festival.getId()))
-                .with(csrf()))
-                .andExpect(status().is(200))
-                .andDo(print());
-
-    }
-
 
     @AfterAll
     void afterAll() {
         festivalService.delete(festival.getId());
         festivalCategoryService.delete(festivalCategory.getId());
     }
-
 }

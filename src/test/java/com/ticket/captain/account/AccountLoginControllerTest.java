@@ -1,6 +1,6 @@
 package com.ticket.captain.account;
 
-import com.ticket.captain.account.dto.AccountDto;
+import com.ticket.captain.account.dto.AccountCreateDto;
 import com.ticket.captain.mail.EmailService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ class AccountLoginControllerTest {
     @DisplayName("아이디 비밀번호 일치할 때의 로그인 테스트")
     public void loginTest() throws Exception{
         //given
-        AccountDto.Create accountCreateDto = accountCreateDtoSample();
+        AccountCreateDto accountCreateDto = accountCreateDtoSample();
 
         //when
         accountService.createAccount(accountCreateDto);
@@ -49,7 +49,7 @@ class AccountLoginControllerTest {
     @DisplayName("비밀번호가 일치하지 않을 시의 로그인 테스트")
     public void authenticateFailedWithPasswordTest() throws Exception{
         //given
-        AccountDto.Create accountCreateDto = accountCreateDtoSample();
+        AccountCreateDto accountCreateDto = accountCreateDtoSample();
 
         //when
         accountService.createAccount(accountCreateDto);
@@ -65,7 +65,7 @@ class AccountLoginControllerTest {
     @DisplayName("아이디가 일치하지 않을 시의 로그인 테스트")
     public void authenticateFailedWithIdTest() throws Exception{
         //given
-        AccountDto.Create accountCreateDto = accountCreateDtoSample();
+        AccountCreateDto accountCreateDto = accountCreateDtoSample();
 
         //when
         accountService.createAccount(accountCreateDto);
@@ -77,8 +77,8 @@ class AccountLoginControllerTest {
         ;
     }
 
-    private AccountDto.Create accountCreateDtoSample(){
-        return AccountDto.Create.builder()
+    private AccountCreateDto accountCreateDtoSample(){
+        return AccountCreateDto.builder()
                 .email("kangsy763@naver.com")
                 .password("1qaz2wsx")
                 .nickname("bepoz")

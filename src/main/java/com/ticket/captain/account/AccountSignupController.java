@@ -1,5 +1,6 @@
 package com.ticket.captain.account;
 
+import com.ticket.captain.account.dto.AccountCreateDto;
 import com.ticket.captain.account.dto.AccountDto;
 import com.ticket.captain.common.ErrorsResource;
 import com.ticket.captain.response.ApiResponseDto;
@@ -18,18 +19,17 @@ public class AccountSignupController {
 
     private final AccountService accountService;
     private final AccountRepository accountRepository;
-
     private final AccountCreateDtoValidator accountCreateDtoValidator;
 
     @PostMapping
-    public ApiResponseDto<?> createAccount(@RequestBody @Valid AccountDto.Create accountCreateDto, Errors errors) {
+    public ApiResponseDto<?> createAccount(@RequestBody @Valid AccountCreateDto accountCreateDto, Errors errors) {
 
         if (errors.hasErrors()) {
             return badRequest(errors);
         }
 
         Account account = accountService.createAccount(accountCreateDto);
-        return ApiResponseDto.createOK(new AccountDto.Response(account));
+        return ApiResponseDto.createOK(new AccountDto(account));
     }
 
     @GetMapping("/check-email-token")
@@ -38,11 +38,11 @@ public class AccountSignupController {
         Account account = accountRepository.findByEmail(email);
 
         if (account == null){
-            return ApiResponseDto.NOT_FOUND(new AccountDto.Response());
+            return ApiResponseDto.NOT_FOUND(new AccountDto());
         }
 
         if (!account.isValidToken(token)) {
-            return ApiResponseDto.BAD_REQUEST(new AccountDto.Response(account));
+            return ApiResponseDto.BAD_REQUEST(new AccountDto(account));
         }
 
         /**
@@ -50,7 +50,7 @@ public class AccountSignupController {
          * login을 할 수 있는 페이지로 갈 수 있어야함
          */
         accountService.completeSignUp(account);
-        return ApiResponseDto.createOK(new AccountDto.Response(account));
+        return ApiResponseDto.createOK(new AccountDto(account));
     }
 
     private ApiResponseDto<?> badRequest(Errors errors) {

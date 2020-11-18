@@ -11,17 +11,15 @@ import lombok.NoArgsConstructor;
 public class TicketDto {
     private Long ticketId;
     private String ticketNo;
-    private String orderNo;
     private Long festivalId;
     private Long festivalSq;
     private Long statusCode;
     private Long price;
 
     @Builder
-    private TicketDto(Long ticketId, String ticketNo, String orderNo, Long festivalId, Long festivalSq, Long statusCode, Long price) {
+    private TicketDto(Long ticketId, String ticketNo, Long festivalId, Long festivalSq, Long statusCode, Long price) {
         this.ticketId = ticketId;
         this.ticketNo = ticketNo;
-        this.orderNo = orderNo;
         this.festivalId = festivalId;
         this.festivalSq = festivalSq;
         this.statusCode = statusCode;
@@ -32,7 +30,6 @@ public class TicketDto {
         return TicketDto.builder()
                 .ticketId(ticket.getTicketId())
                 .ticketNo(ticket.getTicketNo())
-                .orderNo(ticket.getOrderNo())
                 .festivalId(ticket.getFestivalId())
                 .festivalSq(ticket.getFestivalSq())
                 .statusCode(ticket.getStatusCode())
