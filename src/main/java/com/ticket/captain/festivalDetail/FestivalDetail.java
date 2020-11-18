@@ -1,6 +1,7 @@
 package com.ticket.captain.festivalDetail;
 
 import com.ticket.captain.festival.Festival;
+import com.ticket.captain.order.Order;
 import com.ticket.captain.salesType.SalesType;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = "festival_detail")
 @Getter
@@ -17,6 +19,9 @@ public class FestivalDetail {
     @GeneratedValue
     @Column(name = "festival_sq")
     private Long id;
+
+    @OneToMany(mappedBy = "festivalDetail")
+    private List<Order> orders = new ArrayList<>();
 
     @Column(name = "perform_datetime")
     private LocalDateTime processDate;
@@ -58,7 +63,7 @@ public class FestivalDetail {
     }
 
     @Builder
-    private FestivalDetail(Long id, LocalDateTime processDate, Long amount, Long price, LocalDateTime drawDate, LocalDateTime createDate, Long createId, LocalDateTime modifyDate, Long modifyId, Festival festival, SalesType salesType) {
+    public FestivalDetail(Long id, LocalDateTime processDate, Long amount, Long price, LocalDateTime drawDate, LocalDateTime createDate, Long createId, LocalDateTime modifyDate, Long modifyId, Festival festival, SalesType salesType) {
         this.id = id;
         this.processDate = processDate;
         this.amount = amount;

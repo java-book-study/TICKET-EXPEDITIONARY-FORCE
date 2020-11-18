@@ -34,7 +34,6 @@ public class TicketCreateDocumentationTests extends ApiDocumentationTest {
                 .willReturn(TicketDto.builder()
                         .ticketId(2L)
                         .ticketNo("IU00000002")
-                        .orderNo("20110100000000002")
                         .festivalId(1L)
                         .festivalSq(1L)
                         .statusCode(2L)
@@ -43,7 +42,6 @@ public class TicketCreateDocumentationTests extends ApiDocumentationTest {
 
         Request request = new Request();
         request.ticketNo = "IU00000002";
-        request.orderNo = "20110100000000002";
         request.festivalId = "1";
         request.festivalSq = "1";
         request.statusCode = "2";
@@ -63,7 +61,6 @@ public class TicketCreateDocumentationTests extends ApiDocumentationTest {
                         getDocumentResponse(),
                         requestFields(
                                 fieldWithPath("ticketNo").type(JsonFieldType.STRING).description("티켓번호"),
-                                fieldWithPath("orderNo").type(JsonFieldType.STRING).description("주문번호"),
                                 fieldWithPath("festivalId").type(JsonFieldType.STRING).description("축제 ID"),
                                 fieldWithPath("festivalSq").type(JsonFieldType.STRING).description("축제 순번"),
                                 fieldWithPath("statusCode").type(JsonFieldType.STRING).description("주문상태코드"),
@@ -72,7 +69,6 @@ public class TicketCreateDocumentationTests extends ApiDocumentationTest {
                         responseFields(beneathPath("data").withSubsectionId("data"),
                                 fieldWithPath("ticketId").type(JsonFieldType.NUMBER).description("티켓 ID"),
                                 fieldWithPath("ticketNo").type(JsonFieldType.STRING).description("티켓번호"),
-                                fieldWithPath("orderNo").type(JsonFieldType.STRING).description("주문번호"),
                                 fieldWithPath("festivalId").type(JsonFieldType.NUMBER).description("축제 ID"),
                                 fieldWithPath("festivalSq").type(JsonFieldType.NUMBER).description("축제 순번"),
                                 fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("주문상태코드"),
@@ -86,7 +82,6 @@ public class TicketCreateDocumentationTests extends ApiDocumentationTest {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Request {
         String ticketNo;
-        String orderNo;
         String festivalId;
         String festivalSq;
         String statusCode;
