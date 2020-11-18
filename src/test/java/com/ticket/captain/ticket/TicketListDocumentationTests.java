@@ -37,7 +37,6 @@ public class TicketListDocumentationTests extends ApiDocumentationTest {
                 .willReturn(TicketDto.builder()
                         .ticketId(1L)
                         .ticketNo("IU00000001")
-                        .orderNo("20110100000000001")
                         .festivalId(1L)
                         .festivalSq(1L)
                         .statusCode(2L)
@@ -59,7 +58,6 @@ public class TicketListDocumentationTests extends ApiDocumentationTest {
                         responseFields(beneathPath("data").withSubsectionId("data"),
                                 fieldWithPath("ticketId").type(JsonFieldType.NUMBER).description("티켓 ID"),
                                 fieldWithPath("ticketNo").type(JsonFieldType.STRING).description("티켓번호"),
-                                fieldWithPath("orderNo").type(JsonFieldType.STRING).description("주문번호"),
                                 fieldWithPath("festivalId").type(JsonFieldType.NUMBER).description("축제 ID"),
                                 fieldWithPath("festivalSq").type(JsonFieldType.NUMBER).description("축제 순번"),
                                 fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("주문상태코드"),
@@ -77,7 +75,6 @@ public class TicketListDocumentationTests extends ApiDocumentationTest {
                 TicketDto.builder()
                         .ticketId(1L)
                         .ticketNo("IU00000001")
-                        .orderNo("20110100000000001")
                         .festivalId(1L)
                         .festivalSq(1L)
                         .statusCode(2L)
@@ -100,7 +97,6 @@ public class TicketListDocumentationTests extends ApiDocumentationTest {
                         responseFields(beneathPath("data[]").withSubsectionId("data"),
                                 fieldWithPath("ticketId").type(JsonFieldType.NUMBER).description("티켓 ID"),
                                 fieldWithPath("ticketNo").type(JsonFieldType.STRING).description("티켓번호"),
-                                fieldWithPath("orderNo").type(JsonFieldType.STRING).description("주문번호"),
                                 fieldWithPath("festivalId").type(JsonFieldType.NUMBER).description("축제 ID"),
                                 fieldWithPath("festivalSq").type(JsonFieldType.NUMBER).description("축제 순번"),
                                 fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("주문상태코드"),

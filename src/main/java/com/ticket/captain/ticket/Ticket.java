@@ -1,14 +1,12 @@
 package com.ticket.captain.ticket;
 
+import com.ticket.captain.order.Order;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -18,11 +16,12 @@ public class Ticket {
     @GeneratedValue
     private Long ticketId;
 
-    @Column(nullable = false)
-    private String ticketNo;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_no")
+    private Order order;
 
     @Column(nullable = false)
-    private String orderNo;
+    private String ticketNo;
 
     @Column(nullable = false)
     private Long festivalId;
@@ -37,11 +36,10 @@ public class Ticket {
     private Long price;
 
     @Builder
-    private Ticket(Long ticketId, String ticketNo, String orderNo, Long festivalId, Long festivalSq, Long statusCode, Long price) {
+    private Ticket(Long ticketId, String ticketNo, Long festivalId, Long festivalSq, Long statusCode, Long price) {
 
         this.ticketId = ticketId;
         this.ticketNo = ticketNo;
-        this.orderNo = orderNo;
         this.festivalId = festivalId;
         this.festivalSq = festivalSq;
         this.statusCode = statusCode;
