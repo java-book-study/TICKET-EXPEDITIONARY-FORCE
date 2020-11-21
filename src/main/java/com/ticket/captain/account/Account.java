@@ -76,9 +76,12 @@ public class Account {
         this.createDate = LocalDateTime.now();
     }
 
-    public void update(AccountUpdateDto updateRequestDto){
+    public long update(AccountUpdateDto updateRequestDto){
         this.name = updateRequestDto.getName();
         this.email = updateRequestDto.getEmail();
+        this.nickname = updateRequestDto.getNickname();
+
+        return this.id;
     }
 
     public void addRole(Role role){

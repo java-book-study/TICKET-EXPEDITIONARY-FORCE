@@ -1,8 +1,6 @@
 package com.ticket.captain.account;
 
-import com.ticket.captain.account.dto.AccountCreateDto;
-import com.ticket.captain.account.dto.AccountDto;
-import com.ticket.captain.account.dto.AccountUpdateDto;
+import com.ticket.captain.account.dto.*;
 import com.ticket.captain.config.AppProperties;
 import com.ticket.captain.exception.NotFoundException;
 import com.ticket.captain.mail.EmailMessage;
@@ -93,16 +91,19 @@ public class AccountService implements UserDetailsService {
         return modelMapper.map(account, AccountDto.class);
     }
 
-    public void accountUpdate(Long id, AccountUpdateDto updateRequestDto) {
+    public AccountPutDto accountUpdate(Long id, AccountUpdateDto updateRequestDto) {
 
         Account account = accountRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        account.update(updateRequestDto);
-
+        long update = account.update(updateRequestDto);
+        return new AccountPutDto(update);
     }
 
-    public void managerAppoint(Long id) {
-        Account findAccount = accountRepository.findById(id).orElseThrow(NullPointerException::new);
-        findAccount.addRole(Role.ROLE_MANAGER);
+    public AccountRoleDto roleAppoint(Long id, Role role) {
+
+        Account account = accountRepository.findById(id).orElseThrow(NotFoundException::new);
+        account.addRole(role);
+
+        return AccountRoleDto.of(account);
     }
 }
