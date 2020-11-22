@@ -28,6 +28,7 @@ public class Account {
     @OneToMany(mappedBy = "account")
     private List<Order> orders = new ArrayList<>();
 
+    @Column(unique = true)
     private String email;
 
     private String password;
