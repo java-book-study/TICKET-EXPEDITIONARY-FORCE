@@ -17,4 +17,7 @@ public class AccountUpdateDto {
         @Email
         private String email;
 
+        @Length(min=2, max=20)
+        private String nickname;
+
 }

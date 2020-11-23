@@ -3,12 +3,10 @@ package com.ticket.captain.account;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ticket.captain.account.dto.AccountUpdateDto;
 import com.ticket.captain.common.Address;
-import com.ticket.captain.exception.NotFoundException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,21 +14,24 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static com.ticket.captain.document.utils.ApiDocumentUtils.getDocumentRequest;
+import static com.ticket.captain.document.utils.ApiDocumentUtils.getDocumentResponse;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -41,8 +42,6 @@ public class AccountApiControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private AccountService accountService;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -88,7 +87,7 @@ public class AccountApiControllerTest {
 
         Pageable page = PageRequest.of(0, 10);
 
-        mockMvc.perform(get(API_ACCOUNT_URL)
+        mockMvc.perform(MockMvcRequestBuilders.get(API_ACCOUNT_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .param("page", String.valueOf(page.getPageNumber()))
                 .param("size", String.valueOf(page.getPageSize()))
@@ -112,34 +111,40 @@ public class AccountApiControllerTest {
 
     }
 
-    @DisplayName("회원 수정 시 값이 정상적으로 보냈는지 테스트")
     @Test
-    @Order(4)
+    @DisplayName("회원 수정 시 값이 정상적으로 보냈는지 테스트")
     public void 회원_수정_성공() throws Exception {
 
         //given
         AccountUpdateDto updateRequestDto =
-                new AccountUpdateDto("update","update@email.com");
+                new AccountUpdateDto("update", "update@email.com", "updateNickname");
 
-        //when
-        mockMvc.perform(post(API_ACCOUNT_URL + TEST_ID)
+        mockMvc.perform(MockMvcRequestBuilders.put(API_ACCOUNT_URL + "{id}", TEST_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequestDto))
-                .with(csrf()))
+                .with(csrf())
+        )
                 .andDo(print())
-                .andExpect(status().isOk());
-
-        Account account = accountRepository.findById(TEST_ID).orElseThrow(NotFoundException::new);
-
-        //then
-        assertEquals("update@email.com", account.getEmail());
-        assertEquals("update", account.getName());
-//        assertEquals(accountResponseDto.getRole(), Role.ROLE_ADMIN);
+                .andExpect(status().isOk())
+                .andDo(document("update-account",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        requestFields(
+                                fieldWithPath("email").description("수정할 이메일"),
+                                fieldWithPath("name").description("수정할 이름"),
+                                fieldWithPath("nickname").description("수정할 닉네임")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").description("수정된 고유 계정 id"),
+                                fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("회원 경로"),
+                                fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로")
+                        )
+                        )
+                );
     }
 
-    @DisplayName("회원 수정 오류시 값이 변경 되었는지 확인하는 테스트")
     @Test
-    @Order(5)
+    @DisplayName("회원 수정시 수정할 계정이 있는지 확인하는 테스트")
     public void 회원_수정_실패() throws Exception {
 
         //given
@@ -147,100 +152,48 @@ public class AccountApiControllerTest {
                 new AccountUpdateDto("update","update@email.com");
 
         //when + then
-        mockMvc.perform(post(API_ACCOUNT_URL + ERROR_ID)
+        mockMvc.perform(MockMvcRequestBuilders.put(API_ACCOUNT_URL + ERROR_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequestDto))
                 .with(csrf()))
                 .andDo(print())
-                .andExpect(jsonPath("code").exists())
-                .andExpect(jsonPath("message").exists())
-                .andExpect(status().isNotFound());
-
+                .andExpect(status().isNotFound())
+                .andDo(document("error-account",
+                        getDocumentResponse(),
+                        responseFields(
+                                fieldWithPath("message").description("에러 메시지"),
+                                fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로")
+                        )
+                        )
+                );
     }
 
-    @DisplayName("기본 유저는 ROLE_USER를 가지고 있는지 테스트")
     @Test
-    public void containsUSERTest() throws Exception{
-        //given
-        Address adrs = new Address("seoul", "mapo", "03951");
+    @WithMockUser(roles = {"ADMIN"})
+    @DisplayName("권한 부여 테스트 성공")
+    public void 권한_부여() throws Exception {
 
-        Account adminAccount = Account.builder()
-                .email("admin@gmail.com")
-                .name("adminTest")
-                .password(passwordEncoder.encode("1111"))
-                .createDate(LocalDateTime.now())
-                .modifyDate(LocalDateTime.now())
-                .point(5000)
-                .address(adrs)
-                .build();
-        Account savedAccount = accountRepository.save(adminAccount);
-        //then
-        assertThat(savedAccount.getRole()).isEqualTo(Role.ROLE_USER);
-    }
-
-    @DisplayName("addRole메서드 테스트")
-    @Test
-    public void addRoleTest() throws Exception{
-        //given
-        Address adrs = new Address("seoul", "mapo", "03951");
-
-        Account adminAccount = Account.builder()
-                .email("admin@gmail.com")
-                .name("adminTest")
-                .password(passwordEncoder.encode("1111"))
-                .createDate(LocalDateTime.now())
-                .modifyDate(LocalDateTime.now())
-                .point(5000)
-                .address(adrs)
-                .build();
-
-        Account savedAccount = accountRepository.save(adminAccount);
-        //when
-        savedAccount.addRole(Role.ROLE_MANAGER);
-        //then
-        assertThat(savedAccount.getRole()).isNotEqualTo(Role.ROLE_USER);
-        assertThat(savedAccount.getRole()).isEqualTo(Role.ROLE_MANAGER);
-    }
-
-    @DisplayName("managerAppoint 메서드를 통한 ROLE 변경 확인 테스트")
-    @Test
-    public void roleUpdateTest() throws Exception{
-        //given
-        Address adrs = new Address("seoul", "mapo", "03951");
-
-        Account adminAccount = Account.builder()
-                .email("admin@gmail.com")
-                .name("adminTest")
-                .password(passwordEncoder.encode("1111"))
-                .createDate(LocalDateTime.now())
-                .modifyDate(LocalDateTime.now())
-                .point(5000)
-                .address(adrs)
-                .build();
-        Account savedAccount = accountRepository.save(adminAccount);
-        Long id = savedAccount.getId();
-        //when
-        assertThat(savedAccount.getRole()).isEqualTo(Role.ROLE_USER);
-        accountService.managerAppoint(id);
-        Account findAccount = accountRepository.findById(id).orElseThrow(NullPointerException::new);
-        //then
-        assertThat(findAccount.getRole()).isEqualTo(Role.ROLE_MANAGER);
-    }
-
-    @DisplayName("managerAppoint API 테스트")
-    //이거하면 권한가지고 테스트 가능
-    @WithMockUser("ROLE_ADMIN")
-    @Test
-    public void appointApiTest() throws Exception{
-        //given
-        Address adrs = new Address("seoul", "mapo", "03951");
-        //when
-
-        //then
-        mockMvc.perform(put(API_ACCOUNT_URL+"admin/appoint/"+TEST_ID)
+        mockMvc.perform(put(API_ACCOUNT_URL + "appoint/{id}", TEST_ID)
+                .param("role", Role.ROLE_MANAGER.name())
                 .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("data.role").value("ROLE_MANAGER"));
+                .andDo(document("grant-account",
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("id").description("수정할 계정 고유 id값")
+                        ),
+                        requestParameters(
+                                parameterWithName("role").description("줄 권한"),
+                                parameterWithName("_csrf").ignored()
+                        ),
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("권한이 부여된 고유 계정 id"),
+                                fieldWithPath("role").type(JsonFieldType.STRING).description("부여된 계정"),
+                                fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("회원 경로"),
+                                fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로")
+                        )
+                ));
     }
+
 }
