@@ -1,5 +1,6 @@
 package com.ticket.captain.order;
 
+import com.ticket.captain.ticket.TicketRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +16,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class OrderServiceTest {
 
     @Autowired
+    private TicketRepository ticketRepository;
+
+    @Autowired
     private OrderRepository orderRepository;
 
     @Test
-    @DisplayName("Order create 확인")
+    @DisplayName("Order 생성 확인")
     public void orderServiceTest() throws Exception{
         //given
 
