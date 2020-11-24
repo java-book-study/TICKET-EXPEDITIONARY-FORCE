@@ -4,6 +4,8 @@ import com.ticket.captain.account.Account;
 import com.ticket.captain.festivalDetail.FestivalDetail;
 import com.ticket.captain.ticket.Ticket;
 import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -12,39 +14,59 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@Entity @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "Order")
 public class Order {
-    @Id
+    @Id @GeneratedValue
+    @Column(name = "order_id")
+    private Long id;
+
     private String orderNo;
 
     private Long festivalId;
 
     //festivalDetail 를 통해서 festivalId 받아서 필드 값으로 집어넣어 주어야 한다.
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "festival_sq")
+    @JoinColumn(name = "festival_detail_id")
     private FestivalDetail festivalDetail;
-
-    @GeneratedValue
-    @Column(name = "order_id")  //erdcloud 에 order_no 라고 돼있어서 일단 이렇게 했습니다.
-    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
     private Account account;
 
     @OneToMany(mappedBy = "order")
-    private List<Ticket> tickets = new ArrayList<>();
+    private List<Ticket> tickets;
 
-    @Enumerated(EnumType.ORDINAL)
-    private StatusCode statusCode;
+    private String statusCode;
 
     @CreatedDate
     private LocalDateTime purchaseDate;
+
+    @CreatedDate
+    private LocalDateTime createDate;
+
+    @CreatedDate
+    private LocalDateTime modifyDate;
+
     /**
      * 할인 관한 interface 추가가 되어야함
      */
     //private Discount discountRate
+
+    @Builder
+    private Order (String orderNo, Long festivalId, FestivalDetail festivalDetail,
+                              Account account, String statusCode){
+        this.orderNo = orderNo;
+        this.festivalId = festivalId;
+        this.festivalDetail = festivalDetail;
+        this.account = account;
+        this.statusCode = statusCode;
+    }
+
+    public void addTicket(Ticket ticket) {
+        this.tickets.add(ticket);
+
+    }
 
 }
