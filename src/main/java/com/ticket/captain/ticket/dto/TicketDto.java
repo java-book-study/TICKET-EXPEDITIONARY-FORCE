@@ -14,11 +14,11 @@ public class TicketDto {
     private String ticketNo;
     private Long festivalId;
     private Long festivalSq;
-    private StatusCode statusCode;
+    private String statusCode;
     private Long price;
 
     @Builder
-    private TicketDto(Long ticketId, String ticketNo, Long festivalId, Long festivalSq, StatusCode statusCode, Long price) {
+    private TicketDto(Long ticketId, String ticketNo, Long festivalId, Long festivalSq, String statusCode, Long price) {
         this.ticketId = ticketId;
         this.ticketNo = ticketNo;
         this.festivalId = festivalId;
@@ -31,8 +31,6 @@ public class TicketDto {
         return TicketDto.builder()
                 .ticketId(ticket.getTicketId())
                 .ticketNo(ticket.getTicketNo())
-                .festivalId(ticket.getFestivalId())
-                .festivalSq(ticket.getFestivalSq())
                 .statusCode(ticket.getStatusCode())
                 .price(ticket.getPrice())
                 .build();

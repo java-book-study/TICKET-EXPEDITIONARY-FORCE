@@ -24,30 +24,23 @@ public class Ticket {
     @Column(nullable = false)
     private String ticketNo;
 
-    @Column(nullable = false)
-    private Long festivalId;
-
-    @Column(nullable = false)
-    private Long festivalSq;
-
-    @Enumerated(EnumType.ORDINAL)
-    private StatusCode statusCode;
+    private String statusCode;
 
     @Column(nullable = false)
     private Long price;
 
     @Builder
-    private Ticket(Long ticketId, String ticketNo, Long festivalId, Long festivalSq, StatusCode statusCode, Long price) {
-
-        this.ticketId = ticketId;
+    private Ticket(String ticketNo, String statusCode, Long price) {
         this.ticketNo = ticketNo;
-        this.festivalId = festivalId;
-        this.festivalSq = festivalSq;
         this.statusCode = statusCode;
         this.price = price;
     }
 
-    public void update(StatusCode statusCode) {
+    public void update(String statusCode) {
         this.statusCode = statusCode;
+    }
+
+    public void orderSetting(Order order) {
+        this.order = order;
     }
 }

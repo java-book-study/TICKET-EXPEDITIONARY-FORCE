@@ -1,13 +1,14 @@
 package com.ticket.captain.order;
 
+import com.ticket.captain.order.dto.OrderDto;
+import com.ticket.captain.response.ApiResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 @RestController
 @RequiredArgsConstructor
@@ -15,10 +16,9 @@ import javax.servlet.http.HttpSession;
 public class OrderController {
     private final OrderService orderService;
 
-    @GetMapping("/createOrder/{festival_sq}")
-    public String createOrder(@PathVariable Long festival_sq, HttpServletRequest request){
-        HttpSession session = request.getSession();
-        String userEmail = (String) session.getAttribute("userEmail");
-        return orderService.createOrder(festival_sq, userEmail);
+    @PostMapping("/createOrder/{festival_sq}")
+    public ApiResponseDto<OrderDto> createOrder(@PathVariable Long festival_sq, @AuthenticationPrincipal User user){
+        String userEmail = user.getUsername();
+        return ApiResponseDto.createOK(orderService.createOrder(festival_sq, userEmail));
     }
 }

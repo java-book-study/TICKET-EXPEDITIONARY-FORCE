@@ -18,14 +18,17 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "Order")
 public class Order {
-    @Id
+    @Id @GeneratedValue
+    @Column(name = "order_id")
+    private Long id;
+
     private String orderNo;
 
     private Long festivalId;
 
     //festivalDetail 를 통해서 festivalId 받아서 필드 값으로 집어넣어 주어야 한다.
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "festival_sq")
+    @JoinColumn(name = "festival_detail_id")
     private FestivalDetail festivalDetail;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,11 +38,17 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private List<Ticket> tickets;
 
-    @Enumerated(EnumType.ORDINAL)
-    private StatusCode statusCode;
+    private String statusCode;
 
     @CreatedDate
     private LocalDateTime purchaseDate;
+
+    @CreatedDate
+    private LocalDateTime createDate;
+
+    @CreatedDate
+    private LocalDateTime modifyDate;
+
     /**
      * 할인 관한 interface 추가가 되어야함
      */
@@ -47,12 +56,17 @@ public class Order {
 
     @Builder
     private Order (String orderNo, Long festivalId, FestivalDetail festivalDetail,
-                              Account account, StatusCode statusCode){
+                              Account account, String statusCode){
         this.orderNo = orderNo;
         this.festivalId = festivalId;
         this.festivalDetail = festivalDetail;
         this.account = account;
         this.statusCode = statusCode;
+    }
+
+    public void addTicket(Ticket ticket) {
+        this.tickets.add(ticket);
+
     }
 
 }
