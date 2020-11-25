@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
@@ -31,12 +32,14 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@AutoConfigureRestDocs
 @Transactional
 public class AccountApiControllerTest {
 
@@ -56,9 +59,11 @@ public class AccountApiControllerTest {
     public static Long TEST_ID;
 
     public static final String API_ACCOUNT_URL = "/api/account/";
+
+    Address address = new Address("seoul", "mapo", "03951");
+
     @Before
     public void setUp() {
-        Address adrs = new Address("seoul", "mapo", "03951");
 
         Account account = Account.builder()
                 .email(ACCOUNT_EMAIL)
@@ -67,7 +72,7 @@ public class AccountApiControllerTest {
                 .createDate(LocalDateTime.now())
                 .modifyDate(LocalDateTime.now())
                 .point(5000)
-                .address(adrs)
+                .address(address)
                 .build();
 
         Account save = accountRepository.save(account);
@@ -80,34 +85,62 @@ public class AccountApiControllerTest {
         accountRepository.deleteById(TEST_ID);
     }
 
-    @DisplayName("사이트 회원들 목록을 page를 추가해 리턴하는 테스트")
     @Test
-    @Order(1)
-    public void 회원목록() throws Exception {
+    @DisplayName("사이트 회원들 목록을 page를 추가해 리턴하는 테스트")
+    public void 회원_목록() throws Exception {
 
         Pageable page = PageRequest.of(0, 10);
 
-        mockMvc.perform(MockMvcRequestBuilders.get(API_ACCOUNT_URL)
+        mockMvc.perform(get(API_ACCOUNT_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .param("page", String.valueOf(page.getPageNumber()))
                 .param("size", String.valueOf(page.getPageSize()))
                 .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andReturn();
+                .andDo(document("list-accounts",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        responseFields(
+                                fieldWithPath("_embedded.accountDtoList[].id").type(JsonFieldType.NUMBER).description(" 회원 id"),
+                                fieldWithPath("_embedded.accountDtoList[].name").type(JsonFieldType.STRING).description("회원 이름"),
+                                fieldWithPath("_embedded.accountDtoList[].email").type(JsonFieldType.STRING).description("회원 이메일"),
+                                fieldWithPath("_embedded.accountDtoList[].role").type(JsonFieldType.STRING).description("회원 권한"),
+                                fieldWithPath("_embedded.accountDtoList[]._links.self.href").type(JsonFieldType.STRING).description("각 회원 경로"),
+                                fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("현재 경로"),
+                                fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로"),
+                                fieldWithPath("page.size").type(JsonFieldType.NUMBER).description("한 페이지 의 회원 수"),
+                                fieldWithPath("page.totalElements").type(JsonFieldType.NUMBER).description("총 요소"),
+                                fieldWithPath("page.totalPages").type(JsonFieldType.NUMBER).description("총 페이지 수"),
+                                fieldWithPath("page.number").type(JsonFieldType.NUMBER).description("현재 페이지 인덱스")
+                        )
+                        )
+                );
     }
 
-    @DisplayName("한 회원에 대한 정보 출력 테스트")
     @Test
-    @Order(2)
+    @DisplayName("한 회원에 대한 정보 출력 테스트")
     public void 회원_상세조회() throws Exception {
 
         //when
-        MvcResult mvcResult = mockMvc.perform(get(API_ACCOUNT_URL + TEST_ID)
+        mockMvc.perform(get(API_ACCOUNT_URL + TEST_ID)
                 .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andReturn();
+                .andDo(document("detail-account",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description(" 회원 id"),
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("회원 이름"),
+                                fieldWithPath("email").type(JsonFieldType.STRING).description("회원 이메일"),
+                                fieldWithPath("role").type(JsonFieldType.STRING).description("회원 권한"),
+                                fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("회원 경로"),
+                                fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로")
+                        )
+                        )
+
+                );
 
     }
 
@@ -122,8 +155,7 @@ public class AccountApiControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.put(API_ACCOUNT_URL + "{id}", TEST_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequestDto))
-                .with(csrf())
-        )
+                .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("update-account",
@@ -149,7 +181,7 @@ public class AccountApiControllerTest {
 
         //given
         AccountUpdateDto updateRequestDto =
-                new AccountUpdateDto("update","update@email.com");
+                new AccountUpdateDto("update", "update@email.com", "updateNickname");
 
         //when + then
         mockMvc.perform(MockMvcRequestBuilders.put(API_ACCOUNT_URL + ERROR_ID)
