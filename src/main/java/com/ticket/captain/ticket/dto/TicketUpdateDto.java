@@ -8,20 +8,20 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TicketUpdateDto {
-    private StatusCode stateCode;
+    private StatusCode statusCode;
 
     @Builder
-    private TicketUpdateDto(StatusCode stateCode) {
-        this.stateCode = stateCode;
+    private TicketUpdateDto(StatusCode statusCode) {
+        this.statusCode = statusCode;
     }
 
     public TicketUpdateDto toDto() {
         return TicketUpdateDto.builder()
-                .stateCode(stateCode)
+                .statusCode(statusCode)
                 .build();
     }
 
     public void apply(Ticket ticket) {
-        ticket.update(stateCode);
+        ticket.update(statusCode);
     }
 }

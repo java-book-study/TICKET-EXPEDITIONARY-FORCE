@@ -1,5 +1,6 @@
 package com.ticket.captain.ticket;
 
+import com.ticket.captain.festivalDetail.FestivalDetail;
 import com.ticket.captain.order.Order;
 import com.ticket.captain.order.StatusCode;
 import lombok.AccessLevel;
@@ -18,8 +19,12 @@ public class Ticket {
     private Long ticketId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_no")
+    @JoinColumn(name = "order_id")
     private Order order;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "festival_detail_id")
+    private FestivalDetail festivalDetail;
 
     @Column(nullable = false)
     private String ticketNo;
@@ -36,8 +41,8 @@ public class Ticket {
         this.price = price;
     }
 
-    public void update(String statusCode) {
-        this.statusCode = statusCode;
+    public void update(StatusCode statusCode) {
+        this.statusCode = statusCode.name();
     }
 
     public void orderSetting(Order order) {
