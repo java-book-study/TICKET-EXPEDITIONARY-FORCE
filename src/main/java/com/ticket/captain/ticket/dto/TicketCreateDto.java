@@ -9,16 +9,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TicketCreateDto {
     private String ticketNo;
-    private Long festivalId;
-    private Long festivalSq;
+    private Long festivalDetailId;
     private StatusCode statusCode;
     private Long price;
 
     @Builder
-    private TicketCreateDto(String ticketNo, Long festivalId, Long festivalSq, StatusCode statusCode, Long price) {
+    private TicketCreateDto(String ticketNo, Long festivalDetailId, StatusCode statusCode, Long price) {
         this.ticketNo = ticketNo;
-        this.festivalId = festivalId;
-        this.festivalSq = festivalSq;
+        this.festivalDetailId = festivalDetailId;
         this.statusCode = statusCode;
         this.price = price;
     }
@@ -26,8 +24,7 @@ public class TicketCreateDto {
     public TicketCreateDto toDto() {
         return TicketCreateDto.builder()
                 .ticketNo(ticketNo)
-                .festivalId(festivalId)
-                .festivalSq(festivalSq)
+                .festivalDetailId(festivalDetailId)
                 .statusCode(statusCode)
                 .price(price)
                 .build();
@@ -36,9 +33,8 @@ public class TicketCreateDto {
     public Ticket toEntity() {
         return Ticket.builder()
                 .ticketNo(ticketNo)
-                .festivalId(festivalId)
-                .festivalSq(festivalSq)
-                .statusCode(statusCode)
+//                .festivalDetail()
+                .statusCode(statusCode.name())
                 .price(price)
                 .build();
     }
