@@ -11,14 +11,15 @@ import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
-@Entity @Getter
+@Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "Order")
+@Table(name = "order")
 public class Order {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     @Column(name = "order_id")
     private Long id;
 
@@ -53,10 +54,9 @@ public class Order {
      * 할인 관한 interface 추가가 되어야함
      */
     //private Discount discountRate
-
     @Builder
-    private Order (String orderNo, Long festivalId, FestivalDetail festivalDetail,
-                              Account account, String statusCode){
+    private Order(String orderNo, Long festivalId, FestivalDetail festivalDetail,
+                  Account account, String statusCode) {
         this.orderNo = orderNo;
         this.festivalId = festivalId;
         this.festivalDetail = festivalDetail;

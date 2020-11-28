@@ -15,11 +15,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()
                 .authorizeRequests()
-                .mvcMatchers("/", "/login", "/api/sign-up/**", "/api/account/**").permitAll()
-                .mvcMatchers("/api/manager/**").hasAnyRole("ADMIN", "MANAGER")
-                .mvcMatchers("/api/ticket/**").hasAnyRole("ADMIN", "MANAGER", "USER")
-                .mvcMatchers("/api/appointment/**").hasAnyRole("ADMIN")
+                .mvcMatchers("/api/**").permitAll()
+//                .mvcMatchers("/", "/login", "/api/sign-up/**", "/api/account/**").permitAll()
+//                .mvcMatchers("/api/manager/**", "/api/order/**").hasAnyRole("ADMIN", "MANAGER")
+//                .mvcMatchers("/api/ticket/**").hasAnyRole("ADMIN", "MANAGER", "USER")
+//                .mvcMatchers("/api/appointment/**").hasAnyRole("ADMIN")
                 .mvcMatchers(HttpMethod.GET).permitAll()
                 .anyRequest().authenticated()
                 .and()

@@ -17,7 +17,7 @@ public class FestivalDetail {
 
     @Id
     @GeneratedValue
-    @Column(name = "festival_sq")
+    @Column(name = "festival_detail_id")
     private Long id;
 
     @OneToMany(mappedBy = "festivalDetail")

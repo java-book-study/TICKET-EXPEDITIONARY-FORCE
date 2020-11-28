@@ -10,15 +10,21 @@ import com.ticket.captain.order.dto.OrderDto;
 import com.ticket.captain.ticket.Ticket;
 import com.ticket.captain.ticket.TicketRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class OrderService {
+    private final OrderQueryRepository orderQueryRepository;
+
     private final OrderRepository orderRepository;
     private final FestivalDetailRepository festivalDetailRepository;
     private final AccountRepository accountRepository;
@@ -49,5 +55,19 @@ public class OrderService {
         ticketRepository.save(createdTicket);
         Order savedOrder = orderRepository.save(createdOrder);
         return OrderDto.of(savedOrder);
+    }
+
+    public List<OrderDto> findByAccount(Pageable pageable, Long accountId) {
+
+        return orderQueryRepository.findByAccountId(pageable, accountId).stream()
+                .map(OrderDto::of)
+                .collect(Collectors.toList());
+    }
+
+    public List<OrderDto> findByAccountWithDate(Pageable pageable, Long accountId, LocalDateTime startDate, LocalDateTime endDate) {
+
+        return orderQueryRepository.findByAccountWithDate(pageable, accountId, startDate, endDate).stream()
+                .map(OrderDto::of)
+                .collect(Collectors.toList());
     }
 }

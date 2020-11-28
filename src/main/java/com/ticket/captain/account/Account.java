@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Builder @Getter
+@Builder
+@Getter
 @EqualsAndHashCode(of = "id")
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,7 +27,7 @@ public class Account {
     private Long id;
 
     @OneToMany(mappedBy = "account")
-    private List<Order> orders = new ArrayList<>();
+    private final List<Order> orders = new ArrayList<>();
 
     @Column(unique = true)
     private String email;
@@ -77,7 +78,7 @@ public class Account {
         this.createDate = LocalDateTime.now();
     }
 
-    public long update(AccountUpdateDto updateRequestDto){
+    public long update(AccountUpdateDto updateRequestDto) {
         this.name = updateRequestDto.getName();
         this.email = updateRequestDto.getEmail();
         this.nickname = updateRequestDto.getNickname();
@@ -85,7 +86,7 @@ public class Account {
         return this.id;
     }
 
-    public void addRole(Role role){
-        this.role=role;
+    public void addRole(Role role) {
+        this.role = role;
     }
 }
