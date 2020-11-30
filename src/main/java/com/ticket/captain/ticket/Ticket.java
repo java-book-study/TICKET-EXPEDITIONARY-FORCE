@@ -1,5 +1,7 @@
 package com.ticket.captain.ticket;
 
+import com.ticket.captain.account.Account;
+import com.ticket.captain.festivalDetail.FestivalDetail;
 import com.ticket.captain.order.Order;
 import com.ticket.captain.order.StatusCode;
 import lombok.AccessLevel;
@@ -28,6 +30,15 @@ public class Ticket {
 
     @Column(nullable = false)
     private Long price;
+
+    public static Ticket createTicket(String ticketNo, String statusCode, Long price) {
+
+        return Ticket.builder()
+                .ticketNo(ticketNo)
+                .statusCode(statusCode)
+                .price(price)
+                .build();
+    }
 
     @Builder
     private Ticket(String ticketNo, String statusCode, Long price) {

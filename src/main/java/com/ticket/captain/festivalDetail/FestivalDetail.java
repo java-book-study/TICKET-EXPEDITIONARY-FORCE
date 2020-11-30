@@ -63,18 +63,10 @@ public class FestivalDetail {
     }
 
     @Builder
-    public FestivalDetail(Long id, LocalDateTime processDate, Long amount, Long price, LocalDateTime drawDate, LocalDateTime createDate, Long createId, LocalDateTime modifyDate, Long modifyId, Festival festival, SalesType salesType) {
-        this.id = id;
-        this.processDate = processDate;
+    public FestivalDetail(Long amount, Long price, Festival festival) {
         this.amount = amount;
         this.price = price;
-        this.drawDate = drawDate;
-        this.createDate = createDate;
-        this.createId = createId;
-        this.modifyDate = modifyDate;
-        this.modifyId = modifyId;
         this.festival = festival;
-        this.salesType = salesType;
     }
 
 

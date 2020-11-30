@@ -54,9 +54,7 @@ public class Festival {
     @OrderBy("id desc")
     private final Set<FestivalDetail> festival_details = new HashSet<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private FestivalCategory festivalCategory;
+
 
     public Festival() {
 
