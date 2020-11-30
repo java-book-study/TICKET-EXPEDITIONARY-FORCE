@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class FestivalDetailUpdateDto {
 
-    private Festival festival;
-
     String salesType;
 
     private Long amount;

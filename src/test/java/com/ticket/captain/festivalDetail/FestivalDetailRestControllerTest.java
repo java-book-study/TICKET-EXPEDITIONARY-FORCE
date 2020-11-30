@@ -1,32 +1,23 @@
 package com.ticket.captain.festivalDetail;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ticket.captain.account.Account;
 import com.ticket.captain.festival.Festival;
 import com.ticket.captain.festival.FestivalCategory;
 import com.ticket.captain.festival.FestivalRepository;
-import com.ticket.captain.festival.FestivalService;
 import com.ticket.captain.festival.dto.FestivalCreateDto;
-import com.ticket.captain.festival.dto.FestivalDto;
 import com.ticket.captain.festivalDetail.dto.FestivalDetailCreateDto;
 import com.ticket.captain.festivalDetail.dto.FestivalDetailUpdateDto;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Before;
 import org.junit.jupiter.api.*;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
