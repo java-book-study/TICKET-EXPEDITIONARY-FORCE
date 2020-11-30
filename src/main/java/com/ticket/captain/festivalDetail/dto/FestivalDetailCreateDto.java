@@ -75,15 +75,8 @@ public class FestivalDetailCreateDto {
 
         return FestivalDetail.builder()
                 .amount(amount)
-                .processDate(processDate)
-                .drawDate(drawDate)
                 .price(price)
-                .createDate(createDate)
-                .createId(createId)
-                .modifyDate(modifyDate)
-                .modifyId(modifyId)
                 .festival(festival)
-                .salesType(salesType)
                 .build();
     }
 }

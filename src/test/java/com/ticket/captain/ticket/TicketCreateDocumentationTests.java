@@ -36,7 +36,6 @@ public class TicketCreateDocumentationTests extends ApiDocumentationTest {
                         .ticketNo("IU00000002")
                         .festivalId(1L)
                         .festivalSq(1L)
-                        .statusCode(2L)
                         .price(110000L)
                         .build());
 

@@ -5,17 +5,20 @@ import com.ticket.captain.festival.dto.FestivalCreateDto;
 import com.ticket.captain.festival.dto.FestivalDto;
 import com.ticket.captain.festival.dto.FestivalUpdateDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class FestivalService {
 
     private final FestivalRepository festivalRepository;
@@ -34,7 +37,8 @@ public class FestivalService {
 
     @Transactional(readOnly = true)
     public FestivalDto findById(Long festivalId) {
-        return festivalRepository.findById(festivalId)
+        Optional<Festival> findFestival = festivalRepository.findById(festivalId);
+        return findFestival
                 .map(FestivalDto::of)
                 .orElseThrow(NotFoundException::new);
     }

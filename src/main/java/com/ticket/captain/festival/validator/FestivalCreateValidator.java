@@ -2,6 +2,7 @@ package com.ticket.captain.festival.validator;
 
 import com.ticket.captain.festival.FestivalService;
 import com.ticket.captain.festival.dto.FestivalCreateDto;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -21,7 +22,7 @@ public class FestivalCreateValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         FestivalCreateDto festivalCreateDto = (FestivalCreateDto) target;
-        if(festivalService.findByTitle(festivalCreateDto.getTitle()) == null){
+        if(festivalService.findByTitle(festivalCreateDto.getTitle()) != null){
             errors.rejectValue("title", "invalid.title", new Object[]{festivalCreateDto.getTitle()}, "이미 사용중인 이름입니다.");
         }
     }

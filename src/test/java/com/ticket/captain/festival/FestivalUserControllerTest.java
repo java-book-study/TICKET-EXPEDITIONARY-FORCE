@@ -3,10 +3,6 @@ package com.ticket.captain.festival;
 
 import com.ticket.captain.festival.dto.FestivalCreateDto;
 import com.ticket.captain.festival.dto.FestivalDto;
-import com.ticket.captain.festivalCategory.FestivalCategory;
-import com.ticket.captain.festivalCategory.FestivalCategoryService;
-import com.ticket.captain.festivalCategory.dto.FestivalCategoryCreateDto;
-import com.ticket.captain.festivalCategory.dto.FestivalCategoryDto;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -36,35 +32,18 @@ public class FestivalUserControllerTest {
     @Autowired
     private FestivalService festivalService;
 
-    @Autowired
-    private FestivalCategoryService festivalCategoryService;
-
     private Festival festival;
-
-    private FestivalCategory festivalCategory;
 
     public static final String API_ACCOUNT_URL = "/api/account/festival";
 
     @BeforeAll
     void beforeAll() {
-        FestivalCategoryCreateDto categoryCreateDto = FestivalCategoryCreateDto.builder()
-                .categoryName("오페라")
-                .createId(1L)
-                .build();
-
-        FestivalCategoryDto festivalCategoryDto = festivalCategoryService.add(categoryCreateDto);
-        festivalCategory = festivalCategoryService.findByCategoryName(festivalCategoryDto.getCategoryName());
-
         FestivalCreateDto createDto = FestivalCreateDto.builder()
-                .title("오페라의 유령")
-                .content("오페라로 당신을 초대합니다.")
-                .createDate(LocalDateTime.now())
-                .createId(1L)
+                .title("Rock Festival")
+                .content("Come and Join Us")
                 .salesStartDate(LocalDateTime.now())
                 .salesEndDate(LocalDateTime.now())
-                .modifyDate(LocalDateTime.now())
-                .modifyId(1L)
-                .categoryId(festivalCategory.getId())
+                .festivalCategory(FestivalCategory.ROCK.toString())
                 .build();
 
         FestivalDto festivalDto = festivalService.add(createDto);
@@ -99,6 +78,5 @@ public class FestivalUserControllerTest {
     @AfterAll
     void afterAll() {
         festivalService.delete(festival.getId());
-        festivalCategoryService.delete(festivalCategory.getId());
     }
 }
