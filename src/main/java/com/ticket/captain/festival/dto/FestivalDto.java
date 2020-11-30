@@ -7,6 +7,11 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * api등에서 return할 때에 쓰이는 Dto
+ * Festival를 save 후에 반납을 FestivalDto 등으로 받을 때에 들어간다.
+ * 따라서 모든 필드 값을 가지고 있다.
+ */
 @Getter
 @NoArgsConstructor
 public class FestivalDto {

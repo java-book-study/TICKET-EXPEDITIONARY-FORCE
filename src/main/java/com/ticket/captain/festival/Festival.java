@@ -79,14 +79,14 @@ public class Festival {
         this.festivalCategory = festivalCategory;
     }
 
-    public void update(String title, String content, String thumbnail, LocalDateTime salesStartDate, LocalDateTime salesEndDate, LocalDateTime modifyDate, Long modifyId) {
+    public void update(String title, String content, String thumbnail,
+                       LocalDateTime salesStartDate, LocalDateTime salesEndDate, String festivalCategory) {
 
         this.title = title;
         this.content = content;
         this.thumbnail = thumbnail;
         this.salesStartDate = salesStartDate;
         this.salesEndDate = salesEndDate;
-        this.modifyDate = modifyDate;
-        this.modifyId = modifyId;
+        this.festivalCategory = festivalCategory;
     }
 }

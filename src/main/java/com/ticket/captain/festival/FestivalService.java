@@ -6,6 +6,7 @@ import com.ticket.captain.festival.dto.FestivalDto;
 import com.ticket.captain.festival.dto.FestivalUpdateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,11 +26,8 @@ public class FestivalService {
     }
 
     @Transactional(readOnly = true)
-    public List<FestivalDto> findAll(int offset, int limit) {
-
-        PageRequest pageRequest = PageRequest.of(offset, limit);
-
-        return festivalRepository.findAll(pageRequest).stream()
+    public List<FestivalDto> findAll(Pageable pageable) {
+        return festivalRepository.findAll(pageable).stream()
                 .map(FestivalDto::of)
                 .collect(Collectors.toList());
     }
@@ -58,13 +56,5 @@ public class FestivalService {
     @Transactional(readOnly = true)
     public Festival findByTitle(String title) {
         return festivalRepository.findByTitle(title);
-    }
-
-    public FestivalDto addCategory(FestivalCategory category, Long festivalId) {
-        Festival festival = festivalRepository.findById(festivalId)
-                .orElseThrow(NotFoundException::new);
-        festival.addCategory(category);
-        festivalRepository.save(festival);
-        return FestivalDto.of(festival);
     }
 }
