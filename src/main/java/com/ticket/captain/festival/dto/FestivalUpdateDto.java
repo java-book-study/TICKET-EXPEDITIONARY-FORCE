@@ -32,6 +32,17 @@ public class FestivalUpdateDto {
     modifyId 에 대한 처리 해주어야함
      */
 
+    @Builder
+    private FestivalUpdateDto(String title, String thumbnail, String content,
+                              LocalDateTime salesStartDate, LocalDateTime salesEndDate, String festivalCategory) {
+        this.title = title;
+        this.thumbnail = thumbnail;
+        this.content = content;
+        this.salesStartDate = salesStartDate;
+        this.salesEndDate = salesEndDate;
+        this.festivalCategory = festivalCategory;
+    }
+
     public void apply(Festival festival) {
         festival.update(title, content, thumbnail, salesStartDate, salesEndDate, festivalCategory);
     }

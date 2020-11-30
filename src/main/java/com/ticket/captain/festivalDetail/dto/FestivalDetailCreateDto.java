@@ -28,6 +28,18 @@ public class FestivalDetailCreateDto {
 
     private Festival festival;
 
+
+    @Builder
+    private FestivalDetailCreateDto(String salesType, Long amount, Long price, Festival festival,
+                                    LocalDateTime drawDate,LocalDateTime processDate) {
+        this.salesType = salesType;
+        this.amount = amount;
+        this.price = price;
+        this.processDate = processDate;
+        this.drawDate = drawDate;
+        this.festival = festival;
+    }
+
     public FestivalDetail toEntity() {
 
         return FestivalDetail.builder()

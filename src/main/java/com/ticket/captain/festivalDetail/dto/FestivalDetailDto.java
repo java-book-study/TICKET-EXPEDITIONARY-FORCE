@@ -1,5 +1,6 @@
 package com.ticket.captain.festivalDetail.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ticket.captain.festival.Festival;
 import com.ticket.captain.festivalDetail.FestivalDetail;
 import lombok.Builder;
@@ -32,6 +33,7 @@ public class FestivalDetailDto {
 
     private Long modifyId;
 
+    @JsonIgnore
     private Festival festival;
 
     @Builder

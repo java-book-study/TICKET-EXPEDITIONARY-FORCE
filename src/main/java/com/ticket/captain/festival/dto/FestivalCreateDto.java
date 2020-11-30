@@ -28,6 +28,17 @@ public class FestivalCreateDto {
 
     private String festivalCategory;
 
+    @Builder
+    public FestivalCreateDto(String title, String thumbnail, String content,
+                             LocalDateTime salesStartDate, LocalDateTime salesEndDate, String festivalCategory) {
+        this.title = title;
+        this.thumbnail = thumbnail;
+        this.content = content;
+        this.salesStartDate = salesStartDate;
+        this.salesEndDate = salesEndDate;
+        this.festivalCategory = festivalCategory;
+    }
+
     public Festival toEntity() {
 
         return Festival.builder()

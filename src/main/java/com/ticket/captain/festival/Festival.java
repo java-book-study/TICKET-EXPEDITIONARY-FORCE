@@ -1,5 +1,6 @@
 package com.ticket.captain.festival;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ticket.captain.festivalDetail.FestivalDetail;
 import lombok.AccessLevel;
@@ -51,10 +52,10 @@ public class Festival {
     @Column(name = "modify_id")
     private Long modifyId;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "festival", cascade = CascadeType.ALL)
-    @JsonIgnoreProperties({"festival"})
     @OrderBy("id desc")
-    private final Set<FestivalDetail> festival_details = new HashSet<>();
+    private Set<FestivalDetail> festival_details = new HashSet<>();
 
     @Column(name = "festival_category")
     private String festivalCategory;

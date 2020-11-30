@@ -38,10 +38,10 @@ public class OrderService {
         Order createdOrder = Order.createOrder(orderNo, festivalDetailId, curFestivalDetail, curAccount, statusCode);
 
         //Ticket 생성
-        Ticket createdTicket = Ticket.createTicket(orderNo, statusCode, curFestivalDetail.getPrice());
+//        Ticket createdTicket = Ticket.createTicket(orderNo, statusCode, curFestivalDetail.getPrice());
 
         //Order -> Ticket 매핑
-        createdOrder.addTicket(createdTicket);
+//        createdOrder.addTicket(createdTicket);
 
         Order savedOrder = orderRepository.save(createdOrder);
         return OrderDto.of(savedOrder);

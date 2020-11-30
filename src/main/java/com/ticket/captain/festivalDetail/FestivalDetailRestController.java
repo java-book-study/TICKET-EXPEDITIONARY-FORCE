@@ -18,7 +18,7 @@ public class FestivalDetailRestController {
     private final FestivalDetailService festivalDetailService;
 
     @PostMapping("generate")
-    public ApiResponseDto<FestivalDetailDto> generate(FestivalDetailCreateDto festivalDetailCreateDto) {
+    public ApiResponseDto<FestivalDetailDto> generate(@RequestBody FestivalDetailCreateDto festivalDetailCreateDto) {
         return ApiResponseDto.createOK(festivalDetailService.add(festivalDetailCreateDto));
     }
 
@@ -33,7 +33,7 @@ public class FestivalDetailRestController {
     }
 
     @PutMapping("update/{festivalDetailId}")
-    public ApiResponseDto<FestivalDetailDto> update(@PathVariable Long festivalDetailId, FestivalDetailUpdateDto festivalDetailUpdateDto) {
+    public ApiResponseDto<FestivalDetailDto> update(@PathVariable Long festivalDetailId,@RequestBody FestivalDetailUpdateDto festivalDetailUpdateDto) {
         return ApiResponseDto.createOK(festivalDetailService.update(festivalDetailId, festivalDetailUpdateDto));
     }
 

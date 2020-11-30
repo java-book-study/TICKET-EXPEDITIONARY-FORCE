@@ -24,6 +24,16 @@ public class FestivalDetailUpdateDto {
 
     private LocalDateTime drawDate;
 
+    @Builder
+    private FestivalDetailUpdateDto(String salesType, Long amount, Long price,
+                                    LocalDateTime processDate, LocalDateTime drawDate) {
+        this.salesType = salesType;
+        this.amount = amount;
+        this.price = price;
+        this.processDate = processDate;
+        this.drawDate = drawDate;
+    }
+
     public void apply(FestivalDetail festivalDetail) {
         festivalDetail.update(salesType, amount, price, processDate, drawDate);
     }
