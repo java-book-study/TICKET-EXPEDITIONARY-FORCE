@@ -56,14 +56,13 @@ public class Order {
 
     public static Order createOrder(String orderNo, Long festivalId, FestivalDetail festivalDetail,
                                     Account account, String statusCode) {
-        Order createdOrder = Order.builder()
+        return Order.builder()
                 .orderNo(orderNo)
                 .festivalId(festivalId)
                 .festivalDetail(festivalDetail)
                 .account(account)
                 .statusCode(statusCode)
                 .build();
-        return createdOrder;
     }
 
     @Builder

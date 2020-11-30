@@ -11,42 +11,27 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class FestivalCreateDto {
 
-    @NotBlank
-    @Length(min = 2, max = 20)
     private String title;
 
     private String thumbnail;
 
-    @NotBlank
-    @Length(min = 2, max = 1000)
     private String content;
 
     private LocalDateTime salesStartDate;
 
     private LocalDateTime salesEndDate;
 
-    private Long createId;
-
-    private LocalDateTime createDate;
-
-    private LocalDateTime modifyDate;
-
-    private Long modifyId;
-
-    private Long categoryId;
+    private String festivalCategory;
 
     @Builder
-    public FestivalCreateDto(@NotBlank @Length(min = 2, max = 20) String title, String thumbnail, @NotBlank @Length(min = 2, max = 1000) String content, LocalDateTime salesStartDate, LocalDateTime salesEndDate, Long createId, LocalDateTime createDate, LocalDateTime modifyDate, Long modifyId, Long categoryId) {
+    public FestivalCreateDto(String title, String thumbnail, String content,
+                             LocalDateTime salesStartDate, LocalDateTime salesEndDate, String festivalCategory) {
         this.title = title;
         this.thumbnail = thumbnail;
         this.content = content;
         this.salesStartDate = salesStartDate;
         this.salesEndDate = salesEndDate;
-        this.createId = createId;
-        this.createDate = createDate;
-        this.modifyDate = modifyDate;
-        this.modifyId = modifyId;
-        this.categoryId = categoryId;
+        this.festivalCategory = festivalCategory;
     }
 
     public FestivalCreateDto toDto() {
@@ -57,11 +42,7 @@ public class FestivalCreateDto {
                 .thumbnail(thumbnail)
                 .salesEndDate(salesEndDate)
                 .salesStartDate(salesStartDate)
-                .createDate(createDate)
-                .createId(createId)
-                .modifyDate(modifyDate)
-                .modifyId(modifyId)
-                .categoryId(categoryId)
+                .festivalCategory(festivalCategory)
                 .build();
     }
 
@@ -73,10 +54,7 @@ public class FestivalCreateDto {
                 .thumbnail(thumbnail)
                 .salesStartDate(salesStartDate)
                 .salesEndDate(salesEndDate)
-                .createDate(createDate)
-                .createId(createId)
-                .modifyDate(modifyDate)
-                .modifyId(modifyId)
+                .festivalCategory(festivalCategory)
                 .build();
     }
 }

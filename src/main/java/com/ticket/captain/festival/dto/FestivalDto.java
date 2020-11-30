@@ -1,7 +1,6 @@
 package com.ticket.captain.festival.dto;
 
 import com.ticket.captain.festival.Festival;
-import com.ticket.captain.festivalCategory.FestivalCategory;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,10 +31,13 @@ public class FestivalDto {
 
     private Long modifyId;
 
-    private Long categoryId;
+    private String festivalCategory;
 
     @Builder
-    private FestivalDto(Long id, String title, String thumbnail, String content, LocalDateTime salesStartDate, LocalDateTime salesEndDate, Long createId, LocalDateTime createDate, LocalDateTime modifyDate, Long modifyId, Long categoryId) {
+    private FestivalDto(Long id, String title, String thumbnail, String content,
+                        LocalDateTime salesStartDate, LocalDateTime salesEndDate,
+                        Long createId, LocalDateTime createDate,
+                        LocalDateTime modifyDate, Long modifyId, String festivalCategory) {
         this.id = id;
         this.title = title;
         this.thumbnail = thumbnail;
@@ -46,7 +48,7 @@ public class FestivalDto {
         this.createDate = createDate;
         this.modifyDate = modifyDate;
         this.modifyId = modifyId;
-        this.categoryId = categoryId;
+        this.festivalCategory = festivalCategory;
     }
 
     public static FestivalDto of(Festival festival) {
@@ -62,7 +64,7 @@ public class FestivalDto {
                 .modifyId(festival.getModifyId())
                 .salesEndDate(festival.getSalesEndDate())
                 .salesStartDate(festival.getSalesStartDate())
-                .categoryId(festival.getFestivalCategory().getId())
+                .festivalCategory(festival.getFestivalCategory())
                 .build();
     }
 }

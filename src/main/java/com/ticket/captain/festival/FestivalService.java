@@ -4,9 +4,6 @@ import com.ticket.captain.exception.NotFoundException;
 import com.ticket.captain.festival.dto.FestivalCreateDto;
 import com.ticket.captain.festival.dto.FestivalDto;
 import com.ticket.captain.festival.dto.FestivalUpdateDto;
-import com.ticket.captain.festivalCategory.FestivalCategory;
-import com.ticket.captain.festivalCategory.FestivalCategoryService;
-import com.ticket.captain.festivalCategory.dto.FestivalCategoryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -22,13 +19,8 @@ public class FestivalService {
 
     private final FestivalRepository festivalRepository;
 
-    private final FestivalCategoryService festivalCategoryService;
-
     public FestivalDto add(FestivalCreateDto festivalCreateDto) {
         Festival festival = festivalCreateDto.toEntity();
-        FestivalCategoryDto festivalCategoryDto = festivalCategoryService.findById(festivalCreateDto.getCategoryId());
-        FestivalCategory festivalCategory = festivalCategoryService.findByCategoryName(festivalCategoryDto.getCategoryName());
-        festival.addCategory(festivalCategory);
         return FestivalDto.of(festivalRepository.save(festival));
     }
 
