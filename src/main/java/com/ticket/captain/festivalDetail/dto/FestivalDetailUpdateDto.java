@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class FestivalDetailUpdateDto {
 
-    String salesType;
+    private String salesType;
 
     private Long amount;
 
