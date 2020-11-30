@@ -20,8 +20,7 @@ public class FestivalDetailService {
     private final FestivalDetailRepository festivalDetailRepository;
 
     public FestivalDetailDto add(FestivalDetailCreateDto festivalDetailCreateDto) {
-        FestivalDetail festivalDetail = festivalDetailCreateDto.toEntity();
-        return FestivalDetailDto.of(festivalDetailRepository.save(festivalDetail));
+        return FestivalDetailDto.of(festivalDetailRepository.save(festivalDetailCreateDto.toEntity()));
     }
 
     @Transactional(readOnly = true)

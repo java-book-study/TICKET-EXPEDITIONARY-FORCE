@@ -1,36 +1,38 @@
 package com.ticket.captain.festivalDetail;
 
 import com.ticket.captain.festival.Festival;
-import com.ticket.captain.order.Order;
-import com.ticket.captain.salesType.SalesType;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity(name = "festival_detail")
-@Getter
+@Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FestivalDetail {
 
     @Id
     @GeneratedValue
-    @Column(name = "festival_sq")
+    @Column(name = "festival_detail_id")
     private Long id;
 
-    @OneToMany(mappedBy = "festivalDetail")
-    private List<Order> orders = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "festival_id")
+    private Festival festival;
 
-    @Column(name = "perform_datetime")
-    private LocalDateTime processDate;
+    @Column(name = "sales_type")
+    String salesType;
 
     @Column(name = "ticket_amount")
     private Long amount;
 
     @Column(name = "ticket_price")
     private Long price;
+
+    @Column(name = "perform_datetime")
+    private LocalDateTime processDate;
 
     @Column(name = "draw_date")
     private LocalDateTime drawDate;
@@ -47,36 +49,23 @@ public class FestivalDetail {
     @Column(name = "modify_id")
     private Long modifyId;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "festival_id")
-    private Festival festival;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sales_type_id")
-    private SalesType salesType;
-
-    //@OneToMany(mappedBy = "festivalDetail")
-    //private List<Order> orders = new ArrayList<>();
-
-    public FestivalDetail() {
-
-    }
-
     @Builder
-    public FestivalDetail(Long amount, Long price, Festival festival) {
+    public FestivalDetail(String salesType,Long amount, Long price,
+                          LocalDateTime processDate, LocalDateTime drawDate) {
+        this.salesType = salesType;
         this.amount = amount;
         this.price = price;
-        this.festival = festival;
+        this.processDate = processDate;
+        this.drawDate = drawDate;
     }
 
 
-    public void update(LocalDateTime processDate, Long amount, Long price, LocalDateTime drawDate, LocalDateTime modifyDate, Long modifyId, SalesType salesType) {
-        this.processDate = processDate;
+    public void update(String salesType,Long amount, Long price,
+                       LocalDateTime processDate, LocalDateTime drawDate) {
         this.amount = amount;
         this.price = price;
-        this.drawDate = drawDate;
-        this.modifyDate = modifyDate;
-        this.modifyId = modifyId;
         this.salesType = salesType;
+        this.processDate = processDate;
+        this.drawDate = drawDate;
     }
 }

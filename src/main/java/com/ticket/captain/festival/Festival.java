@@ -56,6 +56,7 @@ public class Festival {
     @OrderBy("id desc")
     private final Set<FestivalDetail> festival_details = new HashSet<>();
 
+    @Column(name = "festival_category")
     private String festivalCategory;
 
     public static Festival createFestival(String title, String thumbnail, String content, LocalDateTime salesStartDate, LocalDateTime salesEndDate, String festivalCategory) {
