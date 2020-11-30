@@ -51,12 +51,13 @@ public class FestivalDetail {
 
     @Builder
     public FestivalDetail(String salesType,Long amount, Long price,
-                          LocalDateTime processDate, LocalDateTime drawDate) {
+                          LocalDateTime processDate, LocalDateTime drawDate, Festival festival) {
         this.salesType = salesType;
         this.amount = amount;
         this.price = price;
         this.processDate = processDate;
         this.drawDate = drawDate;
+        this.festival = festival;
     }
 
 

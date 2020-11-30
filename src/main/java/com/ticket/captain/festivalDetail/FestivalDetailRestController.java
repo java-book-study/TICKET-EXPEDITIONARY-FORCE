@@ -5,6 +5,7 @@ import com.ticket.captain.festivalDetail.dto.FestivalDetailDto;
 import com.ticket.captain.festivalDetail.dto.FestivalDetailUpdateDto;
 import com.ticket.captain.response.ApiResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,8 +23,8 @@ public class FestivalDetailRestController {
     }
 
     @GetMapping("festivalDetails")
-    public ApiResponseDto<List<FestivalDetailDto>> festivalDetails(int offset, int limit) {
-        return ApiResponseDto.createOK(festivalDetailService.findAll(offset, limit));
+    public ApiResponseDto<List<FestivalDetailDto>> festivalDetails(Pageable pageable) {
+        return ApiResponseDto.createOK(festivalDetailService.findAll(pageable));
     }
 
     @GetMapping("info/{festivalDetailId}")

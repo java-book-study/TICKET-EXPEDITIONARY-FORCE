@@ -1,5 +1,6 @@
 package com.ticket.captain.festivalDetail.dto;
 
+import com.ticket.captain.festival.Festival;
 import com.ticket.captain.festivalDetail.FestivalDetail;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,11 +32,13 @@ public class FestivalDetailDto {
 
     private Long modifyId;
 
+    private Festival festival;
+
     @Builder
     private FestivalDetailDto(Long id, String salesType, Long amount, Long price,
                               LocalDateTime processDate, LocalDateTime drawDate,
                               LocalDateTime createDate, LocalDateTime modifyDate,
-                              Long createId, Long modifyId) {
+                              Long createId, Long modifyId, Festival festival) {
         this.id = id;
         this.salesType = salesType;
         this.amount = amount;
@@ -46,6 +49,7 @@ public class FestivalDetailDto {
         this.modifyDate = modifyDate;
         this.createId = createId;
         this.modifyId = modifyId;
+        this.festival = festival;
     }
 
     public static FestivalDetailDto of(FestivalDetail festivalDetail) {
@@ -61,6 +65,7 @@ public class FestivalDetailDto {
                 .modifyDate(festivalDetail.getModifyDate())
                 .createId(festivalDetail.getCreateId())
                 .modifyId(festivalDetail.getModifyId())
+                .festival(festivalDetail.getFestival())
                 .build();
     }
 }
