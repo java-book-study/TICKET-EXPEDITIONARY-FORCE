@@ -28,7 +28,6 @@ import java.util.List;
 public class FestivalManagerController {
 
     private final FestivalService festivalService;
-    private final FestivalCreateValidator validator;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {

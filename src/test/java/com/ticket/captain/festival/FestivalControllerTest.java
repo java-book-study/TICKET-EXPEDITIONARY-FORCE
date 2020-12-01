@@ -65,8 +65,6 @@ public class FestivalControllerTest {
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
-
-
     }
 
     @Order(1)

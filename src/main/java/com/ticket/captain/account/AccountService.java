@@ -45,10 +45,6 @@ public class AccountService implements UserDetailsService {
         return accountRepository.save(newAccount);
     }
 
-    public void completeSignUp(Account account) {
-        account.completeSignUp();
-    }
-
     public void sendSignUpConfirmEmail(Account newAccount){
         Context context = new Context();
         context.setVariable("link", "/check-email-token?token="+ newAccount.getEmailCheckToken() +
