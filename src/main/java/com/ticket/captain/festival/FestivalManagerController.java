@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +40,8 @@ public class FestivalManagerController {
     public ApiResponseDto<FestivalDto> generate(@Valid @RequestBody FestivalCreateDto festivalCreateDto,
                                                 Errors errors) {
         if (errors.hasErrors()) {
-            throw new IllegalArgumentException("validator checking");
+            String field = errors.getFieldError().getDefaultMessage();
+            throw new IllegalArgumentException(field);
         }
         return ApiResponseDto.createOK(festivalService.add(festivalCreateDto));
     }
@@ -61,7 +63,8 @@ public class FestivalManagerController {
     }
 
     @PutMapping("update/{festivalId}")
-    public ApiResponseDto<FestivalDto> update(@PathVariable Long festivalId,@RequestBody FestivalUpdateDto festivalUpdateDto) {
+    public ApiResponseDto<FestivalDto> update(@PathVariable Long festivalId,
+                                              @RequestBody @Valid FestivalUpdateDto festivalUpdateDto) {
         return ApiResponseDto.createOK(festivalService.update(festivalId, festivalUpdateDto));
     }
 

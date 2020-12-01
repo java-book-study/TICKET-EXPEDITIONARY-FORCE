@@ -3,6 +3,7 @@ package com.ticket.captain.festival;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ticket.captain.enumType.FestivalCategory;
 import com.ticket.captain.festival.dto.FestivalCreateDto;
+import com.ticket.captain.festival.dto.FestivalDto;
 import com.ticket.captain.festival.dto.FestivalUpdateDto;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +12,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.util.NestedServletException;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -39,6 +44,20 @@ public class FestivalControllerTest {
 
     public static final String API_MANAGER_URL = "/api/manager/festival";
 
+    @BeforeEach
+    void beforeAll() {
+        FestivalCreateDto createDto = FestivalCreateDto.builder()
+                .title("Rock Festival")
+                .content("Come and Join Us")
+                .salesStartDate(LocalDateTime.now())
+                .salesEndDate(LocalDateTime.now())
+                .festivalCategory(FestivalCategory.ROCK.toString())
+                .build();
+
+        FestivalDto festivalDto = festivalService.add(createDto);
+        festival = festivalService.findByTitle(festivalDto.getTitle());
+    }
+
     @WithMockUser(value = "mock-manager", roles = "MANAGER")
     @Test
     public void validatorTest() throws Exception{
@@ -50,29 +69,23 @@ public class FestivalControllerTest {
                 .salesEndDate(LocalDateTime.now())
                 .festivalCategory(FestivalCategory.ROCK.toString())
                 .build();
-        //when
-        festivalService.add(createDto);
+
         //then
-        try {
-            mockMvc.perform(post(API_MANAGER_URL + "/generate/")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(createDto))
-                    .with(csrf()))
-//                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalArgumentException))
-//                .andExpect(result -> assertEquals("valiator checking", result.getResolvedException().getMessage()))
-                    .andDo(print())
+        mockMvc.perform(post(API_MANAGER_URL + "/generate/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(createDto))
+                .with(csrf()))
+                .andExpect(result ->
+                        assertThat(getApiResultExceptionClass(result)).isEqualTo(NestedServletException.class))
+                .andDo(print())
             ;
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }
     }
 
-    @Order(1)
     @Test
     @WithMockUser(value = "mock-manager", roles = "MANAGER")
     void generateFestival() throws Exception {
         FestivalCreateDto createDto = FestivalCreateDto.builder()
-                .title("Rock Festival")
+                .title("Generate Festival")
                 .content("Come and Join Us")
                 .salesStartDate(LocalDateTime.now())
                 .salesEndDate(LocalDateTime.now())
@@ -84,17 +97,14 @@ public class FestivalControllerTest {
                 .content(objectMapper.writeValueAsString(createDto))
                 .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("data.title").value("Rock Festival"))
+                .andExpect(jsonPath("data.title").value("Generate Festival"))
                 .andExpect(jsonPath("data.content").value("Come and Join Us"))
                 .andExpect(jsonPath("data.festivalCategory").value("ROCK"))
                 .andDo(print())
         ;
-
-        festival = festivalService.findByTitle(createDto.getTitle());
     }
 
     @Test
-    @Order(2)
     @WithMockUser(value = "mock-manager", roles = "MANAGER")
     void festivalInfo() throws Exception {
         mockMvc.perform(get(API_MANAGER_URL + "/info/" + festival.getId())
@@ -108,7 +118,6 @@ public class FestivalControllerTest {
     }
 
     @Test
-    @Order(3)
     @WithMockUser(value = "mock-manager", roles = "MANAGER")
     void festivals() throws Exception {
         mockMvc.perform(get(API_MANAGER_URL +"/festivals")
@@ -121,7 +130,6 @@ public class FestivalControllerTest {
     }
 
     @Test
-    @Order(4)
     @WithMockUser(value = "mock-manager", roles = "MANAGER")
     void updateFestival() throws Exception {
 
@@ -145,13 +153,31 @@ public class FestivalControllerTest {
     }
 
     @Test
-    @Order(5)
     @WithMockUser(value = "mock-manager", roles = "MANAGER")
     void deleteFestival() throws Exception {
-        mockMvc.perform(delete(API_MANAGER_URL + "/delete/" + festival.getId())
+        FestivalCreateDto createDto = FestivalCreateDto.builder()
+                .title("Delete Festival")
+                .content("Come and Join Us")
+                .salesStartDate(LocalDateTime.now())
+                .salesEndDate(LocalDateTime.now())
+                .festivalCategory(FestivalCategory.ROCK.toString())
+                .build();
+
+        FestivalDto festivalDto = festivalService.add(createDto);
+        Festival findFestival = festivalService.findByTitle(festivalDto.getTitle());
+
+        mockMvc.perform(delete(API_MANAGER_URL + "/delete/" + findFestival.getId())
                 .with(csrf()))
                 .andExpect(status().is(200))
                 .andDo(print());
+    }
 
+    @AfterEach
+    void afterAll() {
+        festivalService.delete(festival.getId());
+    }
+
+    private Class<? extends Exception> getApiResultExceptionClass(MvcResult result) {
+        return Objects.requireNonNull(result.getResolvedException().getClass());
     }
 }

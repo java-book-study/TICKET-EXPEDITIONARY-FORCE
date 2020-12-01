@@ -58,4 +58,9 @@ public class FestivalDetail extends BaseEntity {
         this.processDate = processDate;
         this.drawDate = drawDate;
     }
+
+    public void setFestival(Festival festival) {
+        this.festival = festival;
+        festival.getFestival_details().add(this);
+    }
 }
