@@ -6,6 +6,7 @@ import com.ticket.captain.festival.Festival;
 import com.ticket.captain.enumType.FestivalCategory;
 import com.ticket.captain.festival.FestivalRepository;
 import com.ticket.captain.festival.dto.FestivalCreateDto;
+import com.ticket.captain.festival.dto.FestivalDto;
 import com.ticket.captain.festivalDetail.dto.FestivalDetailCreateDto;
 import com.ticket.captain.festivalDetail.dto.FestivalDetailUpdateDto;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @Slf4j
@@ -46,14 +46,12 @@ public class FestivalDetailRestControllerTest {
 
     public Festival savedFestival;
 
+    public FestivalDetail savedFestivalDetail;
+
     public static final String API_MANAGER_URL = "/api/manager/festivalDetail";
 
-    @Test
-    @Order(1)
-    @WithMockUser(value = "mock-manager", roles = "MANAGER")
-    @DisplayName("FestivalDetail Create 테스트")
-    public void generateTest() throws Exception{
-        //given
+    @BeforeEach
+    void beforeAll() {
         FestivalCreateDto createDto = FestivalCreateDto.builder()
                 .title("DPR LIVE")
                 .content("IAOT LIVE")
@@ -64,35 +62,48 @@ public class FestivalDetailRestControllerTest {
 
         savedFestival = festivalRepository.save(createDto.toEntity());
 
-        //when
         FestivalDetailCreateDto festivalDetailCreateDto = FestivalDetailCreateDto.builder()
                 .salesType(SalesType.FREE.toString())
                 .amount(10000L)
                 .price(20000L)
                 .drawDate(LocalDateTime.now())
                 .processDate(LocalDateTime.now())
-                .festival(savedFestival)
+                .build();
+
+        savedFestivalDetail = festivalDetailRepository.save(festivalDetailCreateDto.toEntity());
+    }
+
+    @Test
+    @WithMockUser(value = "mock-manager", roles = "MANAGER")
+    @DisplayName("FestivalDetail Create 테스트")
+    public void generateTest() throws Exception{
+        //when
+        FestivalDetailCreateDto festivalDetailCreateDto = FestivalDetailCreateDto.builder()
+                .salesType(SalesType.FREE.toString())
+                .amount(1000L)
+                .price(2000L)
+                .drawDate(LocalDateTime.now())
+                .processDate(LocalDateTime.now())
                 .build();
 
         //then
-        mockMvc.perform(post(API_MANAGER_URL + "/generate/")
+        mockMvc.perform(post(API_MANAGER_URL + "/generate/" + savedFestival.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(festivalDetailCreateDto))
                 .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("data.amount").value(10000L))
-                .andExpect(jsonPath("data.price").value(20000L))
+                .andExpect(jsonPath("data.amount").value(1000L))
+                .andExpect(jsonPath("data.price").value(2000L))
                 .andExpect(jsonPath("data.salesType").value("FREE"))
                 .andDo(print())
         ;
     }
 
     @Test
-    @Order(2)
     @WithMockUser(value = "mock-manager", roles = "MANAGER")
     @DisplayName("FestivalDetail 조회 테스트")
     public void infoTest() throws Exception{
-        mockMvc.perform(get(API_MANAGER_URL + "/info/" + 2L)
+        mockMvc.perform(get(API_MANAGER_URL + "/info/" + savedFestivalDetail.getId())
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("data.amount").value(10000L))
@@ -103,8 +114,7 @@ public class FestivalDetailRestControllerTest {
     }
 
     @Test
-    @Order(3)
-    @WithMockUser(value = "mock-manager", username = "kangsy763", roles = "MANAGER")
+    @WithMockUser(roles = "MANAGER")
     @DisplayName("FestivalDetail Update 테스트")
     public void updateTest() throws Exception{
         //given
@@ -116,7 +126,7 @@ public class FestivalDetailRestControllerTest {
                 .salesType(SalesType.DRAW.toString())
                 .build();
         //when&then
-        mockMvc.perform(put(API_MANAGER_URL + "/update/" + 2)
+        mockMvc.perform(put(API_MANAGER_URL + "/update/" + savedFestivalDetail.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(festivalDetailUpdateDto))
                 .with(csrf()))
@@ -128,16 +138,15 @@ public class FestivalDetailRestControllerTest {
         ;
     }
 
-//    @Test
-//    @Order(4)
-//    @WithMockUser(value = "mock-manager", roles = "MANAGER")
-//    @DisplayName("FestivalDetail Delete 테스트")
-//    public void deleteTest() throws Exception{
-//        //given
-//        mockMvc.perform(delete(API_MANAGER_URL + "/delete/" + 2)
-//                .with(csrf()))
-//                .andExpect(status().is(200))
-//                .andDo(print());
-//    }
+    @Test
+    @WithMockUser(value = "mock-manager", roles = "MANAGER")
+    @DisplayName("FestivalDetail Delete 테스트")
+    public void deleteTest() throws Exception{
+        //given
+        mockMvc.perform(delete(API_MANAGER_URL + "/delete/" + savedFestivalDetail.getId())
+                .with(csrf()))
+                .andExpect(status().is(200))
+                .andDo(print());
+    }
 
 }
