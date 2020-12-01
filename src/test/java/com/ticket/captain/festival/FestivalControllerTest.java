@@ -1,6 +1,7 @@
 package com.ticket.captain.festival;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ticket.captain.enumType.FestivalCategory;
 import com.ticket.captain.festival.dto.FestivalCreateDto;
 import com.ticket.captain.festival.dto.FestivalUpdateDto;
 import org.junit.jupiter.api.*;

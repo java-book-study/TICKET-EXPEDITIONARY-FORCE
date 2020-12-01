@@ -2,7 +2,7 @@ package com.ticket.captain.ticket;
 
 import com.ticket.captain.festivalDetail.FestivalDetail;
 import com.ticket.captain.order.Order;
-import com.ticket.captain.order.StatusCode;
+import com.ticket.captain.enumType.StatusCode;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

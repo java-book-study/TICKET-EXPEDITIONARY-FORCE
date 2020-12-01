@@ -1,6 +1,7 @@
 package com.ticket.captain.festival;
 
 
+import com.ticket.captain.enumType.FestivalCategory;
 import com.ticket.captain.festival.dto.FestivalCreateDto;
 import com.ticket.captain.festival.dto.FestivalDto;
 import org.junit.jupiter.api.*;

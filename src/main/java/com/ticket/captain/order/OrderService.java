@@ -2,12 +2,12 @@ package com.ticket.captain.order;
 
 import com.ticket.captain.account.Account;
 import com.ticket.captain.account.AccountRepository;
+import com.ticket.captain.enumType.StatusCode;
 import com.ticket.captain.exception.NotFoundException;
 import com.ticket.captain.festival.Festival;
 import com.ticket.captain.festivalDetail.FestivalDetail;
 import com.ticket.captain.festivalDetail.FestivalDetailRepository;
 import com.ticket.captain.order.dto.OrderDto;
-import com.ticket.captain.ticket.Ticket;
 import com.ticket.captain.ticket.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

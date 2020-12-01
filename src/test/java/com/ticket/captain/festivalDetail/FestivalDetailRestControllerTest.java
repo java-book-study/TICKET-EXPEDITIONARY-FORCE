@@ -1,8 +1,9 @@
 package com.ticket.captain.festivalDetail;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ticket.captain.enumType.SalesType;
 import com.ticket.captain.festival.Festival;
-import com.ticket.captain.festival.FestivalCategory;
+import com.ticket.captain.enumType.FestivalCategory;
 import com.ticket.captain.festival.FestivalRepository;
 import com.ticket.captain.festival.dto.FestivalCreateDto;
 import com.ticket.captain.festivalDetail.dto.FestivalDetailCreateDto;
