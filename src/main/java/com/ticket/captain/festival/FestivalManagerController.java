@@ -45,7 +45,7 @@ public class FestivalManagerController {
         if (errors.hasErrors()) {
             String field = errors.getFieldError().getDefaultMessage();
             ExceptionDto exceptionDto = ExceptionDto.builder().message(field).build();
-            return ApiResponseDto.createOK(exceptionDto);
+            return ApiResponseDto.VALIDATION_ERROR(exceptionDto);
         }
         return ApiResponseDto.createOK(festivalService.add(festivalCreateDto));
     }
