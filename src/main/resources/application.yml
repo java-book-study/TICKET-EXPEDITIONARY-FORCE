@@ -1,11 +1,11 @@
 spring:
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:tcp://localhost/~/captain
-    username: sa
-    password:
+    driver-class-name: ENC(ahw18zDs3VK5yHnlD63tdEGLsuc+1nVGxgSPn/nAKVXPVqELBIlsmSPhhSzUpXg3TZAg13Ga3JOUerSfAqK4UQ==)
+    url: ENC(71M9V6VbtB6S0i/S/HcxPmy/TTiqAsrY)
+    username: ENC(71M9V6VbtB6S0i/S/HcxPmy/TTiqAsrY)
+    password: ENC(zJWvcj62mjMzbiFJEacMGw==)
     hikari:
-#      schema: ticket
+      schema: ticket
 
   profiles:
     active: local
