@@ -38,10 +38,8 @@ public class FestivalManagerController {
         binder.addValidators(validator);
     }
 
-    @PostMapping("generate/{test}")
-    public ApiResponseDto generate(@PathVariable int test,
-                                                @Valid @RequestBody FestivalCreateDto festivalCreateDto,
-                                                Errors errors) {
+    @PostMapping("generate")
+    public ApiResponseDto generate(@Valid @RequestBody FestivalCreateDto festivalCreateDto, Errors errors) {
         if (errors.hasErrors()) {
             String field = errors.getFieldError().getDefaultMessage();
             ExceptionDto exceptionDto = ExceptionDto.builder().message(field).build();
@@ -67,8 +65,14 @@ public class FestivalManagerController {
     }
 
     @PutMapping("update/{festivalId}")
-    public ApiResponseDto<FestivalDto> update(@PathVariable Long festivalId,
-                                              @Valid @RequestBody FestivalUpdateDto festivalUpdateDto) {
+    public ApiResponseDto update(@PathVariable Long festivalId,
+                                              @Valid @RequestBody FestivalUpdateDto festivalUpdateDto,
+                                              Errors errors) {
+        if (errors.hasErrors()) {
+            String field = errors.getFieldError().getDefaultMessage();
+            ExceptionDto exceptionDto = ExceptionDto.builder().message(field).build();
+            return ApiResponseDto.VALIDATION_ERROR(exceptionDto);
+        }
         return ApiResponseDto.createOK(festivalService.update(festivalId, festivalUpdateDto));
     }
 

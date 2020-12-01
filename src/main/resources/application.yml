@@ -1,7 +1,7 @@
 spring:
   datasource:
-    driver-class-name: ENC(ahw18zDs3VK5yHnlD63tdEGLsuc+1nVGxgSPn/nAKVXPVqELBIlsmSPhhSzUpXg3TZAg13Ga3JOUerSfAqK4UQ==)
-    url: ENC(71M9V6VbtB6S0i/S/HcxPmy/TTiqAsrY)
+    driver-class-name: org.postgresql.Driver
+    url: ENC(ahw18zDs3VK5yHnlD63tdEGLsuc+1nVGxgSPn/nAKVXPVqELBIlsmSPhhSzUpXg3TZAg13Ga3JOUerSfAqK4UQ==)
     username: ENC(71M9V6VbtB6S0i/S/HcxPmy/TTiqAsrY)
     password: ENC(zJWvcj62mjMzbiFJEacMGw==)
     hikari:

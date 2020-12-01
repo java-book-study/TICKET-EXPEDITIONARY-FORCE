@@ -74,10 +74,11 @@ public class FestivalControllerTest {
                 .build();
 
         //then
-        mockMvc.perform(post(API_MANAGER_URL + "/generate/"+2)
+        mockMvc.perform(post(API_MANAGER_URL + "/generate/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createDto))
                 .with(csrf()))
+                .andExpect(jsonPath("code").value("VALIDATION_ERROR"))
                 .andDo(print())
             ;
     }
@@ -93,7 +94,7 @@ public class FestivalControllerTest {
                 .festivalCategory(FestivalCategory.ROCK.toString())
                 .build();
 
-        mockMvc.perform(post(API_MANAGER_URL + "/generate/"+2)
+        mockMvc.perform(post(API_MANAGER_URL + "/generate/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createDto))
                 .with(csrf()))
