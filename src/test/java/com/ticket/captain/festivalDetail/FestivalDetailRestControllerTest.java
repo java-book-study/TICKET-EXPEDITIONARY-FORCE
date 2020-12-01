@@ -15,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -103,7 +104,7 @@ public class FestivalDetailRestControllerTest {
 
     @Test
     @Order(3)
-    @WithMockUser(value = "mock-manager", roles = "MANAGER")
+    @WithMockUser(value = "mock-manager", username = "kangsy763", roles = "MANAGER")
     @DisplayName("FestivalDetail Update 테스트")
     public void updateTest() throws Exception{
         //given
@@ -127,16 +128,16 @@ public class FestivalDetailRestControllerTest {
         ;
     }
 
-    @Test
-    @Order(4)
-    @WithMockUser(value = "mock-manager", roles = "MANAGER")
-    @DisplayName("FestivalDetail Delete 테스트")
-    public void deleteTest() throws Exception{
-        //given
-        mockMvc.perform(delete(API_MANAGER_URL + "/delete/" + 2)
-                .with(csrf()))
-                .andExpect(status().is(200))
-                .andDo(print());
-    }
+//    @Test
+//    @Order(4)
+//    @WithMockUser(value = "mock-manager", roles = "MANAGER")
+//    @DisplayName("FestivalDetail Delete 테스트")
+//    public void deleteTest() throws Exception{
+//        //given
+//        mockMvc.perform(delete(API_MANAGER_URL + "/delete/" + 2)
+//                .with(csrf()))
+//                .andExpect(status().is(200))
+//                .andDo(print());
+//    }
 
 }

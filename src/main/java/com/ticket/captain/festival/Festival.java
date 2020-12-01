@@ -2,12 +2,17 @@ package com.ticket.captain.festival;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.ticket.captain.common.BaseEntity;
 import com.ticket.captain.festivalDetail.FestivalDetail;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -17,7 +22,7 @@ import java.util.Set;
 
 @Entity
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Festival {
+public class Festival extends BaseEntity{
 
     @Id
     @GeneratedValue
@@ -38,19 +43,6 @@ public class Festival {
 
     @Column(name = "sales_end_date")
     private LocalDateTime salesEndDate;
-
-    @CreationTimestamp
-    @Column(name = "create_date")
-    private LocalDateTime createDate;
-
-    @Column(name = "create_id")
-    private Long createId;
-
-    @Column(name = "modify_date")
-    private LocalDateTime modifyDate;
-
-    @Column(name = "modify_id")
-    private Long modifyId;
 
     @JsonIgnore
     @OneToMany(mappedBy = "festival", cascade = CascadeType.ALL)

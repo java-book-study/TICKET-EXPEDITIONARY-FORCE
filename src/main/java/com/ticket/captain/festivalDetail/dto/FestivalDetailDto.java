@@ -27,11 +27,11 @@ public class FestivalDetailDto {
 
     private LocalDateTime createDate;
 
-    private Long createId;
+    private String createId;
 
     private LocalDateTime modifyDate;
 
-    private Long modifyId;
+    private String modifyId;
 
     @JsonIgnore
     private Festival festival;
@@ -40,7 +40,7 @@ public class FestivalDetailDto {
     private FestivalDetailDto(Long id, String salesType, Long amount, Long price,
                               LocalDateTime processDate, LocalDateTime drawDate,
                               LocalDateTime createDate, LocalDateTime modifyDate,
-                              Long createId, Long modifyId, Festival festival) {
+                              String createId, String modifyId, Festival festival) {
         this.id = id;
         this.salesType = salesType;
         this.amount = amount;
