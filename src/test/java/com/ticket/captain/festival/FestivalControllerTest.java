@@ -5,6 +5,7 @@ import com.ticket.captain.enumType.FestivalCategory;
 import com.ticket.captain.festival.dto.FestivalCreateDto;
 import com.ticket.captain.festival.dto.FestivalDto;
 import com.ticket.captain.festival.dto.FestivalUpdateDto;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -29,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@Slf4j
 public class FestivalControllerTest {
 
     @Autowired
@@ -56,6 +58,7 @@ public class FestivalControllerTest {
 
         FestivalDto festivalDto = festivalService.add(createDto);
         festival = festivalService.findByTitle(festivalDto.getTitle());
+        log.info("beforeEach end");
     }
 
     @WithMockUser(value = "mock-manager", roles = "MANAGER")
@@ -71,12 +74,10 @@ public class FestivalControllerTest {
                 .build();
 
         //then
-        mockMvc.perform(post(API_MANAGER_URL + "/generate/")
+        mockMvc.perform(post(API_MANAGER_URL + "/generate/"+2)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createDto))
                 .with(csrf()))
-                .andExpect(result ->
-                        assertThat(getApiResultExceptionClass(result)).isEqualTo(NestedServletException.class))
                 .andDo(print())
             ;
     }
@@ -92,7 +93,7 @@ public class FestivalControllerTest {
                 .festivalCategory(FestivalCategory.ROCK.toString())
                 .build();
 
-        mockMvc.perform(post(API_MANAGER_URL + "/generate/")
+        mockMvc.perform(post(API_MANAGER_URL + "/generate/"+2)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createDto))
                 .with(csrf()))
@@ -174,7 +175,9 @@ public class FestivalControllerTest {
 
     @AfterEach
     void afterAll() {
+        log.info("afterAll started");
         festivalService.delete(festival.getId());
+        log.info("afterAll ended");
     }
 
     private Class<? extends Exception> getApiResultExceptionClass(MvcResult result) {

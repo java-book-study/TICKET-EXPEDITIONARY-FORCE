@@ -1,11 +1,13 @@
 package com.ticket.captain.festival;
 
 import com.ticket.captain.common.ErrorsResource;
+import com.ticket.captain.exception.ExceptionDto;
 import com.ticket.captain.exception.NotFoundException;
 import com.ticket.captain.festival.dto.FestivalCreateDto;
 import com.ticket.captain.festival.dto.FestivalDto;
 import com.ticket.captain.festival.dto.FestivalUpdateDto;
 import com.ticket.captain.festival.validator.FestivalCreateValidator;
+import com.ticket.captain.response.ApiResponseCode;
 import com.ticket.captain.response.ApiResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +26,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/manager/festival", produces = MediaTypes.HAL_JSON_VALUE)
+@RequestMapping(value = "/api/manager/festival")
 @Slf4j
 public class FestivalManagerController {
 
@@ -36,12 +38,14 @@ public class FestivalManagerController {
         binder.addValidators(validator);
     }
 
-    @PostMapping("generate")
-    public ApiResponseDto<FestivalDto> generate(@Valid @RequestBody FestivalCreateDto festivalCreateDto,
+    @PostMapping("generate/{test}")
+    public ApiResponseDto generate(@PathVariable int test,
+                                                @Valid @RequestBody FestivalCreateDto festivalCreateDto,
                                                 Errors errors) {
         if (errors.hasErrors()) {
             String field = errors.getFieldError().getDefaultMessage();
-            throw new IllegalArgumentException(field);
+            ExceptionDto exceptionDto = ExceptionDto.builder().message(field).build();
+            return ApiResponseDto.createOK(exceptionDto);
         }
         return ApiResponseDto.createOK(festivalService.add(festivalCreateDto));
     }
@@ -64,7 +68,7 @@ public class FestivalManagerController {
 
     @PutMapping("update/{festivalId}")
     public ApiResponseDto<FestivalDto> update(@PathVariable Long festivalId,
-                                              @RequestBody @Valid FestivalUpdateDto festivalUpdateDto) {
+                                              @Valid @RequestBody FestivalUpdateDto festivalUpdateDto) {
         return ApiResponseDto.createOK(festivalService.update(festivalId, festivalUpdateDto));
     }
 

@@ -17,7 +17,7 @@ public class FestivalCreateValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return clazz.isAssignableFrom(FestivalCreateDto.class);
+        return clazz.isAssignableFrom(clazz);
     }
 
     @Override
