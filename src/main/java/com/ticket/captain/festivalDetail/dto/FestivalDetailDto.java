@@ -1,13 +1,12 @@
 package com.ticket.captain.festivalDetail.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ticket.captain.festival.Festival;
 import com.ticket.captain.festivalDetail.FestivalDetail;
-import com.ticket.captain.salesType.SalesType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Getter
@@ -16,61 +15,59 @@ public class FestivalDetailDto {
 
     private Long id;
 
-    @NotBlank
-    private LocalDateTime processDate;
+    private String salesType;
 
-    @NotBlank
     private Long amount;
 
-    @NotBlank
     private Long price;
 
-    @NotBlank
+    private LocalDateTime processDate;
+
     private LocalDateTime drawDate;
 
-    @NotBlank
     private LocalDateTime createDate;
 
-    @NotBlank
     private Long createId;
 
     private LocalDateTime modifyDate;
 
     private Long modifyId;
 
+    @JsonIgnore
     private Festival festival;
 
-    private SalesType salesType;
-
     @Builder
-    private FestivalDetailDto(Long id, @NotBlank LocalDateTime processDate, @NotBlank Long amount, @NotBlank Long price, @NotBlank LocalDateTime drawDate, @NotBlank LocalDateTime createDate, @NotBlank Long createId, LocalDateTime modifyDate, Long modifyId, Festival festival, SalesType salesType) {
+    private FestivalDetailDto(Long id, String salesType, Long amount, Long price,
+                              LocalDateTime processDate, LocalDateTime drawDate,
+                              LocalDateTime createDate, LocalDateTime modifyDate,
+                              Long createId, Long modifyId, Festival festival) {
         this.id = id;
-        this.processDate = processDate;
+        this.salesType = salesType;
         this.amount = amount;
         this.price = price;
+        this.processDate = processDate;
         this.drawDate = drawDate;
         this.createDate = createDate;
-        this.createId = createId;
         this.modifyDate = modifyDate;
+        this.createId = createId;
         this.modifyId = modifyId;
         this.festival = festival;
-        this.salesType = salesType;
     }
 
     public static FestivalDetailDto of(FestivalDetail festivalDetail) {
 
         return FestivalDetailDto.builder()
                 .id(festivalDetail.getId())
-                .processDate(festivalDetail.getProcessDate())
+                .salesType(festivalDetail.getSalesType())
                 .amount(festivalDetail.getAmount())
                 .price(festivalDetail.getPrice())
+                .processDate(festivalDetail.getProcessDate())
                 .drawDate(festivalDetail.getDrawDate())
                 .createDate(festivalDetail.getCreateDate())
-                .createId(festivalDetail.getCreateId())
                 .modifyDate(festivalDetail.getModifyDate())
+                .createId(festivalDetail.getCreateId())
                 .modifyId(festivalDetail.getModifyId())
                 .festival(festivalDetail.getFestival())
-                .salesType(festivalDetail.getSalesType())
                 .build();
     }
 }

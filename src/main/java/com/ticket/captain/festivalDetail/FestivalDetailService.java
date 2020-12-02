@@ -6,6 +6,7 @@ import com.ticket.captain.festivalDetail.dto.FestivalDetailDto;
 import com.ticket.captain.festivalDetail.dto.FestivalDetailUpdateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,16 +21,12 @@ public class FestivalDetailService {
     private final FestivalDetailRepository festivalDetailRepository;
 
     public FestivalDetailDto add(FestivalDetailCreateDto festivalDetailCreateDto) {
-        FestivalDetail festivalDetail = festivalDetailCreateDto.toEntity();
-        return FestivalDetailDto.of(festivalDetailRepository.save(festivalDetail));
+        return FestivalDetailDto.of(festivalDetailRepository.save(festivalDetailCreateDto.toEntity()));
     }
 
     @Transactional(readOnly = true)
-    public List<FestivalDetailDto> findAll(int offset, int limit) {
-
-        PageRequest pageRequest = PageRequest.of(offset, limit);
-
-        return festivalDetailRepository.findAll(pageRequest).stream()
+    public List<FestivalDetailDto> findAll(Pageable pageable) {
+        return festivalDetailRepository.findAll(pageable).stream()
                 .map(FestivalDetailDto::of)
                 .collect(Collectors.toList());
     }

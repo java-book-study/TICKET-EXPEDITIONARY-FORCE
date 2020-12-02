@@ -35,7 +35,7 @@ public class Order {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<Ticket> tickets;
 
     private String statusCode;
@@ -54,6 +54,17 @@ public class Order {
      */
     //private Discount discountRate
 
+    public static Order createOrder(String orderNo, Long festivalId, FestivalDetail festivalDetail,
+                                    Account account, String statusCode) {
+        return Order.builder()
+                .orderNo(orderNo)
+                .festivalId(festivalId)
+                .festivalDetail(festivalDetail)
+                .account(account)
+                .statusCode(statusCode)
+                .build();
+    }
+
     @Builder
     private Order (String orderNo, Long festivalId, FestivalDetail festivalDetail,
                               Account account, String statusCode){
@@ -65,6 +76,7 @@ public class Order {
     }
 
     public void addTicket(Ticket ticket) {
+        this.tickets = new ArrayList<>();
         this.tickets.add(ticket);
 
     }

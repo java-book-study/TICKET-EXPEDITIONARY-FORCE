@@ -17,8 +17,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping("/createOrder/{festival_sq}")
-    public ApiResponseDto<OrderDto> createOrder(@PathVariable Long festival_sq, @AuthenticationPrincipal User user){
-        String userEmail = user.getUsername();
-        return ApiResponseDto.createOK(orderService.createOrder(festival_sq, userEmail));
+    public ApiResponseDto<OrderDto> createOrder(@PathVariable Long festivalDetailId, @AuthenticationPrincipal User user){
+        return ApiResponseDto.createOK(orderService.createOrder(festivalDetailId, user.getUsername()));
     }
 }
