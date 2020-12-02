@@ -27,7 +27,7 @@ public class FestivalDetailService {
         FestivalDetail festivalDetail = festivalDetailCreateDto.toEntity();
         Festival findFestival = festivalRepository.findById(festivalId).orElseThrow(NotFoundException::new);
         festivalDetail.setFestival(findFestival);
-        return FestivalDetailDto.of(festivalDetailRepository.save(festivalDetailCreateDto.toEntity()));
+        return FestivalDetailDto.of(festivalDetailRepository.save(festivalDetail));
     }
 
     @Transactional(readOnly = true)
