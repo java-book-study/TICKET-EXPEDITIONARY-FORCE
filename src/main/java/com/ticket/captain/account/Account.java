@@ -2,6 +2,7 @@ package com.ticket.captain.account;
 
 import com.ticket.captain.account.dto.AccountUpdateDto;
 import com.ticket.captain.common.Address;
+import com.ticket.captain.common.BaseEntity;
 import com.ticket.captain.order.Order;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -18,7 +19,7 @@ import java.util.UUID;
 @EqualsAndHashCode(of = "id")
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Account {
+public class Account extends BaseEntity {
 
     @Id
     @GeneratedValue
@@ -53,14 +54,6 @@ public class Account {
 
     private LocalDateTime emailCheckTokenGenDate;
 
-    @CreationTimestamp
-    private LocalDateTime createDate;
-
-    @UpdateTimestamp
-    private LocalDateTime modifyDate;
-
-    private Long modifyId;
-
     public void setPassword(String password) {
         this.password = password;
     }
@@ -71,10 +64,6 @@ public class Account {
 
     public boolean isValidToken(String token) {
         return this.emailCheckToken.equals(token);
-    }
-
-    public void completeSignUp() {
-        this.createDate = LocalDateTime.now();
     }
 
     public long update(AccountUpdateDto updateRequestDto){

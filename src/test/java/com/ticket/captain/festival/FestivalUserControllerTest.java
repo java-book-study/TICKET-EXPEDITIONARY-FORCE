@@ -1,6 +1,7 @@
 package com.ticket.captain.festival;
 
 
+import com.ticket.captain.enumType.FestivalCategory;
 import com.ticket.captain.festival.dto.FestivalCreateDto;
 import com.ticket.captain.festival.dto.FestivalDto;
 import org.junit.jupiter.api.*;
@@ -22,7 +23,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Transactional
 public class FestivalUserControllerTest {
 
@@ -51,7 +51,6 @@ public class FestivalUserControllerTest {
     }
 
     @Test
-    @Order(1)
     @WithMockUser(value = "mock-user", roles = "USER")
     void festivalInfo() throws Exception {
         mockMvc.perform(get(API_ACCOUNT_URL + "/info/" + festival.getId())
@@ -62,7 +61,6 @@ public class FestivalUserControllerTest {
     }
 
     @Test
-    @Order(2)
     @WithMockUser(value = "mock-user", roles = "USER")
     void festivals() throws Exception {
         mockMvc.perform(get(API_ACCOUNT_URL +"/festivals")

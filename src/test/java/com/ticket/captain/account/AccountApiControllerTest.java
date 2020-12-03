@@ -69,8 +69,6 @@ public class AccountApiControllerTest {
                 .email(ACCOUNT_EMAIL)
                 .name("test")
                 .password(passwordEncoder.encode("1111"))
-                .createDate(LocalDateTime.now())
-                .modifyDate(LocalDateTime.now())
                 .point(5000)
                 .address(address)
                 .build();

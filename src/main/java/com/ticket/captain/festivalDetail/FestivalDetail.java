@@ -1,5 +1,6 @@
 package com.ticket.captain.festivalDetail;
 
+import com.ticket.captain.common.BaseEntity;
 import com.ticket.captain.festival.Festival;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 
 @Entity(name = "festival_detail")
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class FestivalDetail {
+public class FestivalDetail extends BaseEntity {
 
     @Id
     @GeneratedValue
@@ -37,18 +38,6 @@ public class FestivalDetail {
     @Column(name = "draw_date")
     private LocalDateTime drawDate;
 
-    @Column(name = "create_date")
-    private LocalDateTime createDate;
-
-    @Column(name = "create_id")
-    private Long createId;
-
-    @Column(name = "modify_date")
-    private LocalDateTime modifyDate;
-
-    @Column(name = "modify_id")
-    private Long modifyId;
-
     @Builder
     public FestivalDetail(String salesType,Long amount, Long price,
                           LocalDateTime processDate, LocalDateTime drawDate, Festival festival) {
@@ -68,5 +57,10 @@ public class FestivalDetail {
         this.salesType = salesType;
         this.processDate = processDate;
         this.drawDate = drawDate;
+    }
+
+    public void setFestival(Festival festival) {
+        this.festival = festival;
+        festival.getFestival_details().add(this);
     }
 }

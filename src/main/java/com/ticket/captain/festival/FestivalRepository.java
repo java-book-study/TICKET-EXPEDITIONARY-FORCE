@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 
-@Transactional(readOnly = true)
+@Transactional
 public interface FestivalRepository extends JpaRepository<Festival, Long> {
 
     @Override

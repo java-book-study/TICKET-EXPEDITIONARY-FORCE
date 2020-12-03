@@ -17,9 +17,10 @@ public class FestivalDetailRestController {
 
     private final FestivalDetailService festivalDetailService;
 
-    @PostMapping("generate")
-    public ApiResponseDto<FestivalDetailDto> generate(@RequestBody FestivalDetailCreateDto festivalDetailCreateDto) {
-        return ApiResponseDto.createOK(festivalDetailService.add(festivalDetailCreateDto));
+    @PostMapping("generate/{festivalId}")
+    public ApiResponseDto<FestivalDetailDto> generate(@PathVariable Long festivalId,
+                                                      @RequestBody FestivalDetailCreateDto festivalDetailCreateDto) {
+        return ApiResponseDto.createOK(festivalDetailService.add(festivalId, festivalDetailCreateDto));
     }
 
     @GetMapping("festivalDetails")

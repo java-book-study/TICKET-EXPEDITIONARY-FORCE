@@ -1,6 +1,6 @@
 package com.ticket.captain.ticket.dto;
 
-import com.ticket.captain.order.StatusCode;
+import com.ticket.captain.enumType.StatusCode;
 import com.ticket.captain.ticket.Ticket;
 import lombok.AccessLevel;
 import lombok.Builder;

@@ -26,18 +26,14 @@ public class FestivalDetailCreateDto {
 
     private LocalDateTime drawDate;
 
-    private Festival festival;
-
-
     @Builder
-    private FestivalDetailCreateDto(String salesType, Long amount, Long price, Festival festival,
+    private FestivalDetailCreateDto(String salesType, Long amount, Long price,
                                     LocalDateTime drawDate,LocalDateTime processDate) {
         this.salesType = salesType;
         this.amount = amount;
         this.price = price;
         this.processDate = processDate;
         this.drawDate = drawDate;
-        this.festival = festival;
     }
 
     public FestivalDetail toEntity() {
@@ -48,7 +44,6 @@ public class FestivalDetailCreateDto {
                 .price(price)
                 .drawDate(drawDate)
                 .processDate(processDate)
-                .festival(festival)
                 .build();
     }
 }

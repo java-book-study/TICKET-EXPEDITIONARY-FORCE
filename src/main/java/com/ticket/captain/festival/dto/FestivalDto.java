@@ -28,21 +28,21 @@ public class FestivalDto {
 
     private LocalDateTime salesEndDate;
 
-    private Long createId;
+    private String createId;
 
     private LocalDateTime createDate;
 
     private LocalDateTime modifyDate;
 
-    private Long modifyId;
+    private String modifyId;
 
     private String festivalCategory;
 
     @Builder
     private FestivalDto(Long id, String title, String thumbnail, String content,
                         LocalDateTime salesStartDate, LocalDateTime salesEndDate,
-                        Long createId, LocalDateTime createDate,
-                        LocalDateTime modifyDate, Long modifyId, String festivalCategory) {
+                        String createId, LocalDateTime createDate,
+                        LocalDateTime modifyDate, String modifyId, String festivalCategory) {
         this.id = id;
         this.title = title;
         this.thumbnail = thumbnail;
