@@ -22,6 +22,6 @@ public class TicketUpdateDto {
     }
 
     public void apply(Ticket ticket) {
-        ticket.update(statusCode);
+        ticket.update(ticket.getStatusCode());
     }
 }
