@@ -35,7 +35,7 @@ public class TicketController {
 
     @PutMapping("/{ticketId}")
     public ApiResponseDto<TicketDto> ticketUpdate(@PathVariable("ticketId") Long ticketId,
-                                                  @Valid TicketUpdateDto ticketUpdateDto) {
+                                                  @Valid @RequestBody TicketUpdateDto ticketUpdateDto) {
         return ApiResponseDto.createOK(ticketService.update(ticketId, ticketUpdateDto.toDto()));
     }
 

@@ -51,7 +51,6 @@ public class TicketDto {
         return TicketDto.builder()
                 .ticketId(ticket.getId())
                 .ticketNo(ticket.getTicketNo())
-                .orderId(ticket.getOrder().getId())
                 .festivalDetailId(ticket.getFestivalDetail().getId())
                 .statusCode(ticket.getStatusCode())
                 .price(ticket.getPrice())

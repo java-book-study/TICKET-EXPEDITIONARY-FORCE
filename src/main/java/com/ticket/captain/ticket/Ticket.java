@@ -30,6 +30,7 @@ public class Ticket extends BaseEntity {
     @Column(nullable = false)
     private String ticketNo;
 
+    @Column(name = "status_id")
     private String statusCode;
 
     @Column(nullable = false)

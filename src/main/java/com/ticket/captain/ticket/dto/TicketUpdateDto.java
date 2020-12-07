@@ -4,14 +4,16 @@ import com.ticket.captain.enumType.StatusCode;
 import com.ticket.captain.ticket.Ticket;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TicketUpdateDto {
-    private StatusCode statusCode;
+    private String statusCode;
 
     @Builder
-    private TicketUpdateDto(StatusCode statusCode) {
+    private TicketUpdateDto(String statusCode) {
         this.statusCode = statusCode;
     }
 
@@ -22,6 +24,6 @@ public class TicketUpdateDto {
     }
 
     public void apply(Ticket ticket) {
-        ticket.update(ticket.getStatusCode());
+        ticket.update(statusCode);
     }
 }
