@@ -18,12 +18,17 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 
+import static com.ticket.captain.document.utils.ApiDocumentUtils.getDocumentRequest;
+import static com.ticket.captain.document.utils.ApiDocumentUtils.getDocumentResponse;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -103,8 +108,8 @@ public class TicketControllerTest {
 //                                fieldWithPath("festivalDetailId").type(JsonFieldType.NUMBER).description("축제 디테일 ID"),
 //                                fieldWithPath("statusCode").type(JsonFieldType.STRING).description("주문상태코드"),
 //                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("티켓가격"),
-//                                fieldWithPath("createdDate").type(JsonFieldType.NUMBER).description("생성일자"),
-//                                fieldWithPath("createdId").type(JsonFieldType.NUMBER).description("생성인"),
+//                                fieldWithPath("createDate").type(JsonFieldType.NUMBER).description("생성일자"),
+//                                fieldWithPath("createId").type(JsonFieldType.NUMBER).description("생성인"),
 //                                fieldWithPath("modifyDate").type(JsonFieldType.NUMBER).description("수정일자"),
 //                                fieldWithPath("modifyId").type(JsonFieldType.NUMBER).description("수정인")
 //                        )
