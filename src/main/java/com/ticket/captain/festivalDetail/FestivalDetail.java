@@ -23,7 +23,7 @@ public class FestivalDetail extends BaseEntity {
     @JoinColumn(name = "festival_id")
     private Festival festival;
 
-    @Column(name = "sales_type")
+    @Column(name = "sales_type_id")
     String salesType;
 
     @Column(name = "ticket_amount")
@@ -32,7 +32,7 @@ public class FestivalDetail extends BaseEntity {
     @Column(name = "ticket_price")
     private Long price;
 
-    @Column(name = "perform_datetime")
+    @Column(name = "perform_date")
     private LocalDateTime processDate;
 
     @Column(name = "draw_date")

@@ -49,7 +49,7 @@ public class Festival extends BaseEntity{
     @OrderBy("id desc")
     private Set<FestivalDetail> festival_details = new HashSet<>();
 
-    @Column(name = "festival_category")
+    @Column(name = "category_id")
     private String festivalCategory;
 
     public static Festival createFestival(String title, String thumbnail, String content, LocalDateTime salesStartDate, LocalDateTime salesEndDate, String festivalCategory) {
