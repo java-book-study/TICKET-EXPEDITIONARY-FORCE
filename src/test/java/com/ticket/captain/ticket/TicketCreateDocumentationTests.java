@@ -1,28 +1,40 @@
-//package com.ticket.captain.ticket;
-//
-//import com.ticket.captain.ApiDocumentationTest;
-//import com.ticket.captain.ticket.dto.TicketCreateDto;
-//import com.ticket.captain.ticket.dto.TicketDto;
-//import lombok.AccessLevel;
-//import lombok.Getter;
-//import lombok.NoArgsConstructor;
-//import org.junit.Test;
-//import org.junit.jupiter.api.DisplayName;
-//import org.springframework.http.MediaType;
-//import org.springframework.restdocs.payload.JsonFieldType;
-//import org.springframework.security.test.context.support.WithMockUser;
-//import org.springframework.test.web.servlet.ResultActions;
-//
-//import static com.ticket.captain.document.utils.ApiDocumentUtils.getDocumentRequest;
-//import static com.ticket.captain.document.utils.ApiDocumentUtils.getDocumentResponse;
-//import static org.mockito.ArgumentMatchers.any;
-//import static org.mockito.BDDMockito.given;
-//import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-//import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-//import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-//
+package com.ticket.captain.ticket;
+
+import com.ticket.captain.ApiDocumentationTest;
+import com.ticket.captain.enumType.FestivalCategory;
+import com.ticket.captain.enumType.SalesType;
+import com.ticket.captain.enumType.StatusCode;
+import com.ticket.captain.festival.FestivalService;
+import com.ticket.captain.festival.dto.FestivalCreateDto;
+import com.ticket.captain.festival.dto.FestivalDto;
+import com.ticket.captain.festivalDetail.FestivalDetailService;
+import com.ticket.captain.festivalDetail.dto.FestivalDetailCreateDto;
+import com.ticket.captain.festivalDetail.dto.FestivalDetailDto;
+import com.ticket.captain.ticket.dto.TicketCreateDto;
+import com.ticket.captain.ticket.dto.TicketDto;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.ResultActions;
+
+import java.time.LocalDateTime;
+
+import static com.ticket.captain.document.utils.ApiDocumentUtils.getDocumentRequest;
+import static com.ticket.captain.document.utils.ApiDocumentUtils.getDocumentResponse;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 //public class TicketCreateDocumentationTests extends ApiDocumentationTest {
 //
 //    @Test
