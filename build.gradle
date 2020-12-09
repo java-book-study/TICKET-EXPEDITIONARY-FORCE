@@ -4,7 +4,7 @@ plugins {
     id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
     id 'java'
 
-    id'org.asciidoctor.convert' version '1.5.8'
+    id 'org.asciidoctor.convert' version '1.5.8'
 }
 
 group = 'com.ticket'

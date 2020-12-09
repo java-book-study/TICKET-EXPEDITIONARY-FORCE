@@ -1,23 +1,23 @@
 spring:
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:tcp://localhost/~/captain
-    username: sa
-    password:
+    driver-class-name: org.postgresql.Driver
+    url: ENC(L25WvmgFeXMISd0eGfmGprAZwPXfjudFOnGnX5C4JTSsRnJwkAqz4l44PiS9xz82lvRfBenSr2d2DXJgMEgZIg==)
+    username: ENC(71M9V6VbtB6S0i/S/HcxPmy/TTiqAsrY)
+    password: ENC(zJWvcj62mjMzbiFJEacMGw==)
     hikari:
-#      schema: ticket
+      schema: ENC(C+zieUA6YJjngYOmMYzJvA==)
 
   profiles:
     active: local
 
   jpa:
-    hibernate:
-      ddl-auto: none
     properties:
       hibernate:
-        #show_sql: true
         format_sql: true
-        use_sql_comments: true
+        #        use_sql_comments: true
+        type:
+          descriptor:
+            sql: trace
 
   data:
     web:
@@ -41,5 +41,4 @@ logging.level:
   root: info
   org.hibernate.SQL: debug
   org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-  #org.hibernate.type: trace
 
