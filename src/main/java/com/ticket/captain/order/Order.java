@@ -38,6 +38,7 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<Ticket> tickets;
 
+    @Column(name = "status_id")
     private String statusCode;
 
     @CreatedDate
