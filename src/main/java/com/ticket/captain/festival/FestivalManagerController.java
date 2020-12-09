@@ -38,7 +38,7 @@ public class FestivalManagerController {
         binder.addValidators(validator);
     }
 
-    @PostMapping("generate")
+    @PostMapping
     public ApiResponseDto generate(@Valid @RequestBody FestivalCreateDto festivalCreateDto, Errors errors) {
         if (errors.hasErrors()) {
             String field = errors.getFieldError().getDefaultMessage();
@@ -51,7 +51,7 @@ public class FestivalManagerController {
     /*
     FestivalUserController의 festivals 메서드와 동일함
      */
-    @GetMapping("festivals")
+    @GetMapping
     public ApiResponseDto<List<FestivalDto>> festivals(Pageable pageable) {
         return ApiResponseDto.createOK(festivalService.findAll(pageable));
     }
@@ -59,12 +59,12 @@ public class FestivalManagerController {
     /*
     FestivalUserController의 info 메서드와 동일함
      */
-    @GetMapping("info/{festivalId}")
+    @GetMapping("/{festivalId}")
     public ApiResponseDto<FestivalDto> info(@PathVariable Long festivalId) {
         return ApiResponseDto.createOK(festivalService.findById(festivalId));
     }
 
-    @PutMapping("update/{festivalId}")
+    @PutMapping("/{festivalId}")
     public ApiResponseDto update(@PathVariable Long festivalId,
                                               @Valid @RequestBody FestivalUpdateDto festivalUpdateDto,
                                               Errors errors) {
@@ -76,7 +76,7 @@ public class FestivalManagerController {
         return ApiResponseDto.createOK(festivalService.update(festivalId, festivalUpdateDto));
     }
 
-    @DeleteMapping("delete/{festivalId}")
+    @DeleteMapping("/{festivalId}")
     public ApiResponseDto<String> delete(@PathVariable Long festivalId) {
         festivalService.delete(festivalId);
         return ApiResponseDto.DEFAULT_OK;
