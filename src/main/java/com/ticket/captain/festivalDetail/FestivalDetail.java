@@ -2,6 +2,7 @@ package com.ticket.captain.festivalDetail;
 
 import com.ticket.captain.common.BaseEntity;
 import com.ticket.captain.festival.Festival;
+import com.ticket.captain.scrap.Scrap;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,6 +38,10 @@ public class FestivalDetail extends BaseEntity {
 
     @Column(name = "draw_date")
     private LocalDateTime drawDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "scrap_id")
+    private Scrap scrap;
 
     @Builder
     public FestivalDetail(String salesType,Long amount, Long price,

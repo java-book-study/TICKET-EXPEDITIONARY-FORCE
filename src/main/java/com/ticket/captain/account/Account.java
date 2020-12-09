@@ -4,9 +4,8 @@ import com.ticket.captain.account.dto.AccountUpdateDto;
 import com.ticket.captain.common.Address;
 import com.ticket.captain.common.BaseEntity;
 import com.ticket.captain.order.Order;
+import com.ticket.captain.scrap.Scrap;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -53,6 +52,9 @@ public class Account extends BaseEntity {
     private String emailCheckToken;
 
     private LocalDateTime emailCheckTokenGenDate;
+
+    @OneToMany
+    private List<Scrap> scrap;
 
     public void setPassword(String password) {
         this.password = password;
