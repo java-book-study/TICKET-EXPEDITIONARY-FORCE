@@ -18,12 +18,12 @@ public class FestivalUserController {
 
     private final FestivalService festivalService;
 
-    @GetMapping("festivals")
+    @GetMapping
     public ApiResponseDto<List<FestivalDto>> festivals(Pageable pageable) {
         return ApiResponseDto.createOK(festivalService.findAll(pageable));
     }
 
-    @GetMapping("info/{festivalId}")
+    @GetMapping("/{festivalId}")
     public ApiResponseDto<FestivalDto> info(@PathVariable Long festivalId) {
         return ApiResponseDto.createOK(festivalService.findById(festivalId));
     }
