@@ -43,7 +43,6 @@ public class AccountApiController {
 
     @GetMapping("{id}")
     public ResponseEntity<?> accountDetail(@PathVariable Long id){
-
         AccountDto result = accountService.findAccountDetail(id);
         EntityModel<AccountDto> accountDtoModel = AccountResource.of(result);
         accountDtoModel.add(Link.of("/docs/index.html#get-account").withRel("profile"));

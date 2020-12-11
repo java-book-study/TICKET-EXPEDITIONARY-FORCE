@@ -2,17 +2,23 @@ package com.ticket.captain.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ticket.captain.account.dto.AccountCreateDto;
+import com.ticket.captain.account.dto.AccountDto;
+import com.ticket.captain.common.Address;
+import com.ticket.captain.exception.UnauthorizedException;
 import com.ticket.captain.mail.EmailMessage;
 import com.ticket.captain.mail.EmailService;
 import com.ticket.captain.response.ApiResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +35,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-// TODO: 단위 테스트로 바꾸기
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
@@ -55,8 +60,7 @@ class AccountSignupControllerTest {
         MvcResult mvcResult = mockMvc.perform(post("/api/sign-up")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                .content(new ObjectMapper().writeValueAsString(accountCreateDto))
-                .with(csrf()))
+                .content(new ObjectMapper().writeValueAsString(accountCreateDto)))
                 .andDo(print())
                 .andReturn();
 
@@ -71,24 +75,22 @@ class AccountSignupControllerTest {
     @DisplayName("회원가입 - 입력값 오류")
     @Test
     public void createAccount_wrong_input() throws Exception {
+        Address address = new Address("seoul", "gangnam", "111");
+
         AccountCreateDto accountCreateDto = AccountCreateDto.builder()
                 .email("email..")
                 .name("sonnie")
                 .password("111")
                 .nickname("eeee")
+                .address(address)
                 .build();
 
-        MvcResult mvcResult = mockMvc.perform(post("/api/sign-up/")
+        mockMvc.perform(post("/api/sign-up/")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                .content(new ObjectMapper().writeValueAsString(accountCreateDto))
-                .with(csrf()))
-                .andReturn();
-
-        String contentAsString = mvcResult.getResponse().getContentAsString();
-        ApiResponseDto<?> apiResponseDto = new ObjectMapper().readValue(contentAsString, ApiResponseDto.class);
-
-        assertEquals(400, apiResponseDto.getCode().getHttpStatus());
+                .content(new ObjectMapper().writeValueAsString(accountCreateDto)))
+                .andDo(print())
+                .andExpect(status().is(400));
     }
 
     @DisplayName("이미 가입되어있는 이메일로 가입 시 validate 처리가 잘 되는지")
@@ -96,16 +98,16 @@ class AccountSignupControllerTest {
     public void createAccount_sameEmail() throws Exception {
         //given
         AccountCreateDto accountCreateDto = accountCreateDtoSample();
-        accountService.createAccount(accountCreateDto);
+        accountSample();
         //then
-        AccountCreateDto accountCreateDto2 = accountCreateDtoSample();
+        AccountCreateDto accountCreateDto2 = accountCreateDto;
         //when&then
         mockMvc.perform(post("/api/sign-up")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                .content(new ObjectMapper().writeValueAsString(accountCreateDto2))
-                .with(csrf()))
-                .andDo(print());
+                .content(new ObjectMapper().writeValueAsString(accountCreateDto2)))
+                .andDo(print())
+                .andExpect(status().is(400));
     }
 
     @DisplayName("인증 메일 확인 - 입력값 정상")
@@ -113,9 +115,10 @@ class AccountSignupControllerTest {
     void checkEmailToken_success() throws Exception {
         Account newAccount = accountSample();
 
-        MvcResult mvcResult = mockMvc.perform(get("/api/sign-up/check-email-token")
+        MvcResult mvcResult = mockMvc.perform(get("/api/check-email-token")
                 .param("token", newAccount.getEmailCheckToken())
                 .param("email", newAccount.getEmail()))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(unauthenticated())
                 .andReturn();
@@ -132,28 +135,26 @@ class AccountSignupControllerTest {
     @Test
     void checkEmailToken_with_account_null() throws Exception {
 
-        AccountCreateDto accountCreateDto = accountCreateDtoSample();
-        Account account = accountService.createAccount(accountCreateDto);
+        Account account = accountSample();
 
-        MvcResult mvcResult = mockMvc.perform(get("/api/sign-up/check-email-token")
+        MvcResult mvcResult = mockMvc.perform(get("/api/check-email-token")
                 .param("token", account.getEmailCheckToken())
                 .param("email", "email@email.com"))
+                .andExpect(unauthenticated())
                 .andReturn();
 
         String contentAsString = mvcResult.getResponse().getContentAsString();
         ApiResponseDto<?> apiResponseDto = new ObjectMapper().readValue(contentAsString, ApiResponseDto.class);
 
-        assertEquals(404, apiResponseDto.getCode().getHttpStatus());
+        assertEquals(401, apiResponseDto.getCode().getHttpStatus());
     }
 
     @DisplayName("인증 메일 확인 - 토큰값 오류")
     @Test
     void checkEmailToken_with_wrong_input() throws Exception {
 
-        AccountCreateDto accountCreateDto = accountCreateDtoSample();
-        Account account = accountService.createAccount(accountCreateDto);
-
-        MvcResult mvcResult = mockMvc.perform(get("/api/sign-up/check-email-token")
+        Account account = accountSample();
+        MvcResult mvcResult = mockMvc.perform(get("/api/check-email-token")
                 .param("token", UUID.randomUUID().toString())
                 .param("email", account.getEmail()))
                 .andReturn();
@@ -161,35 +162,27 @@ class AccountSignupControllerTest {
         String contentAsString = mvcResult.getResponse().getContentAsString();
         ApiResponseDto<?> apiResponseDto = new ObjectMapper().readValue(contentAsString, ApiResponseDto.class);
 
-        assertEquals(400, apiResponseDto.getCode().getHttpStatus());
+        assertEquals(401, apiResponseDto.getCode().getHttpStatus());
     }
 
-    //TODO : 로그인 유지 되었는지,
-    // TODO : was 2대에 로그인 잘 되어있는지
-    @DisplayName("header에 로그인 token 저장 성공")
-    @Test
-    void check_login_token_in_Header_success() {
-
-    }
 
     private AccountCreateDto accountCreateDtoSample() {
+        Address address = new Address("seoul", "gangnam", "111");
+
         return AccountCreateDto.builder()
                 .email("modunaeggu@naver.com")
                 .password("1qaz2wsx")
                 .nickname("sonnie")
                 .name("sohyun")
+                .address(address)
                 .build();
     }
 
     private Account accountSample() {
-        Account account = Account.builder()
-                .email("sonnie@email.com")
-                .password("1qaz2wsx")
-                .nickname("sonnie")
-                .name("회의록")
-                .build();
-        Account newAccount = accountRepository.save(account);
-        newAccount.generateEmailCheckToken();
+
+        AccountCreateDto accountCreateDto = accountCreateDtoSample();
+        AccountDto accountDto = accountService.createAccount(accountCreateDto);
+        Account newAccount = accountService.findByEmail(accountDto.getEmail());
         return newAccount;
     }
 }

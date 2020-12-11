@@ -5,6 +5,7 @@ import com.ticket.captain.common.Address;
 import com.ticket.captain.common.BaseEntity;
 import com.ticket.captain.order.Order;
 import lombok.*;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -15,10 +16,9 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Builder @Getter
-@EqualsAndHashCode(of = "id")
+@Getter
+@EqualsAndHashCode(of = "id", callSuper = false)
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Account extends BaseEntity {
 
     @Id
@@ -27,7 +27,7 @@ public class Account extends BaseEntity {
     private Long id;
 
     @OneToMany(mappedBy = "account")
-    private List<Order> orders = new ArrayList<>();
+    private final List<Order> orders = new ArrayList<>();
 
     @Column(unique = true)
     private String email;
@@ -41,18 +41,35 @@ public class Account extends BaseEntity {
     private String nickname;
 
     @Builder.Default
-    private int point = 0;
+    private long point = 0;
 
     @Embedded
     private Address address;
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
-    private Role role = Role.ROLE_USER;
+    private Role role;
 
     private String emailCheckToken;
 
     private LocalDateTime emailCheckTokenGenDate;
+
+    @Builder
+    public Account(String email, String password, String profileImage, String name,
+                   String nickname, int point, Address address, Role role) {
+        this.email = email;
+        this.password = password;
+        this.profileImage = profileImage;
+        this.name = name;
+        this.nickname = nickname;
+        this.point = point;
+        this.address = address;
+        this.role = role;
+    }
+
+    public Account() {
+
+    }
 
     public void setPassword(String password) {
         this.password = password;
@@ -60,6 +77,7 @@ public class Account extends BaseEntity {
 
     public void generateEmailCheckToken() {
         this.emailCheckToken = UUID.randomUUID().toString();
+        this.emailCheckTokenGenDate = LocalDateTime.now();
     }
 
     public boolean isValidToken(String token) {
@@ -76,5 +94,26 @@ public class Account extends BaseEntity {
 
     public void addRole(Role role){
         this.role=role;
+    }
+
+    public void completeSignUp() {
+        this.role = Role.ROLE_USER;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("email", email)
+                .append("password", password)
+                .append("profileImage", profileImage)
+                .append("name", name)
+                .append("nickname", nickname)
+                .append("point", point)
+                .append("address", address)
+                .append("role", role)
+                .append("emailCheckToken", emailCheckToken)
+                .append("emailCheckTokenGenDate", emailCheckTokenGenDate)
+                .toString();
     }
 }

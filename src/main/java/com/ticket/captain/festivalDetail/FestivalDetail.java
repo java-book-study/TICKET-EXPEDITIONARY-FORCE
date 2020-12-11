@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity(name = "festival_detail")
@@ -23,23 +24,23 @@ public class FestivalDetail extends BaseEntity {
     @JoinColumn(name = "festival_id")
     private Festival festival;
 
-    @Column(name = "sales_type")
+    @Column(name = "sales_type_id")
     String salesType;
 
     @Column(name = "ticket_amount")
     private Long amount;
 
     @Column(name = "ticket_price")
-    private Long price;
+    private BigDecimal price;
 
-    @Column(name = "perform_datetime")
+    @Column(name = "perform_date")
     private LocalDateTime processDate;
 
     @Column(name = "draw_date")
     private LocalDateTime drawDate;
 
     @Builder
-    public FestivalDetail(String salesType,Long amount, Long price,
+    public FestivalDetail(String salesType,Long amount, BigDecimal price,
                           LocalDateTime processDate, LocalDateTime drawDate, Festival festival) {
         this.salesType = salesType;
         this.amount = amount;
@@ -50,7 +51,7 @@ public class FestivalDetail extends BaseEntity {
     }
 
 
-    public void update(String salesType,Long amount, Long price,
+    public void update(String salesType,Long amount, BigDecimal price,
                        LocalDateTime processDate, LocalDateTime drawDate) {
         this.amount = amount;
         this.price = price;

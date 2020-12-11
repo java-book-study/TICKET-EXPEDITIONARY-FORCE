@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -16,14 +17,14 @@ public class FestivalDetailUpdateDto {
 
     private Long amount;
 
-    private Long price;
+    private BigDecimal price;
 
     private LocalDateTime processDate;
 
     private LocalDateTime drawDate;
 
     @Builder
-    private FestivalDetailUpdateDto(String salesType, Long amount, Long price,
+    private FestivalDetailUpdateDto(String salesType, Long amount, BigDecimal price,
                                     LocalDateTime processDate, LocalDateTime drawDate) {
         this.salesType = salesType;
         this.amount = amount;

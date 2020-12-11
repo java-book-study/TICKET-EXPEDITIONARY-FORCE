@@ -2,10 +2,13 @@ package com.ticket.captain.account;
 
 import com.ticket.captain.account.dto.AccountErrorDto;
 import com.ticket.captain.exception.NotFoundException;
+import com.ticket.captain.exception.UnauthorizedException;
+import com.ticket.captain.response.ApiResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -25,6 +28,12 @@ public class AccountAdvice {
         EntityModel<AccountErrorDto> accountErrorDtoModel = AccountResource.of(accountErrorDto);
         accountErrorDtoModel.add(Link.of("/docs/index.html#not_found-account").withRel("profile"));
         return accountErrorDtoModel;
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+    public ApiResponseDto<?> handleServiceRuntimeException(RuntimeException e) {
+        return ApiResponseDto.UNAUTHORIZED(e);
     }
 
 }
