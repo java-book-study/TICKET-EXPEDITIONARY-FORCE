@@ -7,9 +7,11 @@ import com.ticket.captain.festivalDetail.FestivalDetail;
 import com.ticket.captain.festivalDetail.FestivalDetailRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ScrapService {
 
     private final ScrapRepository scrapRepository;
@@ -24,7 +26,7 @@ public class ScrapService {
                 .orElseThrow(NotFoundException::new);
         Account account = accountRepository.findById(accountId).orElseThrow(NotFoundException::new);
 
-        Scrap scrap = scrapRepository.save(ScrapRequestDto.toEntity(account, festivalDetail));
+        scrapRepository.save(ScrapRequestDto.toEntity(account, festivalDetail));
 
     }
 
