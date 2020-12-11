@@ -17,28 +17,28 @@ public class FestivalDetailRestController {
 
     private final FestivalDetailService festivalDetailService;
 
-    @PostMapping("generate/{festivalId}")
+    @PostMapping("/{festivalId}")
     public ApiResponseDto<FestivalDetailDto> generate(@PathVariable Long festivalId,
                                                       @RequestBody FestivalDetailCreateDto festivalDetailCreateDto) {
         return ApiResponseDto.createOK(festivalDetailService.add(festivalId, festivalDetailCreateDto));
     }
 
-    @GetMapping("festivalDetails")
+    @GetMapping
     public ApiResponseDto<List<FestivalDetailDto>> festivalDetails(Pageable pageable) {
         return ApiResponseDto.createOK(festivalDetailService.findAll(pageable));
     }
 
-    @GetMapping("info/{festivalDetailId}")
+    @GetMapping("/{festivalDetailId}")
     public ApiResponseDto<FestivalDetailDto> info(@PathVariable Long festivalDetailId) {
         return ApiResponseDto.createOK(festivalDetailService.findById(festivalDetailId));
     }
 
-    @PutMapping("update/{festivalDetailId}")
+    @PutMapping("/{festivalDetailId}")
     public ApiResponseDto<FestivalDetailDto> update(@PathVariable Long festivalDetailId,@RequestBody FestivalDetailUpdateDto festivalDetailUpdateDto) {
         return ApiResponseDto.createOK(festivalDetailService.update(festivalDetailId, festivalDetailUpdateDto));
     }
 
-    @DeleteMapping("delete/{festivalDetailId}")
+    @DeleteMapping("/{festivalDetailId}")
     public ApiResponseDto<String> delete(@PathVariable Long festivalDetailId) {
         festivalDetailService.delete(festivalDetailId);
 
