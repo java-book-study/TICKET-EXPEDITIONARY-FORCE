@@ -3,6 +3,7 @@ package com.ticket.captain.account;
 import com.ticket.captain.account.dto.*;
 import com.ticket.captain.config.AppProperties;
 import com.ticket.captain.exception.NotFoundException;
+import com.ticket.captain.exception.UnauthorizedException;
 import com.ticket.captain.mail.EmailMessage;
 import com.ticket.captain.mail.EmailService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 @Service
 @Slf4j
 @Transactional
@@ -33,12 +36,12 @@ public class AccountService implements UserDetailsService {
 
     private final ModelMapper modelMapper;
 
-    public Account createAccount(AccountCreateDto accountCreateDto){
+    public AccountDto createAccount(AccountCreateDto accountCreateDto){
         Account newAccount = accountCreateDto.toEntity();
         newAccount.setPassword(passwordEncoder.encode(accountCreateDto.getPassword()));
         newAccount.generateEmailCheckToken();
         sendSignUpConfirmEmail(newAccount);
-        return accountRepository.save(newAccount);
+        return AccountDto.of(accountRepository.save(newAccount));
     }
 
     public void sendSignUpConfirmEmail(Account newAccount){
@@ -59,7 +62,6 @@ public class AccountService implements UserDetailsService {
         emailService.sendEmail(emailMessage);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
@@ -68,19 +70,22 @@ public class AccountService implements UserDetailsService {
         if (account == null) {
             throw new UsernameNotFoundException(email);
         }
+
+        if (account.getRole() == null) {
+            account.addRole(Role.UNAUTH);
+        }
+
         return new UserAccount(account);
     }
 
     public Page<AccountDto> findAccountList(Pageable pageable) {
 
-        return accountRepository.findAll(pageable).map(AccountDto::new);
+        return accountRepository.findAll(pageable).map(AccountDto::of);
     }
 
     public AccountDto findAccountDetail(Long id){
-
         Account account = accountRepository.findById(id).orElseThrow(NotFoundException::new);
-
-        return modelMapper.map(account, AccountDto.class);
+        return AccountDto.of(account);
     }
 
     public AccountPutDto accountUpdate(Long id, AccountUpdateDto updateRequestDto) {
@@ -97,5 +102,33 @@ public class AccountService implements UserDetailsService {
         account.addRole(role);
 
         return AccountRoleDto.of(account);
+    }
+
+    public Account authenticate(String email, String password) {
+        Account account = accountRepository.findByEmail(email);
+        if (account == null) {
+            throw new NotFoundException();
+        }
+
+        if (!passwordEncoder.matches(password, account.getPassword())) {
+            throw new UnauthorizedException();
+        }
+
+        return account;
+    }
+
+    public Account findByEmail(String email) {
+        return accountRepository.findByEmail(email);
+    }
+
+    public void completeSignUp(Account account, String token) {
+
+        checkNotNull(account, "account must be provided.");
+        checkNotNull(token, "token must be provided.");
+        if (!account.isValidToken(token)) {
+            throw new UnauthorizedException();
+        }
+
+        account.completeSignUp();
     }
 }

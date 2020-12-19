@@ -22,6 +22,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import static com.ticket.captain.document.utils.ApiDocumentUtils.getDocumentRequest;
@@ -58,7 +59,7 @@ public class TicketControllerTest {
         FestivalDetailCreateDto festivalDetailCreateDto = FestivalDetailCreateDto.builder()
                 .salesType(SalesType.FREE.toString())
                 .amount(10000L)
-                .price(20000L)
+                .price(BigDecimal.valueOf(20000))
                 .drawDate(LocalDateTime.now())
                 .processDate(LocalDateTime.now())
                 .build();

@@ -14,9 +14,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity @Getter
+@Entity(name = "order")
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "Order")
 public class Order {
     @Id @GeneratedValue
     @Column(name = "order_id")
@@ -24,6 +24,7 @@ public class Order {
 
     private String orderNo;
 
+    @Column(name = "fetival_id")
     private Long festivalId;
 
     //festivalDetail 를 통해서 festivalId 받아서 필드 값으로 집어넣어 주어야 한다.

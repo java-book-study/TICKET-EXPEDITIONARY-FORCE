@@ -1,4 +1,4 @@
-package com.ticket.captain.main;
+package com.ticket.captain.account;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
