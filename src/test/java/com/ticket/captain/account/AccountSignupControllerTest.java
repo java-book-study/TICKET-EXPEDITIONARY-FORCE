@@ -17,7 +17,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.restdocs.request.ParameterDescriptor;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -25,9 +28,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
+import static com.ticket.captain.document.utils.ApiDocumentUtils.getDocumentRequest;
+import static com.ticket.captain.document.utils.ApiDocumentUtils.getDocumentResponse;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -39,18 +49,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 @AutoConfigureRestDocs
-//@ContextConfiguration(classes = SecurityConfig.class)
 class AccountSignupControllerTest {
 
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
     @Autowired
-    AccountRepository accountRepository;
+    private AccountRepository accountRepository;
     @Autowired
-    AccountService accountService;
+    private AccountService accountService;
 
     @MockBean
-    EmailService emailService;
+    private EmailService emailService;
 
     @DisplayName("회원가입 - 입력값 정상")
     @Test
@@ -58,16 +67,40 @@ class AccountSignupControllerTest {
         AccountCreateDto accountCreateDto = accountCreateDtoSample();
 
         MvcResult mvcResult = mockMvc.perform(post("/api/sign-up")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaTypes.HAL_JSON_VALUE)
+                .accept(MediaTypes.HAL_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(accountCreateDto)))
+                .andExpect(status().isOk())
+                .andDo(document("signUp-success",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        requestFields(
+                                fieldWithPath("email").description("아이디"),
+                                fieldWithPath("password").description("비밀번호"),
+                                fieldWithPath("nickname").description("닉네임"),
+                                fieldWithPath("name").description("이름"),
+                                fieldWithPath("address.city").description("상세주소(시)"),
+                                fieldWithPath("address.street").description("상세주소(도로명 주소)"),
+                                fieldWithPath("address.zipcode").description("상세주소(우편번호)")
+                        ),
+                        responseFields(
+                                fieldWithPath("token").type(JsonFieldType.STRING).description("인증 토큰"),
+                                fieldWithPath("accountDto.id").type(JsonFieldType.NUMBER).description(" 회원 id"),
+                                fieldWithPath("accountDto.name").type(JsonFieldType.STRING).description("회원 이름"),
+                                fieldWithPath("accountDto.nickname").type(JsonFieldType.STRING).description("회원 닉네임"),
+                                fieldWithPath("accountDto.email").type(JsonFieldType.STRING).description("회원 이메일"),
+                                fieldWithPath("accountDto.point").type(JsonFieldType.NUMBER).description("회원 포인트"),
+                                fieldWithPath("accountDto.address.city").type(JsonFieldType.STRING).description("회원 상세주소(시)"),
+                                fieldWithPath("accountDto.address.street").type(JsonFieldType.STRING).description("회원 상세주소(도로명주소)"),
+                                fieldWithPath("accountDto.address.zipcode").type(JsonFieldType.STRING).description("회원 상세주소(우편번호)"),
+                                fieldWithPath("accountDto.role").type(JsonFieldType.STRING).description("회원 권한"),
+                                fieldWithPath("accountDto.emailCheckToken").type(JsonFieldType.STRING).description("이메일 인증 토큰"),
+                                fieldWithPath("accountDto.emailCheckTokenGenDate").type(JsonFieldType.STRING).description("이메일 토큰 발행 시간"),
+                                fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("회원 경로"),
+                                fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로")
+                        )))
                 .andDo(print())
                 .andReturn();
-
-        String contentAsString = mvcResult.getResponse().getContentAsString();
-        ApiResponseDto<?> apiResponseDto = new ObjectMapper().readValue(contentAsString, ApiResponseDto.class);
-
-        assertEquals(200, apiResponseDto.getCode().getHttpStatus());
 
         then(emailService).should().sendEmail(any(EmailMessage.class));
     }
@@ -86,9 +119,25 @@ class AccountSignupControllerTest {
                 .build();
 
         mockMvc.perform(post("/api/sign-up/")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaTypes.HAL_JSON_VALUE)
+                .accept(MediaTypes.HAL_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(accountCreateDto)))
+                .andDo(document("signUp-fail",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        requestFields(
+                                fieldWithPath("email").description("아이디"),
+                                fieldWithPath("password").description("비밀번호"),
+                                fieldWithPath("nickname").description("닉네임"),
+                                fieldWithPath("name").description("이름"),
+                                fieldWithPath("address.city").description("상세주소(시)"),
+                                fieldWithPath("address.street").description("상세주소(도로명 주소)"),
+                                fieldWithPath("address.zipcode").description("상세주소(우편번호)")
+                        ),
+                        responseFields(
+                                fieldWithPath("message").description("에러 메시지"),
+                                fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로")
+                        )))
                 .andDo(print())
                 .andExpect(status().is(400));
     }
@@ -103,11 +152,19 @@ class AccountSignupControllerTest {
         AccountCreateDto accountCreateDto2 = accountCreateDto;
         //when&then
         mockMvc.perform(post("/api/sign-up")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaTypes.HAL_JSON_VALUE)
+                .accept(MediaTypes.HAL_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(accountCreateDto2)))
                 .andDo(print())
-                .andExpect(status().is(400));
+                .andExpect(status().is(400))
+                .andDo(document("email-validate-fail",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        responseFields(
+                                fieldWithPath("message").description("에러 메시지"),
+                                fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로")
+                        )))
+                .andDo(print());
     }
 
     @DisplayName("인증 메일 확인 - 입력값 정상")
@@ -118,16 +175,30 @@ class AccountSignupControllerTest {
         MvcResult mvcResult = mockMvc.perform(get("/api/check-email-token")
                 .param("token", newAccount.getEmailCheckToken())
                 .param("email", newAccount.getEmail()))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(unauthenticated())
+                .andDo(document("email-auth-success",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+
+                        responseFields(
+                                fieldWithPath("token").type(JsonFieldType.STRING).description("인증 토큰"),
+                                fieldWithPath("accountDto.id").type(JsonFieldType.NUMBER).description(" 회원 id"),
+                                fieldWithPath("accountDto.name").type(JsonFieldType.STRING).description("회원 이름"),
+                                fieldWithPath("accountDto.nickname").type(JsonFieldType.STRING).description("회원 닉네임"),
+                                fieldWithPath("accountDto.email").type(JsonFieldType.STRING).description("회원 이메일"),
+                                fieldWithPath("accountDto.point").type(JsonFieldType.NUMBER).description("회원 포인트"),
+                                fieldWithPath("accountDto.address.city").type(JsonFieldType.STRING).description("회원 상세주소(시)"),
+                                fieldWithPath("accountDto.address.street").type(JsonFieldType.STRING).description("회원 상세주소(도로명주소)"),
+                                fieldWithPath("accountDto.address.zipcode").type(JsonFieldType.STRING).description("회원 상세주소(우편번호)"),
+                                fieldWithPath("accountDto.role").type(JsonFieldType.STRING).description("회원 권한"),
+                                fieldWithPath("accountDto.emailCheckToken").type(JsonFieldType.STRING).description("이메일 인증 토큰"),
+                                fieldWithPath("accountDto.emailCheckTokenGenDate").type(JsonFieldType.STRING).description("이메일 토큰 발행 시간"),
+                                fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("회원 경로"),
+                                fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로")
+                        )))
+                .andDo(print())
                 .andReturn();
-
-        String contentAsString = mvcResult.getResponse().getContentAsString();
-        ApiResponseDto<?> apiResponseDto = new ObjectMapper().readValue(contentAsString, ApiResponseDto.class);
-
-        assertEquals(200, apiResponseDto.getCode().getHttpStatus());
-
 
     }
 
@@ -141,12 +212,17 @@ class AccountSignupControllerTest {
                 .param("token", account.getEmailCheckToken())
                 .param("email", "email@email.com"))
                 .andExpect(unauthenticated())
+                .andExpect(status().is(400))
+                .andDo(document("email-auth-fail",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        responseFields(
+                                fieldWithPath("message").description("에러 메시지"),
+                                fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로")
+                        )))
+                .andDo(print())
                 .andReturn();
 
-        String contentAsString = mvcResult.getResponse().getContentAsString();
-        ApiResponseDto<?> apiResponseDto = new ObjectMapper().readValue(contentAsString, ApiResponseDto.class);
-
-        assertEquals(401, apiResponseDto.getCode().getHttpStatus());
     }
 
     @DisplayName("인증 메일 확인 - 토큰값 오류")
@@ -157,12 +233,17 @@ class AccountSignupControllerTest {
         MvcResult mvcResult = mockMvc.perform(get("/api/check-email-token")
                 .param("token", UUID.randomUUID().toString())
                 .param("email", account.getEmail()))
+                .andExpect(status().is(401))
+                .andDo(document("token-auth-fail",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+
+                        responseFields(
+                                fieldWithPath("message").description("에러 메시지"),
+                                fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로")
+                        )))
+                .andDo(print())
                 .andReturn();
-
-        String contentAsString = mvcResult.getResponse().getContentAsString();
-        ApiResponseDto<?> apiResponseDto = new ObjectMapper().readValue(contentAsString, ApiResponseDto.class);
-
-        assertEquals(401, apiResponseDto.getCode().getHttpStatus());
     }
 
 

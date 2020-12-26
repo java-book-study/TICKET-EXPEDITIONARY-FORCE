@@ -2,7 +2,9 @@ package com.ticket.captain.account;
 
 import com.ticket.captain.account.dto.*;
 import com.ticket.captain.config.AppProperties;
+import com.ticket.captain.exception.EmailExistedException;
 import com.ticket.captain.exception.NotFoundException;
+import com.ticket.captain.exception.PasswordInputWrongException;
 import com.ticket.captain.exception.UnauthorizedException;
 import com.ticket.captain.mail.EmailMessage;
 import com.ticket.captain.mail.EmailService;
@@ -37,9 +39,19 @@ public class AccountService implements UserDetailsService {
     private final ModelMapper modelMapper;
 
     public AccountDto createAccount(AccountCreateDto accountCreateDto){
+        if (accountCreateDto.getPassword().length() < 4
+                || accountCreateDto.getPassword().length() > 13) {
+            throw new PasswordInputWrongException();
+        }
+
+        if (accountRepository.existsByEmail(accountCreateDto.getEmail())) {
+            throw new EmailExistedException(accountCreateDto.getEmail());
+        }
+
         Account newAccount = accountCreateDto.toEntity();
         newAccount.setPassword(passwordEncoder.encode(accountCreateDto.getPassword()));
         newAccount.generateEmailCheckToken();
+        newAccount.addRole(Role.UNAUTH);
         sendSignUpConfirmEmail(newAccount);
         return AccountDto.of(accountRepository.save(newAccount));
     }
@@ -130,5 +142,9 @@ public class AccountService implements UserDetailsService {
         }
 
         account.completeSignUp();
+    }
+
+    public void deleteById(Long accountId) {
+        accountRepository.deleteById(accountId);
     }
 }
