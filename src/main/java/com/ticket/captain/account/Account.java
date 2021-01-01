@@ -1,5 +1,6 @@
 package com.ticket.captain.account;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ticket.captain.account.dto.AccountUpdateDto;
 import com.ticket.captain.common.Address;
 import com.ticket.captain.common.BaseEntity;
@@ -8,8 +9,10 @@ import lombok.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +33,7 @@ public class Account extends BaseEntity {
     private final List<Order> orders = new ArrayList<>();
 
     @Column(unique = true)
+    @Email
     private String email;
 
     private String password;
@@ -103,7 +107,6 @@ public class Account extends BaseEntity {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("id", id)
                 .append("email", email)
                 .append("password", password)
                 .append("profileImage", profileImage)
@@ -112,8 +115,6 @@ public class Account extends BaseEntity {
                 .append("point", point)
                 .append("address", address)
                 .append("role", role)
-                .append("emailCheckToken", emailCheckToken)
-                .append("emailCheckTokenGenDate", emailCheckTokenGenDate)
                 .toString();
     }
 }

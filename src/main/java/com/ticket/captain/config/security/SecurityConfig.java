@@ -36,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .mvcMatchers(HttpMethod.GET).permitAll()// 요청에 대한 사용권한 체크
+                .antMatchers("/api/auth", "/api/email-token", "/api/sign-up").permitAll()
                 .antMatchers("/api/account/**").hasAnyRole("USER", "ADMIN", "MANAGER")
                 .antMatchers("/api/manager/**").hasAnyRole("ADMIN", "MANAGER")
                 .antMatchers("/api/ticket/**").hasAnyRole("ADMIN", "MANAGER", "USER")

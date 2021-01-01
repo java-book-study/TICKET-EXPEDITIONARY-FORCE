@@ -4,32 +4,42 @@ import com.ticket.captain.account.Account;
 import com.ticket.captain.account.AccountService;
 import com.ticket.captain.account.Role;
 import com.ticket.captain.account.dto.AccountDto;
-import com.ticket.captain.exception.NotFoundException;
+import com.ticket.captain.exception.EmailNotExistedException;
 import com.ticket.captain.exception.UnauthorizedException;
 import com.ticket.captain.response.ApiResponseDto;
 import com.ticket.captain.security.Jwt;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.MediaTypes;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping(value = "api", produces = MediaTypes.HAL_JSON_VALUE)
 public class AuthenticationController {
 
     private final AccountService accountService;
 
     private final Jwt jwt;
 
-    @PostMapping("api/auth")
-    public ApiResponseDto<AuthenticationResponse> authenticate (@RequestBody AuthenticationRequest request) {
+    private final AuthenticationRequestValidator validator;
+
+    @InitBinder
+    public void initBinder(WebDataBinder webDataBinder) {webDataBinder.addValidators(validator);}
+
+    @PostMapping("auth")
+    public ResponseEntity<?> authenticate (@RequestBody @Valid AuthenticationRequest request) {
         try {
             String email = request.getPrincipal();
             String password = request.getCredentials();
 
             Account account = accountService.authenticate(email, password);
-            String role = (account.getRole() == null) ? Role.UNAUTH.toString() : account.getRole().toString();
+            String role = (account.getRole() == null) ? Role.UNAUTH.name() : account.getRole().name();
 
             String jwtToken = jwt.createToken(
                     account.getId(),
@@ -37,30 +47,34 @@ public class AuthenticationController {
             jwt.getAuthentication(jwtToken);
             AccountDto accountDto = AccountDto.of(account);
 
-            return ApiResponseDto.createOK(
-                    new AuthenticationResponse(jwtToken, accountDto)
-            );
+            AuthenticationResponse response = new AuthenticationResponse(jwtToken, accountDto);
+            EntityModel<AuthenticationResponse> responseEntityModel = AuthenticationResource.loginOf(response);
+            responseEntityModel.add(Link.of("/docs/index.html#login-account").withRel("profile"));
+
+            return ResponseEntity.ok(responseEntityModel);
         } catch (UnauthorizedException e) {
             throw new UnauthorizedException();
         }
     }
 
-    @GetMapping("api/check-email-token")
-    public ApiResponseDto<AuthenticationResponse> checkEmailToken(String token,  String email) {
+    @GetMapping("check-email-token")
+    public ResponseEntity<?> checkEmailToken(@RequestParam String token, @RequestParam String email) {
         Account account = accountService.findByEmail(email);
         if (account == null) {
-            throw new UnauthorizedException();
+            throw new EmailNotExistedException(email);
         }
         accountService.completeSignUp(account, token);
 
         String jwtToken = jwt.createToken(
                 account.getId(),
-                account.getName(), account.getEmail(), account.getRole().toString());
+                account.getName(), account.getEmail(), account.getRole().name());
         jwt.getAuthentication(jwtToken);
         AccountDto accountDto = AccountDto.of(account);
 
-        return ApiResponseDto.createOK(
-                new AuthenticationResponse(jwtToken, accountDto)
-        );
+        AuthenticationResponse response = new AuthenticationResponse(jwtToken, accountDto);
+        EntityModel<AuthenticationResponse> responseEntityModel = AuthenticationResource.loginOf(response);
+        responseEntityModel.add(Link.of("/docs/index.html#email-auth-account").withRel("profile"));
+
+        return ResponseEntity.ok(responseEntityModel);
     }
 }
