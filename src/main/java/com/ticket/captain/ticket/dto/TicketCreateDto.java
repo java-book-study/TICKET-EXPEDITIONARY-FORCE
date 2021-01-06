@@ -7,15 +7,17 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TicketCreateDto {
     private String ticketNo;
     private String statusCode;
-    private Long price;
+    private BigDecimal price;
 
     @Builder
-    private TicketCreateDto(String ticketNo, Long festivalDetailId, String statusCode, Long price) {
+    private TicketCreateDto(String ticketNo, Long festivalDetailId, String statusCode, BigDecimal price) {
         this.ticketNo = ticketNo;
         this.statusCode = statusCode;
         this.price = price;

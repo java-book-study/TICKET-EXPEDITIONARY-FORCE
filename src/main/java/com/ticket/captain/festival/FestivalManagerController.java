@@ -81,4 +81,10 @@ public class FestivalManagerController {
         festivalService.delete(festivalId);
         return ApiResponseDto.DEFAULT_OK;
     }
+
+    @DeleteMapping("/deleteAll")
+    public ApiResponseDto<String> deleteAll() {
+        festivalService.deleteAll();
+        return ApiResponseDto.DEFAULT_OK;
+    }
 }

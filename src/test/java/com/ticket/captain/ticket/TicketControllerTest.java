@@ -67,7 +67,7 @@ public class TicketControllerTest {
 
         TicketCreateDto ticketCreateDto = TicketCreateDto.builder()
                 .ticketNo("ticketNo-001")
-                .price(10000L)
+                .price(BigDecimal.valueOf(10000))
                 .statusCode(StatusCode.DELIVERED.name())
                 .build();
         Ticket ticket = ticketCreateDto.toEntity();
@@ -82,7 +82,7 @@ public class TicketControllerTest {
         //given
         TicketCreateDto ticketCreateDto = TicketCreateDto.builder()
                 .ticketNo("ticketNo-001")
-                .price(10000L)
+                .price(BigDecimal.valueOf(10000))
                 .statusCode(StatusCode.DELIVERED.name())
                 .build();
 

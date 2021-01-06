@@ -49,7 +49,7 @@ public class FestivalDetailRestControllerTest {
 
     public FestivalDetail savedFestivalDetail;
 
-    public static final String API_MANAGER_URL = "/api/manager/festivalDetail";
+    public static final String API_MANAGER_URL = "/api/manager/festivalDetail/";
 
     @BeforeEach
     void beforeAll() {
@@ -58,7 +58,7 @@ public class FestivalDetailRestControllerTest {
                 .content("IAOT LIVE")
                 .salesStartDate(LocalDateTime.now())
                 .salesEndDate(LocalDateTime.now())
-                .festivalCategory(FestivalCategory.ROCK.toString())
+                .festivalCategory(FestivalCategory.ROCK.name())
                 .build();
 
         savedFestival = festivalRepository.save(createDto.toEntity());
@@ -69,6 +69,7 @@ public class FestivalDetailRestControllerTest {
                 .price(BigDecimal.valueOf(20000))
                 .drawDate(LocalDateTime.now())
                 .processDate(LocalDateTime.now())
+                .festival(savedFestival)
                 .build();
 
         savedFestivalDetail = festivalDetailRepository.save(festivalDetailCreateDto.toEntity());
@@ -85,13 +86,13 @@ public class FestivalDetailRestControllerTest {
                 .price(BigDecimal.valueOf(2000))
                 .drawDate(LocalDateTime.now())
                 .processDate(LocalDateTime.now())
+                .festival(savedFestival)
                 .build();
 
         //then
-        mockMvc.perform(post(API_MANAGER_URL + "/generate/" + savedFestival.getId())
+        mockMvc.perform(post(API_MANAGER_URL + savedFestival.getId())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(festivalDetailCreateDto))
-                .with(csrf()))
+                .content(objectMapper.writeValueAsString(festivalDetailCreateDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("data.amount").value(1000L))
                 .andExpect(jsonPath("data.price").value(2000L))
@@ -104,8 +105,7 @@ public class FestivalDetailRestControllerTest {
     @WithMockUser(value = "mock-manager", roles = "MANAGER")
     @DisplayName("FestivalDetail 조회 테스트")
     public void infoTest() throws Exception{
-        mockMvc.perform(get(API_MANAGER_URL + "/info/" + savedFestivalDetail.getId())
-                .with(csrf()))
+        mockMvc.perform(get(API_MANAGER_URL + savedFestivalDetail.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("data.amount").value(10000L))
                 .andExpect(jsonPath("data.price").value(20000L))
@@ -124,13 +124,12 @@ public class FestivalDetailRestControllerTest {
                 .price(BigDecimal.valueOf(500L))
                 .drawDate(LocalDateTime.now())
                 .processDate(LocalDateTime.now())
-                .salesType(SalesType.DRAW.toString())
+                .salesType(SalesType.DRAW.name())
                 .build();
         //when&then
-        mockMvc.perform(put(API_MANAGER_URL + "/update/" + savedFestivalDetail.getId())
+        mockMvc.perform(put(API_MANAGER_URL + savedFestivalDetail.getId())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(festivalDetailUpdateDto))
-                .with(csrf()))
+                .content(objectMapper.writeValueAsString(festivalDetailUpdateDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("data.amount").value(300L))
                 .andExpect(jsonPath("data.price").value(500L))
@@ -144,8 +143,7 @@ public class FestivalDetailRestControllerTest {
     @DisplayName("FestivalDetail Delete 테스트")
     public void deleteTest() throws Exception{
         //given
-        mockMvc.perform(delete(API_MANAGER_URL + "/delete/" + savedFestivalDetail.getId())
-                .with(csrf()))
+        mockMvc.perform(delete(API_MANAGER_URL + savedFestivalDetail.getId()))
                 .andExpect(status().is(200))
                 .andDo(print());
     }

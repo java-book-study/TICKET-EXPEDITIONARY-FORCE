@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Getter
@@ -34,10 +35,10 @@ public class Ticket extends BaseEntity {
     private String statusCode;
 
     @Column(nullable = false)
-    private Long price;
+    private BigDecimal price;
 
     @Builder
-    private Ticket(String ticketNo, String statusCode, Long price) {
+    private Ticket(String ticketNo, String statusCode, BigDecimal price) {
         this.ticketNo = ticketNo;
         this.statusCode = statusCode;
         this.price = price;
