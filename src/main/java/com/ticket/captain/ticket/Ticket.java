@@ -58,6 +58,7 @@ public class Ticket extends BaseEntity {
 
     public void orderSetting(Order order) {
         this.order = order;
+        order.addTicket(this);
     }
 
     public void festivalDetailSetting(FestivalDetail festivalDetail) {

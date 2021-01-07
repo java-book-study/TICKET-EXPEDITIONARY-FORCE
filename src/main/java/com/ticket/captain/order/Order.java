@@ -1,6 +1,7 @@
 package com.ticket.captain.order;
 
 import com.ticket.captain.account.Account;
+import com.ticket.captain.common.BaseEntity;
 import com.ticket.captain.festivalDetail.FestivalDetail;
 import com.ticket.captain.ticket.Ticket;
 import lombok.AccessLevel;
@@ -17,7 +18,7 @@ import java.util.List;
 @Entity(name = "order")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Order {
+public class Order extends BaseEntity {
     @Id @GeneratedValue
     @Column(name = "order_id")
     private Long id;
@@ -37,19 +38,13 @@ public class Order {
     private Account account;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<Ticket> tickets;
+    private List<Ticket> tickets = new ArrayList<>();
 
     @Column(name = "status_id")
     private String statusCode;
 
     @CreatedDate
     private LocalDateTime purchaseDate;
-
-    @CreatedDate
-    private LocalDateTime createDate;
-
-    @CreatedDate
-    private LocalDateTime modifyDate;
 
     /**
      * 할인 관한 interface 추가가 되어야함
@@ -78,9 +73,6 @@ public class Order {
     }
 
     public void addTicket(Ticket ticket) {
-        this.tickets = new ArrayList<>();
-        this.tickets.add(ticket);
-
+        tickets.add(ticket);
     }
-
 }
