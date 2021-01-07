@@ -8,6 +8,7 @@ import com.ticket.captain.festival.Festival;
 import com.ticket.captain.festivalDetail.FestivalDetail;
 import com.ticket.captain.festivalDetail.FestivalDetailRepository;
 import com.ticket.captain.order.dto.OrderDto;
+import com.ticket.captain.ticket.Ticket;
 import com.ticket.captain.ticket.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,15 +31,15 @@ public class OrderService {
                 festivalDetailRepository.findById(festivalDetailId).orElseThrow(NotFoundException::new);
 
         Festival findFestival = curFestivalDetail.getFestival();
-        Account curAccount = accountRepository.findByEmail(userEmail);
+        Account findAccount = accountRepository.findByEmail(userEmail);
         String statusCode = StatusCode.PURCHASE.name();
         String orderNo = UUID.randomUUID().toString();
 
         //Order 생성
-        Order createdOrder = Order.createOrder(orderNo, festivalDetailId, curFestivalDetail, curAccount, statusCode);
+        Order createdOrder = Order.createOrder(orderNo, festivalDetailId, curFestivalDetail, findAccount, statusCode);
 
         //Ticket 생성
-//        Ticket createdTicket = Ticket.createTicket(orderNo, statusCode, curFestivalDetail.getPrice());
+        Ticket createdTicket = Ticket.createTicket(orderNo, statusCode, curFestivalDetail.getPrice());
 
         //Order -> Ticket 매핑
 //        createdOrder.addTicket(createdTicket);

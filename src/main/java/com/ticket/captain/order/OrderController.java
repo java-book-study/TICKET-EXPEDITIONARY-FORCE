@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
     private final OrderService orderService;
 
-    @PostMapping("/createOrder/{festival_sq}")
+    @PostMapping("/{festivalDetail_id}")
     public ApiResponseDto<OrderDto> createOrder(@PathVariable Long festivalDetailId, @AuthenticationPrincipal User user){
         return ApiResponseDto.createOK(orderService.createOrder(festivalDetailId, user.getUsername()));
     }
