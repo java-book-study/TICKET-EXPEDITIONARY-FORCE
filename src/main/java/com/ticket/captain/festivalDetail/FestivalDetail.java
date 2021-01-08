@@ -25,7 +25,7 @@ public class FestivalDetail extends BaseEntity {
     private Festival festival;
 
     @Column(name = "sales_type_id")
-    String salesType;
+    private String salesType;
 
     @Column(name = "ticket_amount")
     private Long amount;

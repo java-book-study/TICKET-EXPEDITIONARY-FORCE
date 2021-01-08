@@ -57,7 +57,7 @@ public class BaseEntityTest {
                 .content("Come and Join Us")
                 .salesStartDate(LocalDateTime.now())
                 .salesEndDate(LocalDateTime.now())
-                .festivalCategory(FestivalCategory.ROCK.toString())
+                .festivalCategory(FestivalCategory.ROCK.name())
                 .build();
 
         mockMvc.perform(post(API_MANAGER_URL + "/generate/")

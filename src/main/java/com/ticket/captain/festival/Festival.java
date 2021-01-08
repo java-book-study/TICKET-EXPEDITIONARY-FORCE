@@ -16,7 +16,9 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -47,7 +49,7 @@ public class Festival extends BaseEntity{
     @JsonIgnore
     @OneToMany(mappedBy = "festival", cascade = CascadeType.ALL)
     @OrderBy("id desc")
-    private Set<FestivalDetail> festival_details = new HashSet<>();
+    private List<FestivalDetail> festival_details = new ArrayList<>();
 
     @Column(name = "category_id")
     private String festivalCategory;

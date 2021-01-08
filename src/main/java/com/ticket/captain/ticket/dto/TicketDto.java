@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -21,7 +22,7 @@ public class TicketDto {
 
     private String statusCode;
 
-    private Long price;
+    private BigDecimal price;
 
     private LocalDateTime createDate;
 
@@ -33,7 +34,7 @@ public class TicketDto {
 
     @Builder
     private TicketDto(Long ticketId, String ticketNo, Long orderId, Long festivalDetailId,
-                      String statusCode, Long price, LocalDateTime createDate, String createId,
+                      String statusCode, BigDecimal price, LocalDateTime createDate, String createId,
                       LocalDateTime modifyDate, String modifyId) {
         this.ticketId = ticketId;
         this.ticketNo = ticketNo;
