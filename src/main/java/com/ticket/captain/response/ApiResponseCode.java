@@ -11,7 +11,8 @@ public enum ApiResponseCode implements EnumType {
     BAD_REQUEST("잘못된 요청.", 400),
     NOT_FOUND("리소스를 찾지 못했습니다.", 404),
     UNAUTHORIZED("인증에 실패하였습니다.",401),
-    SERVER_ERROR("서버 에러입니다.",500);
+    SERVER_ERROR("서버 에러입니다.",500),
+    VALIDATION_ERROR("Validation 에러입니다.", 403);
 
 
     private final String message;

@@ -4,47 +4,41 @@ import com.ticket.captain.exception.NotFoundException;
 import com.ticket.captain.festival.dto.FestivalCreateDto;
 import com.ticket.captain.festival.dto.FestivalDto;
 import com.ticket.captain.festival.dto.FestivalUpdateDto;
-import com.ticket.captain.festivalCategory.FestivalCategory;
-import com.ticket.captain.festivalCategory.FestivalCategoryService;
-import com.ticket.captain.festivalCategory.dto.FestivalCategoryDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class FestivalService {
 
     private final FestivalRepository festivalRepository;
 
-    private final FestivalCategoryService festivalCategoryService;
-
     public FestivalDto add(FestivalCreateDto festivalCreateDto) {
         Festival festival = festivalCreateDto.toEntity();
-        FestivalCategoryDto festivalCategoryDto = festivalCategoryService.findById(festivalCreateDto.getCategoryId());
-        FestivalCategory festivalCategory = festivalCategoryService.findByCategoryName(festivalCategoryDto.getCategoryName());
-        festival.addCategory(festivalCategory);
         return FestivalDto.of(festivalRepository.save(festival));
     }
 
     @Transactional(readOnly = true)
-    public List<FestivalDto> findAll(int offset, int limit) {
-
-        PageRequest pageRequest = PageRequest.of(offset, limit);
-
-        return festivalRepository.findAll(pageRequest).stream()
+    public List<FestivalDto> findAll(Pageable pageable) {
+        return festivalRepository.findAll(pageable).stream()
                 .map(FestivalDto::of)
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public FestivalDto findById(Long festivalId) {
-        return festivalRepository.findById(festivalId)
+        Optional<Festival> findFestival = festivalRepository.findById(festivalId);
+        return findFestival
                 .map(FestivalDto::of)
                 .orElseThrow(NotFoundException::new);
     }
@@ -54,6 +48,10 @@ public class FestivalService {
                 .orElseThrow(NotFoundException::new);
 
         festivalRepository.delete(festival);
+    }
+
+    public void deleteAll() {
+        festivalRepository.deleteAll();
     }
 
     public FestivalDto update(Long festivalId, FestivalUpdateDto festivalUpdateDto) {
@@ -66,13 +64,5 @@ public class FestivalService {
     @Transactional(readOnly = true)
     public Festival findByTitle(String title) {
         return festivalRepository.findByTitle(title);
-    }
-
-    public FestivalDto addCategory(FestivalCategory category, Long festivalId) {
-        Festival festival = festivalRepository.findById(festivalId)
-                .orElseThrow(NotFoundException::new);
-        festival.addCategory(category);
-        festivalRepository.save(festival);
-        return FestivalDto.of(festival);
     }
 }

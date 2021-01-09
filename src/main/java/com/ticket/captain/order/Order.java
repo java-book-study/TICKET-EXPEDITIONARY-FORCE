@@ -11,20 +11,20 @@ import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@Entity(name = "order")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "order")
 public class Order {
-    @Id
-    @GeneratedValue
+    @Id @GeneratedValue
     @Column(name = "order_id")
     private Long id;
 
     private String orderNo;
 
+    @Column(name = "fetival_id")
     private Long festivalId;
 
     //festivalDetail 를 통해서 festivalId 받아서 필드 값으로 집어넣어 주어야 한다.
@@ -36,9 +36,10 @@ public class Order {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<Ticket> tickets;
 
+    @Column(name = "status_id")
     private String statusCode;
 
     @CreatedDate
@@ -54,9 +55,21 @@ public class Order {
      * 할인 관한 interface 추가가 되어야함
      */
     //private Discount discountRate
+
+    public static Order createOrder(String orderNo, Long festivalId, FestivalDetail festivalDetail,
+                                    Account account, String statusCode) {
+        return Order.builder()
+                .orderNo(orderNo)
+                .festivalId(festivalId)
+                .festivalDetail(festivalDetail)
+                .account(account)
+                .statusCode(statusCode)
+                .build();
+    }
+
     @Builder
-    private Order(String orderNo, Long festivalId, FestivalDetail festivalDetail,
-                  Account account, String statusCode) {
+    private Order (String orderNo, Long festivalId, FestivalDetail festivalDetail,
+                              Account account, String statusCode){
         this.orderNo = orderNo;
         this.festivalId = festivalId;
         this.festivalDetail = festivalDetail;
@@ -65,6 +78,7 @@ public class Order {
     }
 
     public void addTicket(Ticket ticket) {
+        this.tickets = new ArrayList<>();
         this.tickets.add(ticket);
 
     }

@@ -1,7 +1,7 @@
 package com.ticket.captain.account;
 
 import com.ticket.captain.account.dto.AccountErrorDto;
-import com.ticket.captain.exception.NotFoundException;
+import com.ticket.captain.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -25,6 +25,24 @@ public class AccountAdvice {
         EntityModel<AccountErrorDto> accountErrorDtoModel = AccountResource.of(accountErrorDto);
         accountErrorDtoModel.add(Link.of("/docs/index.html#not_found-account").withRel("profile"));
         return accountErrorDtoModel;
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+    public EntityModel<AccountErrorDto> handleServiceRuntimeException(RuntimeException e) {
+        AccountErrorDto accountErrorDto = AccountErrorDto.builder().message(e.getMessage()).build();
+        EntityModel<AccountErrorDto> accountErrorDtoEntityModel = AccountResource.of(accountErrorDto);
+        accountErrorDtoEntityModel.add(Link.of("/docs/index.html#unauth-account").withRel("profile"));
+        return accountErrorDtoEntityModel;
+    }
+
+    @ExceptionHandler({PasswordInputWrongException.class, EmailExistedException.class, EmailNotExistedException.class})
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public EntityModel<AccountErrorDto> createAccountRuntimeException(RuntimeException e) {
+        AccountErrorDto accountErrorDto = AccountErrorDto.builder().message(e.getMessage()).build();
+        EntityModel<AccountErrorDto> accountErrorDtoEntityModel = AccountResource.of(accountErrorDto);
+        accountErrorDtoEntityModel.add(Link.of("/docs/index.html#inputError-account").withRel("profile"));
+        return accountErrorDtoEntityModel;
     }
 
 }

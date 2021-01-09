@@ -1,22 +1,24 @@
 package com.ticket.captain.ticket;
 
+import com.ticket.captain.common.BaseEntity;
 import com.ticket.captain.festivalDetail.FestivalDetail;
 import com.ticket.captain.order.Order;
-import com.ticket.captain.order.StatusCode;
+import com.ticket.captain.enumType.StatusCode;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Ticket {
-    @Id
-    @GeneratedValue
-    private Long ticketId;
+public class Ticket extends BaseEntity {
+    @Id @GeneratedValue
+    @Column(name = "ticket_id")
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
@@ -29,23 +31,28 @@ public class Ticket {
     @Column(nullable = false)
     private String ticketNo;
 
+    @Column(name = "status_id")
     private String statusCode;
 
     @Column(nullable = false)
-    private Long price;
+    private BigDecimal price;
 
     @Builder
-    private Ticket(String ticketNo, String statusCode, Long price) {
+    private Ticket(String ticketNo, String statusCode, BigDecimal price) {
         this.ticketNo = ticketNo;
         this.statusCode = statusCode;
         this.price = price;
     }
 
-    public void update(StatusCode statusCode) {
-        this.statusCode = statusCode.name();
+    public void update(String statusCode) {
+        this.statusCode = statusCode;
     }
 
     public void orderSetting(Order order) {
         this.order = order;
+    }
+
+    public void festivalDetailSetting(FestivalDetail festivalDetail) {
+        this.festivalDetail = festivalDetail;
     }
 }

@@ -1,90 +1,67 @@
 package com.ticket.captain.festivalDetail;
 
+import com.ticket.captain.common.BaseEntity;
 import com.ticket.captain.festival.Festival;
-import com.ticket.captain.order.Order;
-import com.ticket.captain.salesType.SalesType;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity(name = "festival_detail")
-@Getter
-public class FestivalDetail {
+@Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class FestivalDetail extends BaseEntity {
 
     @Id
     @GeneratedValue
     @Column(name = "festival_detail_id")
     private Long id;
 
-    @OneToMany(mappedBy = "festivalDetail")
-    private List<Order> orders = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "festival_id")
+    private Festival festival;
 
-    @Column(name = "perform_datetime")
-    private LocalDateTime processDate;
+    @Column(name = "sales_type_id")
+    private String salesType;
 
     @Column(name = "ticket_amount")
     private Long amount;
 
     @Column(name = "ticket_price")
-    private Long price;
+    private BigDecimal price;
+
+    @Column(name = "perform_date")
+    private LocalDateTime processDate;
 
     @Column(name = "draw_date")
     private LocalDateTime drawDate;
 
-    @Column(name = "create_date")
-    private LocalDateTime createDate;
-
-    @Column(name = "create_id")
-    private Long createId;
-
-    @Column(name = "modify_date")
-    private LocalDateTime modifyDate;
-
-    @Column(name = "modify_id")
-    private Long modifyId;
-
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "festival_id")
-    private Festival festival;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sales_type_id")
-    private SalesType salesType;
-
-    //@OneToMany(mappedBy = "festivalDetail")
-    //private List<Order> orders = new ArrayList<>();
-
-    public FestivalDetail() {
-
-    }
-
     @Builder
-    public FestivalDetail(Long id, LocalDateTime processDate, Long amount, Long price, LocalDateTime drawDate, LocalDateTime createDate, Long createId, LocalDateTime modifyDate, Long modifyId, Festival festival, SalesType salesType) {
-        this.id = id;
-        this.processDate = processDate;
+    public FestivalDetail(String salesType,Long amount, BigDecimal price,
+                          LocalDateTime processDate, LocalDateTime drawDate, Festival festival) {
+        this.salesType = salesType;
         this.amount = amount;
         this.price = price;
+        this.processDate = processDate;
         this.drawDate = drawDate;
-        this.createDate = createDate;
-        this.createId = createId;
-        this.modifyDate = modifyDate;
-        this.modifyId = modifyId;
         this.festival = festival;
-        this.salesType = salesType;
     }
 
 
-    public void update(LocalDateTime processDate, Long amount, Long price, LocalDateTime drawDate, LocalDateTime modifyDate, Long modifyId, SalesType salesType) {
-        this.processDate = processDate;
+    public void update(String salesType,Long amount, BigDecimal price,
+                       LocalDateTime processDate, LocalDateTime drawDate) {
         this.amount = amount;
         this.price = price;
-        this.drawDate = drawDate;
-        this.modifyDate = modifyDate;
-        this.modifyId = modifyId;
         this.salesType = salesType;
+        this.processDate = processDate;
+        this.drawDate = drawDate;
+    }
+
+    public void setFestival(Festival festival) {
+        this.festival = festival;
+        festival.getFestival_details().add(this);
     }
 }
