@@ -34,7 +34,7 @@ public class FestivalUserControllerTest {
 
     private Festival festival;
 
-    public static final String API_ACCOUNT_URL = "/api/account/festival";
+    public static final String API_ACCOUNT_URL = "/api/account/festival/";
 
     @BeforeAll
     void beforeAll() {
@@ -43,7 +43,7 @@ public class FestivalUserControllerTest {
                 .content("Come and Join Us")
                 .salesStartDate(LocalDateTime.now())
                 .salesEndDate(LocalDateTime.now())
-                .festivalCategory(FestivalCategory.ROCK.toString())
+                .festivalCategory(FestivalCategory.ROCK.name())
                 .build();
 
         FestivalDto festivalDto = festivalService.add(createDto);
@@ -53,9 +53,8 @@ public class FestivalUserControllerTest {
     @Test
     @WithMockUser(value = "mock-user", roles = "USER")
     void festivalInfo() throws Exception {
-        mockMvc.perform(get(API_ACCOUNT_URL + "/info/" + festival.getId())
-                .param("festivalId", String.valueOf(festival.getId()))
-                .with(csrf()))
+        mockMvc.perform(get(API_ACCOUNT_URL + festival.getId())
+                .param("festivalId", String.valueOf(festival.getId())))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -63,11 +62,10 @@ public class FestivalUserControllerTest {
     @Test
     @WithMockUser(value = "mock-user", roles = "USER")
     void festivals() throws Exception {
-        mockMvc.perform(get(API_ACCOUNT_URL +"/festivals")
+        mockMvc.perform(get(API_ACCOUNT_URL)
                 .param("offset", String.valueOf(0))
                 .param("limit", String.valueOf(1))
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(csrf()))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print());
     }

@@ -1,8 +1,11 @@
 package com.ticket.captain.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ticket.captain.account.dto.AccountCreateDto;
+import com.ticket.captain.account.dto.AccountDto;
 import com.ticket.captain.account.dto.AccountUpdateDto;
 import com.ticket.captain.common.Address;
+import com.ticket.captain.security.Jwt;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,9 +51,11 @@ public class AccountApiControllerTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
-    private AccountRepository accountRepository;
+    private AccountService accountService;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private Jwt jwt;
 
     public static final String ACCOUNT_EMAIL = "test@email.com";
 
@@ -62,25 +67,20 @@ public class AccountApiControllerTest {
 
     Address address = new Address("seoul", "mapo", "03951");
 
+    private String jwtToken;
+
     @Before
     public void setUp() {
-
-        Account account = Account.builder()
-                .email(ACCOUNT_EMAIL)
-                .name("test")
-                .password(passwordEncoder.encode("1111"))
-                .point(5000)
-                .address(address)
-                .build();
-
-        Account save = accountRepository.save(account);
-
+        AccountCreateDto accountCreateDto = accountCreateDtoSample();
+        Account save = accountSample();
         TEST_ID = save.getId();
+        save.addRole(Role.ROLE_USER);
+        jwtToken = jwt.createToken(TEST_ID, save.getName(), save.getEmail(), save.getRole().name());
     }
 
     @After
     public void after() {
-        accountRepository.deleteById(TEST_ID);
+        accountService.deleteById(TEST_ID);
     }
 
     @Test
@@ -93,7 +93,7 @@ public class AccountApiControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .param("page", String.valueOf(page.getPageNumber()))
                 .param("size", String.valueOf(page.getPageSize()))
-                .with(csrf()))
+                .header("X-AUTH-TOKEN", jwtToken))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("list-accounts",
@@ -102,8 +102,15 @@ public class AccountApiControllerTest {
                         responseFields(
                                 fieldWithPath("_embedded.accountDtoList[].id").type(JsonFieldType.NUMBER).description(" 회원 id"),
                                 fieldWithPath("_embedded.accountDtoList[].name").type(JsonFieldType.STRING).description("회원 이름"),
+                                fieldWithPath("_embedded.accountDtoList[].nickname").type(JsonFieldType.STRING).description("회원 닉네임"),
                                 fieldWithPath("_embedded.accountDtoList[].email").type(JsonFieldType.STRING).description("회원 이메일"),
+                                fieldWithPath("_embedded.accountDtoList[].address.city").type(JsonFieldType.STRING).description("회원 상세주소(시)"),
+                                fieldWithPath("_embedded.accountDtoList[].address.street").type(JsonFieldType.STRING).description("회원 상세주소(도로명주소)"),
+                                fieldWithPath("_embedded.accountDtoList[].address.zipcode").type(JsonFieldType.STRING).description("회원 상세주소(우편번호)"),
                                 fieldWithPath("_embedded.accountDtoList[].role").type(JsonFieldType.STRING).description("회원 권한"),
+                                fieldWithPath("_embedded.accountDtoList[].point").type(JsonFieldType.NUMBER).description("회원 포인트"),
+                                fieldWithPath("_embedded.accountDtoList[].emailCheckToken").type(JsonFieldType.STRING).description("회원 이메일 토큰"),
+                                fieldWithPath("_embedded.accountDtoList[].emailCheckTokenGenDate").type(JsonFieldType.STRING).description("회원 이메일 발송시간"),
                                 fieldWithPath("_embedded.accountDtoList[]._links.self.href").type(JsonFieldType.STRING).description("각 회원 경로"),
                                 fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("현재 경로"),
                                 fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로"),
@@ -122,7 +129,7 @@ public class AccountApiControllerTest {
 
         //when
         mockMvc.perform(get(API_ACCOUNT_URL + TEST_ID)
-                .with(csrf()))
+                .header("X-AUTH-TOKEN", jwtToken))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("detail-account",
@@ -131,8 +138,15 @@ public class AccountApiControllerTest {
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description(" 회원 id"),
                                 fieldWithPath("name").type(JsonFieldType.STRING).description("회원 이름"),
+                                fieldWithPath("nickname").type(JsonFieldType.STRING).description("회원 닉네임"),
                                 fieldWithPath("email").type(JsonFieldType.STRING).description("회원 이메일"),
+                                fieldWithPath("point").type(JsonFieldType.NUMBER).description("회원 포인트"),
+                                fieldWithPath("address.city").type(JsonFieldType.STRING).description("회원 상세주소(시)"),
+                                fieldWithPath("address.street").type(JsonFieldType.STRING).description("회원 상세주소(도로명주소)"),
+                                fieldWithPath("address.zipcode").type(JsonFieldType.STRING).description("회원 상세주소(우편번호)"),
                                 fieldWithPath("role").type(JsonFieldType.STRING).description("회원 권한"),
+                                fieldWithPath("emailCheckToken").type(JsonFieldType.STRING).description("이메일 인증 토큰"),
+                                fieldWithPath("emailCheckTokenGenDate").type(JsonFieldType.STRING).description("이메일 토큰 발행 시간"),
                                 fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("회원 경로"),
                                 fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로")
                         )
@@ -153,7 +167,7 @@ public class AccountApiControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.put(API_ACCOUNT_URL + "{id}", TEST_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequestDto))
-                .with(csrf()))
+                .header("X-AUTH-TOKEN", jwtToken))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("update-account",
@@ -185,7 +199,7 @@ public class AccountApiControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.put(API_ACCOUNT_URL + ERROR_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequestDto))
-                .with(csrf()))
+                .header("X-AUTH-TOKEN", jwtToken))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andDo(document("error-account",
@@ -205,7 +219,7 @@ public class AccountApiControllerTest {
 
         mockMvc.perform(put(API_ACCOUNT_URL + "appoint/{id}", TEST_ID)
                 .param("role", Role.ROLE_MANAGER.name())
-                .with(csrf()))
+                .header("X-AUTH-TOKEN", jwtToken))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("grant-account",
@@ -214,8 +228,7 @@ public class AccountApiControllerTest {
                                 parameterWithName("id").description("수정할 계정 고유 id값")
                         ),
                         requestParameters(
-                                parameterWithName("role").description("줄 권한"),
-                                parameterWithName("_csrf").ignored()
+                                parameterWithName("role").description("줄 권한")
                         ),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("권한이 부여된 고유 계정 id"),
@@ -224,6 +237,24 @@ public class AccountApiControllerTest {
                                 fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로")
                         )
                 ));
+    }
+
+    private AccountCreateDto accountCreateDtoSample(){
+        return AccountCreateDto.builder()
+                .email(ACCOUNT_EMAIL)
+                .password("1111")
+                .nickname("test")
+                .name("test")
+                .address(address)
+                .build();
+    }
+
+    private Account accountSample() {
+
+        AccountCreateDto accountCreateDto = accountCreateDtoSample();
+        AccountDto accountDto = accountService.createAccount(accountCreateDto);
+        Account newAccount = accountService.findByEmail(accountDto.getEmail());
+        return newAccount;
     }
 
 }

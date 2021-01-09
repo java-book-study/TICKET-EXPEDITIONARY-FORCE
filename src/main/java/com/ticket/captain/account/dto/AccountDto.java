@@ -1,6 +1,7 @@
 package com.ticket.captain.account.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ticket.captain.account.Account;
 import com.ticket.captain.account.Role;
 import com.ticket.captain.common.Address;
@@ -19,6 +20,7 @@ public class AccountDto {
 
     private String email;
 
+    @JsonIgnore
     private String profileImage;
 
     private String name;

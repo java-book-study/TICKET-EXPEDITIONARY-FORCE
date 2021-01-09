@@ -26,8 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @Slf4j
@@ -44,16 +42,18 @@ public class FestivalControllerTest {
 
     private Festival festival;
 
-    public static final String API_MANAGER_URL = "/api/manager/festival";
+    private FestivalCreateDto createDto;
+
+    public static final String API_MANAGER_URL = "/api/manager/festival/";
 
     @BeforeEach
     void beforeAll() {
-        FestivalCreateDto createDto = FestivalCreateDto.builder()
+        createDto = FestivalCreateDto.builder()
                 .title("Rock Festival")
                 .content("Come and Join Us")
                 .salesStartDate(LocalDateTime.now())
                 .salesEndDate(LocalDateTime.now())
-                .festivalCategory(FestivalCategory.ROCK.toString())
+                .festivalCategory(FestivalCategory.ROCK.name())
                 .build();
 
         FestivalDto festivalDto = festivalService.add(createDto);
@@ -64,53 +64,40 @@ public class FestivalControllerTest {
     @WithMockUser(value = "mock-manager", roles = "MANAGER")
     @Test
     public void validatorTest() throws Exception{
-        //given
-        FestivalCreateDto createDto = FestivalCreateDto.builder()
-                .title("Rock Festival")
-                .content("Come and Join Us")
-                .salesStartDate(LocalDateTime.now())
-                .salesEndDate(LocalDateTime.now())
-                .festivalCategory(FestivalCategory.ROCK.toString())
-                .build();
-
         //then
-        mockMvc.perform(post(API_MANAGER_URL + "/generate/")
+        mockMvc.perform(post(API_MANAGER_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(createDto))
-                .with(csrf()))
+                .content(objectMapper.writeValueAsString(createDto)))
                 .andExpect(jsonPath("code").value("VALIDATION_ERROR"))
-                .andDo(print())
-            ;
+                .andDo(print());
     }
 
     @Test
     @WithMockUser(value = "mock-manager", roles = "MANAGER")
     void generateFestival() throws Exception {
-        FestivalCreateDto createDto = FestivalCreateDto.builder()
+        FestivalCreateDto festivalCreateDto = FestivalCreateDto.builder()
                 .title("Generate Festival")
                 .content("Come and Join Us")
                 .salesStartDate(LocalDateTime.now())
                 .salesEndDate(LocalDateTime.now())
-                .festivalCategory(FestivalCategory.ROCK.toString())
+                .festivalCategory(FestivalCategory.ROCK.name())
                 .build();
 
-        mockMvc.perform(post(API_MANAGER_URL + "/generate/")
+        mockMvc.perform(post(API_MANAGER_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(createDto))
-                .with(csrf()))
+                .content(objectMapper.writeValueAsString(festivalCreateDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("data.title").value("Generate Festival"))
                 .andExpect(jsonPath("data.content").value("Come and Join Us"))
                 .andExpect(jsonPath("data.festivalCategory").value("ROCK"))
-                .andDo(print())
-        ;
+                .andDo(print());
+
     }
 
     @Test
     @WithMockUser(value = "mock-manager", roles = "MANAGER")
     void festivalInfo() throws Exception {
-        mockMvc.perform(get(API_MANAGER_URL + "/info/" + festival.getId())
-                .with(csrf()))
+        mockMvc.perform(get(API_MANAGER_URL + festival.getId()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("data.title").value("Rock Festival"))
@@ -122,11 +109,10 @@ public class FestivalControllerTest {
     @Test
     @WithMockUser(value = "mock-manager", roles = "MANAGER")
     void festivals() throws Exception {
-        mockMvc.perform(get(API_MANAGER_URL +"/festivals")
+        mockMvc.perform(get(API_MANAGER_URL)
                 .param("offset", String.valueOf(0))
                 .param("limit", String.valueOf(1))
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(csrf()))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
@@ -138,14 +124,14 @@ public class FestivalControllerTest {
         FestivalUpdateDto updateDto = FestivalUpdateDto.builder()
                 .title("Charity Concert")
                 .content("Enjoy And Donate")
+                .salesStartDate(LocalDateTime.now())
                 .salesEndDate(LocalDateTime.now())
-                .festivalCategory(FestivalCategory.CHARITY.toString())
+                .festivalCategory(FestivalCategory.CHARITY.name())
                 .build();
 
-        mockMvc.perform(put(API_MANAGER_URL + "/update/" + festival.getId())
+        mockMvc.perform(put(API_MANAGER_URL + festival.getId())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updateDto))
-                .with(csrf()))
+                .content(objectMapper.writeValueAsString(updateDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("data.title").value("Charity Concert"))
                 .andExpect(jsonPath("data.content").value("Enjoy And Donate"))
@@ -162,14 +148,13 @@ public class FestivalControllerTest {
                 .content("Come and Join Us")
                 .salesStartDate(LocalDateTime.now())
                 .salesEndDate(LocalDateTime.now())
-                .festivalCategory(FestivalCategory.ROCK.toString())
+                .festivalCategory(FestivalCategory.ROCK.name())
                 .build();
 
         FestivalDto festivalDto = festivalService.add(createDto);
         Festival findFestival = festivalService.findByTitle(festivalDto.getTitle());
 
-        mockMvc.perform(delete(API_MANAGER_URL + "/delete/" + findFestival.getId())
-                .with(csrf()))
+        mockMvc.perform(delete(API_MANAGER_URL + findFestival.getId()))
                 .andExpect(status().is(200))
                 .andDo(print());
     }
@@ -177,7 +162,7 @@ public class FestivalControllerTest {
     @AfterEach
     void afterAll() {
         log.info("afterAll started");
-        festivalService.delete(festival.getId());
+        festivalService.deleteAll();
         log.info("afterAll ended");
     }
 

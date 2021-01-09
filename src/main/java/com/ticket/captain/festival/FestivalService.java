@@ -50,6 +50,10 @@ public class FestivalService {
         festivalRepository.delete(festival);
     }
 
+    public void deleteAll() {
+        festivalRepository.deleteAll();
+    }
+
     public FestivalDto update(Long festivalId, FestivalUpdateDto festivalUpdateDto) {
         Festival festival = festivalRepository.findById(festivalId)
                 .orElseThrow(NotFoundException::new);

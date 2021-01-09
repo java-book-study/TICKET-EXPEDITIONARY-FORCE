@@ -12,19 +12,12 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class AccountCreateDto {
 
-    @Email
-    @NotBlank
     private String email;
 
-    @NotBlank
-    @Length(min = 8, max = 50)
     private String password;
 
-    @NotBlank
     private String nickname;
 
-    @NotBlank
-    @Length(min = 2, max = 20)
     private String name;
 
     private Address address;
