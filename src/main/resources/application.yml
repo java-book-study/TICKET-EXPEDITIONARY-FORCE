@@ -37,6 +37,13 @@ spring:
           timeout: 5000
           starttls.enable: true
 
+  devtools:
+    restart:
+      enabled: true
+  thymeleaf:
+    cache: false
+    prefix: file:src/main/resources/templates/
+
 logging.level:
   root: info
   org.hibernate.SQL: debug
