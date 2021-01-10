@@ -22,11 +22,15 @@ public class QFestivalDetail extends EntityPathBase<FestivalDetail> {
 
     public static final QFestivalDetail festivalDetail = new QFestivalDetail("festivalDetail");
 
+    public final com.ticket.captain.common.QBaseEntity _super = new com.ticket.captain.common.QBaseEntity(this);
+
     public final NumberPath<Long> amount = createNumber("amount", Long.class);
 
-    public final DateTimePath<java.time.LocalDateTime> createDate = createDateTime("createDate", java.time.LocalDateTime.class);
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createDate = _super.createDate;
 
-    public final NumberPath<Long> createId = createNumber("createId", Long.class);
+    //inherited
+    public final StringPath createId = _super.createId;
 
     public final DateTimePath<java.time.LocalDateTime> drawDate = createDateTime("drawDate", java.time.LocalDateTime.class);
 
@@ -34,17 +38,17 @@ public class QFestivalDetail extends EntityPathBase<FestivalDetail> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final DateTimePath<java.time.LocalDateTime> modifyDate = createDateTime("modifyDate", java.time.LocalDateTime.class);
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> modifyDate = _super.modifyDate;
 
-    public final NumberPath<Long> modifyId = createNumber("modifyId", Long.class);
+    //inherited
+    public final StringPath modifyId = _super.modifyId;
 
-    public final ListPath<com.ticket.captain.order.Order, com.ticket.captain.order.QOrder> orders = this.<com.ticket.captain.order.Order, com.ticket.captain.order.QOrder>createList("orders", com.ticket.captain.order.Order.class, com.ticket.captain.order.QOrder.class, PathInits.DIRECT2);
-
-    public final NumberPath<Long> price = createNumber("price", Long.class);
+    public final NumberPath<java.math.BigDecimal> price = createNumber("price", java.math.BigDecimal.class);
 
     public final DateTimePath<java.time.LocalDateTime> processDate = createDateTime("processDate", java.time.LocalDateTime.class);
 
-    public final com.ticket.captain.salesType.QSalesType salesType;
+    public final StringPath salesType = createString("salesType");
 
     public QFestivalDetail(String variable) {
         this(FestivalDetail.class, forVariable(variable), INITS);
@@ -64,8 +68,7 @@ public class QFestivalDetail extends EntityPathBase<FestivalDetail> {
 
     public QFestivalDetail(Class<? extends FestivalDetail> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.festival = inits.isInitialized("festival") ? new com.ticket.captain.festival.QFestival(forProperty("festival"), inits.get("festival")) : null;
-        this.salesType = inits.isInitialized("salesType") ? new com.ticket.captain.salesType.QSalesType(forProperty("salesType")) : null;
+        this.festival = inits.isInitialized("festival") ? new com.ticket.captain.festival.QFestival(forProperty("festival")) : null;
     }
 
 }

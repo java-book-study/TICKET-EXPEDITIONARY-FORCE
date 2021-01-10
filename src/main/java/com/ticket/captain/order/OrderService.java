@@ -60,16 +60,16 @@ public class OrderService {
         return OrderDto.of(savedOrder);
     }
 
-    public List<OrderDto> findByAccount(Pageable pageable, Long accountId) {
+    public List<OrderDto> findByAccount(Pageable pageable, String accountEmail) {
 
-        return orderQueryRepository.findByAccountId(pageable, accountId).stream()
+        return orderQueryRepository.findByAccountId(pageable, accountEmail).stream()
                 .map(OrderDto::of)
                 .collect(Collectors.toList());
     }
 
-    public List<OrderDto> findByAccountWithDate(Pageable pageable, Long accountId, LocalDateTime startDate, LocalDateTime endDate) {
+    public List<OrderDto> findByAccountWithDate(Pageable pageable, String accountEmail, LocalDateTime startDate, LocalDateTime endDate) {
 
-        return orderQueryRepository.findByAccountWithDate(pageable, accountId, startDate, endDate).stream()
+        return orderQueryRepository.findByAccountWithDate(pageable, accountEmail, startDate, endDate).stream()
                 .map(OrderDto::of)
                 .collect(Collectors.toList());
     }

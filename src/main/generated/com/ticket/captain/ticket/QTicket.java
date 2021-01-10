@@ -22,15 +22,29 @@ public class QTicket extends EntityPathBase<Ticket> {
 
     public static final QTicket ticket = new QTicket("ticket");
 
+    public final com.ticket.captain.common.QBaseEntity _super = new com.ticket.captain.common.QBaseEntity(this);
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createDate = _super.createDate;
+
+    //inherited
+    public final StringPath createId = _super.createId;
+
     public final com.ticket.captain.festivalDetail.QFestivalDetail festivalDetail;
+
+    public final NumberPath<Long> id = createNumber("id", Long.class);
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> modifyDate = _super.modifyDate;
+
+    //inherited
+    public final StringPath modifyId = _super.modifyId;
 
     public final com.ticket.captain.order.QOrder order;
 
-    public final NumberPath<Long> price = createNumber("price", Long.class);
+    public final NumberPath<java.math.BigDecimal> price = createNumber("price", java.math.BigDecimal.class);
 
     public final StringPath statusCode = createString("statusCode");
-
-    public final NumberPath<Long> ticketId = createNumber("ticketId", Long.class);
 
     public final StringPath ticketNo = createString("ticketNo");
 

@@ -22,9 +22,15 @@ public class QOrder extends EntityPathBase<Order> {
 
     public static final QOrder order = new QOrder("order1");
 
+    public final com.ticket.captain.common.QBaseEntity _super = new com.ticket.captain.common.QBaseEntity(this);
+
     public final com.ticket.captain.account.QAccount account;
 
-    public final DateTimePath<java.time.LocalDateTime> createDate = createDateTime("createDate", java.time.LocalDateTime.class);
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createDate = _super.createDate;
+
+    //inherited
+    public final StringPath createId = _super.createId;
 
     public final com.ticket.captain.festivalDetail.QFestivalDetail festivalDetail;
 
@@ -32,7 +38,11 @@ public class QOrder extends EntityPathBase<Order> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final DateTimePath<java.time.LocalDateTime> modifyDate = createDateTime("modifyDate", java.time.LocalDateTime.class);
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> modifyDate = _super.modifyDate;
+
+    //inherited
+    public final StringPath modifyId = _super.modifyId;
 
     public final StringPath orderNo = createString("orderNo");
 

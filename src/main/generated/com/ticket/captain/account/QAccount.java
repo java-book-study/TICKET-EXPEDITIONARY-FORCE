@@ -22,9 +22,15 @@ public class QAccount extends EntityPathBase<Account> {
 
     public static final QAccount account = new QAccount("account");
 
+    public final com.ticket.captain.common.QBaseEntity _super = new com.ticket.captain.common.QBaseEntity(this);
+
     public final com.ticket.captain.common.QAddress address;
 
-    public final DateTimePath<java.time.LocalDateTime> createDate = createDateTime("createDate", java.time.LocalDateTime.class);
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createDate = _super.createDate;
+
+    //inherited
+    public final StringPath createId = _super.createId;
 
     public final StringPath email = createString("email");
 
@@ -34,9 +40,11 @@ public class QAccount extends EntityPathBase<Account> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final DateTimePath<java.time.LocalDateTime> modifyDate = createDateTime("modifyDate", java.time.LocalDateTime.class);
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> modifyDate = _super.modifyDate;
 
-    public final NumberPath<Long> modifyId = createNumber("modifyId", Long.class);
+    //inherited
+    public final StringPath modifyId = _super.modifyId;
 
     public final StringPath name = createString("name");
 
@@ -46,7 +54,7 @@ public class QAccount extends EntityPathBase<Account> {
 
     public final StringPath password = createString("password");
 
-    public final NumberPath<Integer> point = createNumber("point", Integer.class);
+    public final NumberPath<Long> point = createNumber("point", Long.class);
 
     public final StringPath profileImage = createString("profileImage");
 

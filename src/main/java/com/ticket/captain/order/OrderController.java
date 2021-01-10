@@ -27,13 +27,12 @@ public class OrderController {
     @GetMapping("/buyer")
     public ResponseEntity<?> myOrder(@AuthenticationPrincipal User user, Pageable pageable,
                                      @RequestParam(required = false) LocalDateTime startDate, @RequestParam(required = false) LocalDateTime endDate) {
-//        Long accountId = account.getId();
-        Long accountId = 1L;
+        String accountEmail = user.getUsername();
 
         List<OrderDto> buyerOrders =
                 startDate != null && endDate != null
-                        ? orderService.findByAccountWithDate(pageable, accountId, startDate, endDate)
-                        : orderService.findByAccount(pageable, accountId);
+                        ? orderService.findByAccountWithDate(pageable, accountEmail, startDate, endDate)
+                        : orderService.findByAccount(pageable, accountEmail);
 
         return ResponseEntity.ok(buyerOrders);
     }
