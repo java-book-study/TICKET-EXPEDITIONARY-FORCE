@@ -37,6 +37,14 @@ public class Ticket extends BaseEntity {
     @Column(nullable = false)
     private BigDecimal price;
 
+    public static Ticket createTicket(String ticketNo, String statusCode, BigDecimal price) {
+        return Ticket.builder()
+                .ticketNo(ticketNo)
+                .statusCode(statusCode)
+                .price(price)
+                .build();
+    }
+
     @Builder
     private Ticket(String ticketNo, String statusCode, BigDecimal price) {
         this.ticketNo = ticketNo;
@@ -50,6 +58,7 @@ public class Ticket extends BaseEntity {
 
     public void orderSetting(Order order) {
         this.order = order;
+        order.addTicket(this);
     }
 
     public void festivalDetailSetting(FestivalDetail festivalDetail) {

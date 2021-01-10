@@ -19,14 +19,13 @@ import java.util.List;
 public class OrderController {
     private final OrderService orderService;
 
-    @PostMapping("/createOrder/{festival_sq}")
-    public ApiResponseDto<OrderDto> createOrder(@PathVariable Long festival_sq, @AuthenticationPrincipal User user) {
-        String userEmail = user.getUsername();
-        return ApiResponseDto.createOK(orderService.createOrder(festival_sq, userEmail));
+    @PostMapping("/{festivalDetailId}")
+    public ApiResponseDto<OrderDto> createOrder(@PathVariable Long festivalDetailId){
+        return ApiResponseDto.createOK(orderService.createOrder(festivalDetailId));
     }
 
     @GetMapping("/buyer")
-    public ResponseEntity<?> myOrder(@AuthenticationPrincipal Account account, Pageable pageable,
+    public ResponseEntity<?> myOrder(@AuthenticationPrincipal User user, Pageable pageable,
                                      @RequestParam(required = false) LocalDateTime startDate, @RequestParam(required = false) LocalDateTime endDate) {
 //        Long accountId = account.getId();
         Long accountId = 1L;
