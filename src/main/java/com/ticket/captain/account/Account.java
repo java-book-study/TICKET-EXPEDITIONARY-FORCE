@@ -5,6 +5,8 @@ import com.ticket.captain.account.dto.AccountUpdateDto;
 import com.ticket.captain.common.Address;
 import com.ticket.captain.common.BaseEntity;
 import com.ticket.captain.order.Order;
+import com.ticket.captain.review.Comment;
+import com.ticket.captain.review.Review;
 import lombok.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.CreationTimestamp;
@@ -57,6 +59,12 @@ public class Account extends BaseEntity {
     private String emailCheckToken;
 
     private LocalDateTime emailCheckTokenGenDate;
+
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+    private final List<Review> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+    private final List<Comment> comments = new ArrayList<>();
 
     @Builder
     public Account(String email, String password, String profileImage, String name,

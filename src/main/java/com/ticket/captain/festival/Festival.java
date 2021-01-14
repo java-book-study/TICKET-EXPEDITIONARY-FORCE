@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ticket.captain.common.BaseEntity;
 import com.ticket.captain.festivalDetail.FestivalDetail;
+import com.ticket.captain.review.Review;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -50,6 +51,9 @@ public class Festival extends BaseEntity{
     @OneToMany(mappedBy = "festival", cascade = CascadeType.ALL)
     @OrderBy("id desc")
     private List<FestivalDetail> festival_details = new ArrayList<>();
+
+    @OneToMany(mappedBy = "festival", fetch = FetchType.LAZY)
+    private final List<Review> reviews = new ArrayList<>();
 
     @Column(name = "category_id")
     private String festivalCategory;
