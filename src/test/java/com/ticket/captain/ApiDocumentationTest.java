@@ -1,6 +1,7 @@
 package com.ticket.captain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ticket.captain.order.OrderService;
 import com.ticket.captain.ticket.TicketController;
 import com.ticket.captain.ticket.TicketService;
 import org.junit.runner.RunWith;
@@ -22,6 +23,9 @@ public abstract class ApiDocumentationTest {
 
     @Autowired
     protected ObjectMapper objectMapper;
+
+    @MockBean
+    protected OrderService orderService;
 
     @MockBean
     protected TicketService ticketService;

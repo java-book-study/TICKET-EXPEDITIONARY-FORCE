@@ -1,40 +1,44 @@
 package com.ticket.captain.order.dto;
 
+import com.ticket.captain.account.Account;
+import com.ticket.captain.festival.Festival;
+import com.ticket.captain.festivalDetail.FestivalDetail;
 import com.ticket.captain.order.Order;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderDto {
 
     private String orderNo;
 
-    private Long festivalId;
+    private Festival festival;
 
-    private Long festivalDetailId;
+    private FestivalDetail festivalDetail;
 
-    private Long accountId;
+    private Account account;
 
     private String statusCode;
 
     @Builder
-    private OrderDto(String orderNo, Long festivalId, Long festivalDetailId, Long accountId, String statusCode) {
+    private OrderDto(String orderNo, Festival festival, FestivalDetail festivalDetail, Account account, String statusCode) {
         this.orderNo = orderNo;
-        this.festivalId = festivalId;
-        this.festivalDetailId = festivalDetailId;
-        this.accountId = accountId;
+        this.festival = festival;
+        this.festivalDetail = festivalDetail;
+        this.account = account;
         this.statusCode = statusCode;
     }
 
     public static OrderDto of(Order order) {
         return OrderDto.builder()
                 .orderNo(order.getOrderNo())
-                .festivalId(order.getFestivalId())
-                .festivalDetailId(order.getFestivalDetail().getId())
-                .accountId(order.getAccount().getId())
-                .statusCode(order.getStatusCode())
+                .festival(order.getFestival())
+                .festivalDetail(order.getFestivalDetail())
+                .account(order.getAccount())
+                .statusCode(order.getStatusCode().name())
                 .build();
     }
 

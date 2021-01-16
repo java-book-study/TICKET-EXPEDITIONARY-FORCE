@@ -1,21 +1,17 @@
 package com.ticket.captain.account;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ticket.captain.account.dto.AccountUpdateDto;
 import com.ticket.captain.common.Address;
 import com.ticket.captain.common.BaseEntity;
-import com.ticket.captain.order.Order;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -28,9 +24,6 @@ public class Account extends BaseEntity {
     @GeneratedValue
     @Column(name = "account_id")
     private Long id;
-
-    @OneToMany(mappedBy = "account")
-    private final List<Order> orders = new ArrayList<>();
 
     @Column(unique = true)
     @Email
@@ -88,7 +81,7 @@ public class Account extends BaseEntity {
         return this.emailCheckToken.equals(token);
     }
 
-    public long update(AccountUpdateDto updateRequestDto){
+    public long update(AccountUpdateDto updateRequestDto) {
         this.name = updateRequestDto.getName();
         this.email = updateRequestDto.getEmail();
         this.nickname = updateRequestDto.getNickname();
@@ -96,8 +89,8 @@ public class Account extends BaseEntity {
         return this.id;
     }
 
-    public void addRole(Role role){
-        this.role=role;
+    public void addRole(Role role) {
+        this.role = role;
     }
 
     public void completeSignUp() {

@@ -2,6 +2,8 @@ package com.ticket.captain.order;
 
 import com.ticket.captain.account.Account;
 import com.ticket.captain.common.BaseEntity;
+import com.ticket.captain.enumType.StatusCode;
+import com.ticket.captain.festival.Festival;
 import com.ticket.captain.festivalDetail.FestivalDetail;
 import com.ticket.captain.ticket.Ticket;
 import lombok.AccessLevel;
@@ -19,57 +21,59 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order extends BaseEntity {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     @Column(name = "order_id")
     private Long id;
 
     private String orderNo;
 
-    @Column(name = "fetival_id")
-    private Long festivalId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "festival_id")
+    private Festival festival;
 
     //festivalDetail 를 통해서 festivalId 받아서 필드 값으로 집어넣어 주어야 한다.
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "festival_detail_id")
     private FestivalDetail festivalDetail;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "account_id")
     private Account account;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<Ticket> tickets = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status_id")
-    private String statusCode;
+    private StatusCode statusCode;
 
     @CreatedDate
     private LocalDateTime purchaseDate;
+
+    @Builder
+    private Order(String orderNo, Festival festival, FestivalDetail festivalDetail,
+                  Account account, StatusCode statusCode) {
+        this.orderNo = orderNo;
+        this.festival = festival;
+        this.festivalDetail = festivalDetail;
+        this.account = account;
+        this.statusCode = statusCode;
+    }
 
     /**
      * 할인 관한 interface 추가가 되어야함
      */
     //private Discount discountRate
-
-    public static Order createOrder(String orderNo, Long festivalId, FestivalDetail festivalDetail,
-                                    Account account, String statusCode) {
+    public static Order createOrder(String orderNo, Festival festival, FestivalDetail festivalDetail,
+                                    Account account, StatusCode statusCode) {
         return Order.builder()
                 .orderNo(orderNo)
-                .festivalId(festivalId)
+                .festival(festival)
                 .festivalDetail(festivalDetail)
                 .account(account)
                 .statusCode(statusCode)
                 .build();
-    }
-
-    @Builder
-    private Order (String orderNo, Long festivalId, FestivalDetail festivalDetail,
-                              Account account, String statusCode){
-        this.orderNo = orderNo;
-        this.festivalId = festivalId;
-        this.festivalDetail = festivalDetail;
-        this.account = account;
-        this.statusCode = statusCode;
     }
 
     public void addTicket(Ticket ticket) {

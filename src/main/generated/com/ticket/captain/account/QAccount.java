@@ -50,8 +50,6 @@ public class QAccount extends EntityPathBase<Account> {
 
     public final StringPath nickname = createString("nickname");
 
-    public final ListPath<com.ticket.captain.order.Order, com.ticket.captain.order.QOrder> orders = this.<com.ticket.captain.order.Order, com.ticket.captain.order.QOrder>createList("orders", com.ticket.captain.order.Order.class, com.ticket.captain.order.QOrder.class, PathInits.DIRECT2);
-
     public final StringPath password = createString("password");
 
     public final NumberPath<Long> point = createNumber("point", Long.class);

@@ -7,18 +7,18 @@ import com.ticket.captain.exception.NotFoundException;
 import com.ticket.captain.festival.Festival;
 import com.ticket.captain.festivalDetail.FestivalDetail;
 import com.ticket.captain.festivalDetail.FestivalDetailRepository;
+import com.ticket.captain.order.dto.OrderCreateDto;
 import com.ticket.captain.order.dto.OrderDto;
 import com.ticket.captain.ticket.Ticket;
 import com.ticket.captain.ticket.TicketRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -31,7 +31,7 @@ public class OrderService {
     private final AccountRepository accountRepository;
     private final TicketRepository ticketRepository;
 
-    public OrderDto createOrder(Long festivalDetailId) {
+    public OrderCreateDto createOrder(Long festivalDetailId) {
 
         FestivalDetail curFestivalDetail =
                 festivalDetailRepository.findById(festivalDetailId).orElseThrow(NotFoundException::new);
@@ -39,15 +39,13 @@ public class OrderService {
         Festival findFestival = curFestivalDetail.getFestival();
         Account savedAccount = accountRepository.save(Account.builder()
                 .email("test@gmail.com").build());
-        String statusCode = StatusCode.PURCHASE.name();
         String orderNo = UUID.randomUUID().toString();
 
         //Order 생성
-        Order createdOrder = Order.createOrder(orderNo, findFestival.getId(),
-                                                curFestivalDetail, savedAccount, statusCode);
+        Order createdOrder = Order.createOrder(orderNo, findFestival, curFestivalDetail, savedAccount, StatusCode.PURCHASE);
 
         //Ticket 생성
-        Ticket createdTicket = Ticket.createTicket(orderNo, statusCode, curFestivalDetail.getPrice());
+        Ticket createdTicket = Ticket.createTicket(orderNo, StatusCode.PURCHASE.name(), curFestivalDetail.getPrice());
 
         //Order, Ticket 매핑
         createdTicket.orderSetting(createdOrder);
@@ -57,20 +55,20 @@ public class OrderService {
         Order savedOrder = orderRepository.save(createdOrder);
         ticketRepository.save(createdTicket);
 
-        return OrderDto.of(savedOrder);
+        return OrderCreateDto.of(savedOrder);
     }
 
-    public List<OrderDto> findByAccount(Pageable pageable, String accountEmail) {
-
-        return orderQueryRepository.findByAccountId(pageable, accountEmail).stream()
-                .map(OrderDto::of)
-                .collect(Collectors.toList());
+    public OrderDto findByOrderNo(String orderNo) {
+        return orderRepository.findByOrderNo(orderNo);
     }
 
-    public List<OrderDto> findByAccountWithDate(Pageable pageable, String accountEmail, LocalDateTime startDate, LocalDateTime endDate) {
+    public Page<OrderDto> findByAccount(Pageable pageable, String accountEmail) {
 
-        return orderQueryRepository.findByAccountWithDate(pageable, accountEmail, startDate, endDate).stream()
-                .map(OrderDto::of)
-                .collect(Collectors.toList());
+        return orderQueryRepository.findByAccountId(pageable, accountEmail);
+    }
+
+    public Page<OrderDto> findByAccountWithDate(Pageable pageable, String accountEmail, LocalDateTime startDate, LocalDateTime endDate) {
+
+        return orderQueryRepository.findByAccountWithDate(pageable, accountEmail, startDate, endDate);
     }
 }

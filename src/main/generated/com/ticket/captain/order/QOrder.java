@@ -32,9 +32,9 @@ public class QOrder extends EntityPathBase<Order> {
     //inherited
     public final StringPath createId = _super.createId;
 
-    public final com.ticket.captain.festivalDetail.QFestivalDetail festivalDetail;
+    public final com.ticket.captain.festival.QFestival festival;
 
-    public final NumberPath<Long> festivalId = createNumber("festivalId", Long.class);
+    public final com.ticket.captain.festivalDetail.QFestivalDetail festivalDetail;
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
@@ -48,7 +48,7 @@ public class QOrder extends EntityPathBase<Order> {
 
     public final DateTimePath<java.time.LocalDateTime> purchaseDate = createDateTime("purchaseDate", java.time.LocalDateTime.class);
 
-    public final StringPath statusCode = createString("statusCode");
+    public final EnumPath<com.ticket.captain.enumType.StatusCode> statusCode = createEnum("statusCode", com.ticket.captain.enumType.StatusCode.class);
 
     public final ListPath<com.ticket.captain.ticket.Ticket, com.ticket.captain.ticket.QTicket> tickets = this.<com.ticket.captain.ticket.Ticket, com.ticket.captain.ticket.QTicket>createList("tickets", com.ticket.captain.ticket.Ticket.class, com.ticket.captain.ticket.QTicket.class, PathInits.DIRECT2);
 
@@ -71,6 +71,7 @@ public class QOrder extends EntityPathBase<Order> {
     public QOrder(Class<? extends Order> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.account = inits.isInitialized("account") ? new com.ticket.captain.account.QAccount(forProperty("account"), inits.get("account")) : null;
+        this.festival = inits.isInitialized("festival") ? new com.ticket.captain.festival.QFestival(forProperty("festival")) : null;
         this.festivalDetail = inits.isInitialized("festivalDetail") ? new com.ticket.captain.festivalDetail.QFestivalDetail(forProperty("festivalDetail"), inits.get("festivalDetail")) : null;
     }
 
