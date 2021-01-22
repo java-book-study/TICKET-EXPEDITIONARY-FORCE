@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ticket.captain.common.BaseEntity;
 import com.ticket.captain.festivalDetail.FestivalDetail;
+import com.ticket.captain.scrap.Scrap;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -53,6 +54,9 @@ public class Festival extends BaseEntity{
 
     @Column(name = "category_id")
     private String festivalCategory;
+
+    @OneToOne(mappedBy = "festival")
+    private Scrap scrap;
 
     public static Festival createFestival(String title, String thumbnail, String content, LocalDateTime salesStartDate, LocalDateTime salesEndDate, String festivalCategory) {
         return Festival.builder()

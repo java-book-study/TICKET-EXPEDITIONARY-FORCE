@@ -5,6 +5,7 @@ import com.ticket.captain.account.dto.AccountUpdateDto;
 import com.ticket.captain.common.Address;
 import com.ticket.captain.common.BaseEntity;
 import com.ticket.captain.order.Order;
+import com.ticket.captain.scrap.Scrap;
 import lombok.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.CreationTimestamp;
@@ -57,6 +58,9 @@ public class Account extends BaseEntity {
     private String emailCheckToken;
 
     private LocalDateTime emailCheckTokenGenDate;
+
+    @OneToMany(mappedBy = "account")
+    private List<Scrap> scraps;
 
     @Builder
     public Account(String email, String password, String profileImage, String name,
