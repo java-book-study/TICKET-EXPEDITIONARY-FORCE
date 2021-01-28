@@ -42,6 +42,8 @@ public class QFestival extends EntityPathBase<Festival> {
     //inherited
     public final StringPath modifyId = _super.modifyId;
 
+    public final ListPath<com.ticket.captain.review.Review, com.ticket.captain.review.QReview> reviews = this.<com.ticket.captain.review.Review, com.ticket.captain.review.QReview>createList("reviews", com.ticket.captain.review.Review.class, com.ticket.captain.review.QReview.class, PathInits.DIRECT2);
+
     public final DateTimePath<java.time.LocalDateTime> salesEndDate = createDateTime("salesEndDate", java.time.LocalDateTime.class);
 
     public final DateTimePath<java.time.LocalDateTime> salesStartDate = createDateTime("salesStartDate", java.time.LocalDateTime.class);

@@ -26,6 +26,8 @@ public class QAccount extends EntityPathBase<Account> {
 
     public final com.ticket.captain.common.QAddress address;
 
+    public final ListPath<com.ticket.captain.review.Comment, com.ticket.captain.review.QComment> comments = this.<com.ticket.captain.review.Comment, com.ticket.captain.review.QComment>createList("comments", com.ticket.captain.review.Comment.class, com.ticket.captain.review.QComment.class, PathInits.DIRECT2);
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createDate = _super.createDate;
 
@@ -50,11 +52,15 @@ public class QAccount extends EntityPathBase<Account> {
 
     public final StringPath nickname = createString("nickname");
 
+    public final ListPath<com.ticket.captain.order.Order, com.ticket.captain.order.QOrder> orders = this.<com.ticket.captain.order.Order, com.ticket.captain.order.QOrder>createList("orders", com.ticket.captain.order.Order.class, com.ticket.captain.order.QOrder.class, PathInits.DIRECT2);
+
     public final StringPath password = createString("password");
 
     public final NumberPath<Long> point = createNumber("point", Long.class);
 
     public final StringPath profileImage = createString("profileImage");
+
+    public final ListPath<com.ticket.captain.review.Review, com.ticket.captain.review.QReview> reviews = this.<com.ticket.captain.review.Review, com.ticket.captain.review.QReview>createList("reviews", com.ticket.captain.review.Review.class, com.ticket.captain.review.QReview.class, PathInits.DIRECT2);
 
     public final EnumPath<Role> role = createEnum("role", Role.class);
 

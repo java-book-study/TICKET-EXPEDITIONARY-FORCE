@@ -1,5 +1,6 @@
 package com.ticket.captain.account;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ticket.captain.account.dto.AccountUpdateDto;
 import com.ticket.captain.common.Address;
 import com.ticket.captain.common.BaseEntity;
@@ -7,11 +8,20 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import com.ticket.captain.order.Order;
+import com.ticket.captain.review.Comment;
+import com.ticket.captain.review.Review;
+import lombok.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -24,6 +34,9 @@ public class Account extends BaseEntity {
     @GeneratedValue
     @Column(name = "account_id")
     private Long id;
+
+    @OneToMany(mappedBy = "account")
+    private final List<Order> orders = new ArrayList<>();
 
     @Column(unique = true)
     @Email
@@ -50,6 +63,12 @@ public class Account extends BaseEntity {
     private String emailCheckToken;
 
     private LocalDateTime emailCheckTokenGenDate;
+
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+    private final List<Review> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+    private final List<Comment> comments = new ArrayList<>();
 
     @Builder
     public Account(String email, String password, String profileImage, String name,
