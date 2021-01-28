@@ -14,9 +14,6 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
-
-    //auto RestDocs
-    jsondoclet
 }
 
 asciidoctor {
@@ -30,7 +27,6 @@ repositories {
 ext {
     set('snippetsDir', file("build/generated-snippets"))
     set('testcontainersVersion', "1.14.3")
-    javadocJsonDir = file("$buildDir/generated-javadoc-json")
 }
 
 dependencies {
@@ -72,11 +68,6 @@ dependencies {
     implementation("com.google.guava:guava:29.0-jre")
     //RestDocs
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
-    //auto RestDocs
-    testCompile group: 'capital.scalable', name: 'spring-auto-restdocs-core', version: '2.0.9'
-    jsondoclet group: 'capital.scalable', name: 'spring-auto-restdocs-json-doclet-jdk9', version: '2.0.9'
-    //rest-assured
-    compile 'io.rest-assured:rest-assured'
     //jasypt
     implementation "com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3"
     //postgreSQL
@@ -103,23 +94,10 @@ task copyDocument(type: Copy) {
     into file("src/main/resources/static/docs")
 }
 
-task jsonDoclet(type: Javadoc, dependsOn: compileJava) {
-    source = sourceSets.main.allJava
-    classpath = sourceSets.main.compileClasspath
-    destinationDir = javadocJsonDir
-    options.docletpath = configurations.jsondoclet.files.asType(List)
-    options.doclet = 'capital.scalable.restdocs.jsondoclet.ExtractDocumentationAsJsonDoclet'
-    options.memberLevel = JavadocMemberLevel.PACKAGE
-}
-
 test {
     outputs.dir snippetsDir
     useJUnitPlatform()
     systemProperty "jasypt.encryptor.password", System.getProperty("jasypt.encryptor.password")
-    systemProperty 'org.springframework.restdocs.outputDir', snippetsDir
-    systemProperty 'org.springframework.restdocs.javadocJsonDir', javadocJsonDir
-
-    dependsOn jsonDoclet
 }
 
 build {
@@ -142,8 +120,4 @@ tasks.withType(JavaCompile) {
 
 clean.doLast {
     file(generated).deleteDir()
-}
-
-jar {
-    dependsOn asciidoctor
 }

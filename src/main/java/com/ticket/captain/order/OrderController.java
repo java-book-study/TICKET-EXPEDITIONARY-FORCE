@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
@@ -15,7 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,8 +36,8 @@ public class OrderController {
     public ResponseEntity<?> myOrder(@AuthenticationPrincipal User user,
                                      Pageable pageable,
                                      PagedResourcesAssembler<OrderDto> assembler,
-                                     @RequestParam(required = false) LocalDateTime startDate,
-                                     @RequestParam(required = false) LocalDateTime endDate) {
+                                     @RequestParam(required = false) @DateTimeFormat(pattern = "yyyyMMdd") LocalDate startDate,
+                                     @RequestParam(required = false) @DateTimeFormat(pattern = "yyyyMMdd") LocalDate endDate) {
         String accountEmail = user.getUsername();
 
         Page<OrderDto> orders =

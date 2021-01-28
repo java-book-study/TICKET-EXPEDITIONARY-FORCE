@@ -17,7 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Service
@@ -66,7 +66,7 @@ public class OrderService {
         return orderQueryRepository.findByAccountId(pageable, accountEmail);
     }
 
-    public Page<OrderDto> findByAccountWithDate(Pageable pageable, String accountEmail, LocalDateTime startDate, LocalDateTime endDate) {
+    public Page<OrderDto> findByAccountWithDate(Pageable pageable, String accountEmail, LocalDate startDate, LocalDate endDate) {
 
         return orderQueryRepository.findByAccountWithDate(pageable, accountEmail, startDate, endDate);
     }

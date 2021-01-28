@@ -12,7 +12,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,13 +45,13 @@ public class OrderQueryRepository {
         return new PageImpl<>(parsedOrders, pageable, orders.getTotal());
     }
 
-    public Page<OrderDto> findByAccountWithDate(Pageable pageable, String accountEmail, LocalDateTime startDate, LocalDateTime endDate) {
+    public Page<OrderDto> findByAccountWithDate(Pageable pageable, String accountEmail, LocalDate startDate, LocalDate endDate) {
         QueryResults<Order> orders = queryFactory.selectFrom(order)
                 .join(order.account, account).fetchJoin()
                 .join(order.festival, festival).fetchJoin()
                 .join(order.festivalDetail, festivalDetail).fetchJoin()
                 .where(order.account.email.eq(accountEmail),
-                        order.createDate.between(startDate, endDate))
+                        order.createDate.between(startDate.atStartOfDay(), LocalDateTime.of(endDate, LocalTime.MAX).withNano(0)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();
