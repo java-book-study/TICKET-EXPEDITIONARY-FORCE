@@ -31,18 +31,17 @@ public class OrderService {
     private final AccountRepository accountRepository;
     private final TicketRepository ticketRepository;
 
-    public OrderCreateDto createOrder(Long festivalDetailId) {
+    public OrderCreateDto createOrder(String accountEmail, Long festivalDetailId) {
 
         FestivalDetail curFestivalDetail =
                 festivalDetailRepository.findById(festivalDetailId).orElseThrow(NotFoundException::new);
 
         Festival findFestival = curFestivalDetail.getFestival();
-        Account savedAccount = accountRepository.save(Account.builder()
-                .email("test@gmail.com").build());
+        Account account = accountRepository.findByEmail(accountEmail);
         String orderNo = UUID.randomUUID().toString();
 
         //Order 생성
-        Order createdOrder = Order.createOrder(orderNo, findFestival, curFestivalDetail, savedAccount, StatusCode.PURCHASE);
+        Order createdOrder = Order.createOrder(orderNo, findFestival, curFestivalDetail, account, StatusCode.PURCHASE);
 
         //Ticket 생성
         Ticket createdTicket = Ticket.createTicket(orderNo, StatusCode.PURCHASE.name(), curFestivalDetail.getPrice());

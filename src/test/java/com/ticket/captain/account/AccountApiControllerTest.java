@@ -26,15 +26,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-
 import static com.ticket.captain.document.utils.ApiDocumentUtils.getDocumentRequest;
 import static com.ticket.captain.document.utils.ApiDocumentUtils.getDocumentResponse;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,6 +43,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 public class AccountApiControllerTest {
 
+    public static final String ACCOUNT_EMAIL = "test@email.com";
+    public static final Long ERROR_ID = 99L;
+    public static final String API_ACCOUNT_URL = "/api/account/";
+    public static Long TEST_ID;
+    Address address = new Address("seoul", "mapo", "03951");
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -56,17 +58,6 @@ public class AccountApiControllerTest {
     private ObjectMapper objectMapper;
     @Autowired
     private Jwt jwt;
-
-    public static final String ACCOUNT_EMAIL = "test@email.com";
-
-    public static final Long ERROR_ID = 99L;
-
-    public static Long TEST_ID;
-
-    public static final String API_ACCOUNT_URL = "/api/account/";
-
-    Address address = new Address("seoul", "mapo", "03951");
-
     private String jwtToken;
 
     @Before
@@ -151,7 +142,6 @@ public class AccountApiControllerTest {
                                 fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로")
                         )
                         )
-
                 );
 
     }
@@ -239,7 +229,7 @@ public class AccountApiControllerTest {
                 ));
     }
 
-    private AccountCreateDto accountCreateDtoSample(){
+    private AccountCreateDto accountCreateDtoSample() {
         return AccountCreateDto.builder()
                 .email(ACCOUNT_EMAIL)
                 .password("1111")

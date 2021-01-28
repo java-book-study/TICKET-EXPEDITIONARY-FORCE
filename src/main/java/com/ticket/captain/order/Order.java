@@ -28,16 +28,16 @@ public class Order extends BaseEntity {
 
     private String orderNo;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "festival_id")
     private Festival festival;
 
     //festivalDetail 를 통해서 festivalId 받아서 필드 값으로 집어넣어 주어야 한다.
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "festival_detail_id")
     private FestivalDetail festivalDetail;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
     private Account account;
 

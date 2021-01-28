@@ -1,8 +1,11 @@
 package com.ticket.captain.order.dto;
 
 import com.ticket.captain.account.Account;
+import com.ticket.captain.account.dto.AccountDto;
 import com.ticket.captain.festival.Festival;
+import com.ticket.captain.festival.dto.FestivalDto;
 import com.ticket.captain.festivalDetail.FestivalDetail;
+import com.ticket.captain.festivalDetail.dto.FestivalDetailDto;
 import com.ticket.captain.order.Order;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -15,20 +18,20 @@ public class OrderDto {
 
     private String orderNo;
 
-    private Festival festival;
+    private FestivalDto festival;
 
-    private FestivalDetail festivalDetail;
+    private FestivalDetailDto festivalDetail;
 
-    private Account account;
+    private AccountDto account;
 
     private String statusCode;
 
     @Builder
     private OrderDto(String orderNo, Festival festival, FestivalDetail festivalDetail, Account account, String statusCode) {
         this.orderNo = orderNo;
-        this.festival = festival;
-        this.festivalDetail = festivalDetail;
-        this.account = account;
+        this.festival = new FestivalDto().of(festival);
+        this.festivalDetail = new FestivalDetailDto().of(festivalDetail);
+        this.account = new AccountDto().of(account);
         this.statusCode = statusCode;
     }
 

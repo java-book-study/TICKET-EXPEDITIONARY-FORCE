@@ -32,8 +32,11 @@ public class OrderController {
     }
 
     @GetMapping("/buyer")
-    public ResponseEntity<?> myOrder(@AuthenticationPrincipal User user, Pageable pageable, PagedResourcesAssembler<OrderDto> assembler,
-                                     @RequestParam(required = false) LocalDateTime startDate, @RequestParam(required = false) LocalDateTime endDate) {
+    public ResponseEntity<?> myOrder(@AuthenticationPrincipal User user,
+                                     Pageable pageable,
+                                     PagedResourcesAssembler<OrderDto> assembler,
+                                     @RequestParam(required = false) LocalDateTime startDate,
+                                     @RequestParam(required = false) LocalDateTime endDate) {
         String accountEmail = user.getUsername();
 
         Page<OrderDto> orders =
@@ -48,7 +51,11 @@ public class OrderController {
     }
 
     @PostMapping("/{festivalDetailId}")
-    public ApiResponseDto<OrderCreateDto> createOrder(@PathVariable Long festivalDetailId) {
-        return ApiResponseDto.createOK(orderService.createOrder(festivalDetailId));
+    public ApiResponseDto<OrderCreateDto> createOrder(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long festivalDetailId) {
+        String accountEmail = user.getUsername();
+
+        return ApiResponseDto.createOK(orderService.createOrder(accountEmail, festivalDetailId));
     }
 }
