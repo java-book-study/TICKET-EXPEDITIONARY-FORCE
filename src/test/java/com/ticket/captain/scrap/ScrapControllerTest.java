@@ -14,10 +14,17 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 
+import static com.ticket.captain.document.utils.ApiDocumentUtils.getDocumentResponse;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -46,7 +53,7 @@ public class ScrapControllerTest {
     private final static String testEmail = "testEmail@naver.com";
 
     @BeforeAll
-    public void before(){
+    public void before() {
         FestivalCreateDto createDto = FestivalCreateDto.builder()
                 .title("Rock Festival")
                 .content("Come and Join Us")
@@ -62,14 +69,25 @@ public class ScrapControllerTest {
 
     @WithAccount(value = testEmail)
     @Test
-    public void createScrapTest() throws Exception{
+    public void createScrapTest() throws Exception {
         //given
         mockMvc.perform(post("/scrap/{festivalId}", festivalId))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(document("create-scrap",
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("festivalId").description("스크랩 할 축제 Id")
+                        ),
+                        responseFields(
+                                fieldWithPath("scrapId").description("부여된 스크랩 id값"),
+                                fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("회원 경로"),
+                                fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로")
+                        )
+                ));
     }
 
-    @WithAccount(value= testEmail)
+    @WithAccount(value = testEmail)
     @Test
     public void deleteScrapTest() throws Exception {
 
