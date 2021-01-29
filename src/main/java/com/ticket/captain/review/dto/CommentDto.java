@@ -58,7 +58,7 @@ public class CommentDto {
                 .writer(comment.getWriter())
                 .live(comment.getLive())
                 .reviewId(comment.getReview().getId())
-                .superCommentId(comment.getSuperComment().getId())
+                .superCommentId((comment.getSuperComment() == null) ? null : comment.getSuperComment().getId())
                 .createDate(comment.getCreateDate())
                 .createId(comment.getCreateId())
                 .modifyDate(comment.getModifyDate())

@@ -11,6 +11,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -39,8 +43,7 @@ public class CommentService {
     }
 
     private Comment of(CommentCreateDto createDto, Account account, Review review) {
-
-        return Comment.builder()
+        Comment newComment  = Comment.builder()
                 .contents(createDto.getContents())
                 .writer(account.getNickname())
                 .live(true)
@@ -48,6 +51,8 @@ public class CommentService {
                 .review(review)
                 .account(account)
                 .build();
+
+        return commentRepository.save(newComment);
     }
 
     private Comment subCommentOf(CommentCreateDto createDto, Account account, Review review) {
@@ -59,14 +64,14 @@ public class CommentService {
         }
 
         Comment newComment = Comment.builder()
-                    .contents(createDto.getContents())
-                    .writer(account.getNickname())
-                    .live(true)
-                    .level(supComment.getLevel() + 1)
-                    .review(review)
-                    .superComment(supComment)
-                    .account(account)
-                    .build();
+                .contents(createDto.getContents())
+                .writer(account.getNickname())
+                .live(true)
+                .level(supComment.getLevel() + 1)
+                .review(review)
+                .superComment(supComment)
+                .account(account)
+                .build();
 
         supComment.getSubComment().add(newComment);
         commentRepository.save(supComment);
@@ -81,6 +86,18 @@ public class CommentService {
         review.getComments().add(newComment);
         review.commentCountPlus();
         reviewRepository.save(review);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CommentDto> reviewDetail(Long reviewId) {
+        List<Comment> comments = commentRepository.findReviewByIdWithComments(reviewId);
+        if (comments.size() == 0) {
+            return Collections.emptyList();
+        }
+
+        return comments.stream()
+                .map(CommentDto::of)
+                .collect(Collectors.toList());
     }
 
     public CommentDto update(CommentUpdateDto updateDto, Long accountId) {

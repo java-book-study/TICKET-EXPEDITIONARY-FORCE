@@ -13,12 +13,20 @@ import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "api/comment", produces = MediaTypes.HAL_JSON_VALUE)
 @RequiredArgsConstructor
 public class CommentRestController {
 
     private final CommentService commentService;
+
+    @GetMapping("/review/{reviewId}")
+    public ResponseEntity<?> comments(@CurrentUser Account account, @PathVariable Long reviewId) {
+        List<CommentDto> commentsByReviewId = commentService.reviewDetail(reviewId);
+        return ResponseEntity.ok(commentsByReviewId);
+    }
 
     @PostMapping("")
     public ResponseEntity<?> write(@RequestBody CommentCreateDto createDto, @CurrentUser Account account) {

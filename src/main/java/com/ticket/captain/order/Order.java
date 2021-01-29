@@ -25,7 +25,7 @@ public class Order extends BaseEntity {
 
     private String orderNo;
 
-    @Column(name = "fetival_id")
+    @Column(name = "festival_id")
     private Long festivalId;
 
     //festivalDetail 를 통해서 festivalId 받아서 필드 값으로 집어넣어 주어야 한다.

@@ -6,6 +6,7 @@ import com.ticket.captain.exception.NotFoundException;
 import com.ticket.captain.exception.UnauthorizedException;
 import com.ticket.captain.festival.Festival;
 import com.ticket.captain.festival.FestivalRepository;
+import com.ticket.captain.review.dto.ReviewCommentDto;
 import com.ticket.captain.review.dto.ReviewCreateDto;
 import com.ticket.captain.review.dto.ReviewDto;
 import com.ticket.captain.review.dto.ReviewUpdateDto;
@@ -14,6 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -60,6 +64,12 @@ public class ReviewService {
     @Transactional(readOnly = true)
     public Page<ReviewDto> findAll(Pageable pageable) {
         return reviewRepository.findAll(pageable).map(ReviewDto::of);
+    }
+
+    @Transactional(readOnly = true)
+    public ReviewCommentDto reviewComments(Long reviewId) {
+        Review review = reviewRepository.findReviewByIdWithComments(reviewId);
+        return ReviewCommentDto.of(review);
     }
 
     public ReviewDto update(ReviewUpdateDto reviewUpdateDto, Long accountId) {
