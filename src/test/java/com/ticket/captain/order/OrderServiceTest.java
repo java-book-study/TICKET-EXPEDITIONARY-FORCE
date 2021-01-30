@@ -76,7 +76,7 @@ class OrderServiceTest {
     }
 
     @Test
-    @WithMockUser(value = "mock-manager", roles = "MANAGER")
+    @WithMockUser(value = ACCOUNT_EMAIL, roles = "MANAGER")
     @DisplayName("Order 생성 확인")
     public void orderServiceTest() throws Exception {
         mockMvc.perform(post(API_ORDER_URL + savedFestivalDetail.getId())
