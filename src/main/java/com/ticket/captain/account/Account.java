@@ -1,17 +1,17 @@
 package com.ticket.captain.account;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ticket.captain.account.dto.AccountUpdateDto;
 import com.ticket.captain.common.Address;
 import com.ticket.captain.common.BaseEntity;
 import com.ticket.captain.order.Order;
 import com.ticket.captain.review.Comment;
 import com.ticket.captain.review.Review;
-import lombok.*;
+import com.ticket.captain.scrap.Scrap;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -65,6 +65,9 @@ public class Account extends BaseEntity {
 
     @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
     private final List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "account")
+    private List<Scrap> scraps;
 
     @Builder
     public Account(String email, String password, String profileImage, String name,
