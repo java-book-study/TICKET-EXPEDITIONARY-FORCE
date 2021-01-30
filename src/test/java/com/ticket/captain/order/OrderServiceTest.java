@@ -32,6 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 @AutoConfigureMockMvc
 class OrderServiceTest {
     public static final String API_ORDER_URL = "/api/order/";
+    public static final String ACCOUNT_EMAIL = "testEmail@naver.com";
+
     public Festival savedFestival;
     public FestivalDetail savedFestivalDetail;
     @Autowired
@@ -48,6 +50,7 @@ class OrderServiceTest {
     private FestivalRepository festivalRepository;
 
     @BeforeEach
+    @WithMockUser(value = ACCOUNT_EMAIL, roles = "MANAGER")
     void beforeAll() {
         FestivalCreateDto createDto = FestivalCreateDto.builder()
                 .title("ORDER FESTIVAL")

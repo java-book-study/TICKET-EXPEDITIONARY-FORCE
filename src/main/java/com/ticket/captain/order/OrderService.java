@@ -7,7 +7,6 @@ import com.ticket.captain.exception.NotFoundException;
 import com.ticket.captain.festival.Festival;
 import com.ticket.captain.festivalDetail.FestivalDetail;
 import com.ticket.captain.festivalDetail.FestivalDetailRepository;
-import com.ticket.captain.order.dto.OrderCreateDto;
 import com.ticket.captain.order.dto.OrderDto;
 import com.ticket.captain.ticket.Ticket;
 import com.ticket.captain.ticket.TicketRepository;
@@ -31,7 +30,7 @@ public class OrderService {
     private final AccountRepository accountRepository;
     private final TicketRepository ticketRepository;
 
-    public OrderCreateDto createOrder(String accountEmail, Long festivalDetailId) {
+    public OrderDto createOrder(String accountEmail, Long festivalDetailId) {
 
         FestivalDetail curFestivalDetail =
                 festivalDetailRepository.findById(festivalDetailId).orElseThrow(NotFoundException::new);
@@ -54,7 +53,7 @@ public class OrderService {
         Order savedOrder = orderRepository.save(createdOrder);
         ticketRepository.save(createdTicket);
 
-        return OrderCreateDto.of(savedOrder);
+        return OrderDto.of(savedOrder);
     }
 
     public OrderDto findByOrderNo(String orderNo) {
@@ -69,5 +68,10 @@ public class OrderService {
     public Page<OrderDto> findByAccountWithDate(Pageable pageable, String accountEmail, LocalDate startDate, LocalDate endDate) {
 
         return orderQueryRepository.findByAccountWithDate(pageable, accountEmail, startDate, endDate);
+    }
+
+    public Long deleteByOrderNo(String orderNo) {
+
+        return orderRepository.deleteByOrderNo(orderNo);
     }
 }

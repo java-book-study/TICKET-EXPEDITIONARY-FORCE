@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface OrderRepository extends JpaRepository<Order, String> {
     OrderDto findByOrderNo(String orderNo);
 
-    Order deleteOrderByAccount_Email(String email);
+    long deleteByOrderNo(String orderNo);
 }

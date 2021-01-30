@@ -10,15 +10,12 @@ import com.ticket.captain.festival.dto.FestivalDto;
 import com.ticket.captain.festivalDetail.FestivalDetailService;
 import com.ticket.captain.festivalDetail.dto.FestivalDetailCreateDto;
 import com.ticket.captain.festivalDetail.dto.FestivalDetailDto;
-import com.ticket.captain.order.dto.OrderCreateDto;
+import com.ticket.captain.order.dto.OrderDto;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -30,6 +27,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -41,7 +39,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
@@ -49,7 +47,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class OrderControllerTest {
 
     public static final String ACCOUNT_EMAIL = "9m1i9n1@gmail.com";
-
     @Autowired
     protected MockMvc mockMvc;
     @Autowired
@@ -59,11 +56,13 @@ public class OrderControllerTest {
     @Autowired
     protected OrderService orderService;
     @Autowired
-    protected OrderRepository orderRepository;
-    @Autowired
     protected FestivalDetailService festivalDetailService;
+    private FestivalDto festivalDto;
+    private FestivalDetailDto festivalDetailDto;
+    private OrderDto orderDto;
 
-    @Before
+    @BeforeAll
+    @Transactional
     @WithMockUser(value = ACCOUNT_EMAIL, roles = "MANAGER")
     public void setUp() {
         FestivalCreateDto createFestivalDto = FestivalCreateDto.builder()
@@ -74,7 +73,7 @@ public class OrderControllerTest {
                 .festivalCategory(FestivalCategory.ROCK.toString())
                 .build();
 
-        FestivalDto festivalDto = festivalService.add(createFestivalDto);
+        festivalDto = festivalService.add(createFestivalDto);
 
         FestivalDetailCreateDto createFestivalDetailDto = FestivalDetailCreateDto.builder()
                 .salesType(SalesType.FREE.toString())
@@ -84,15 +83,18 @@ public class OrderControllerTest {
                 .processDate(LocalDateTime.now())
                 .build();
 
-        FestivalDetailDto festivalDetailDto = festivalDetailService.add(festivalDto.getId(), createFestivalDetailDto);
+        festivalDetailDto = festivalDetailService.add(festivalDto.getId(), createFestivalDetailDto);
 
-        OrderCreateDto orderCreateDto = orderService.createOrder(ACCOUNT_EMAIL, festivalDetailDto.getId());
+        orderDto = orderService.createOrder(ACCOUNT_EMAIL, festivalDetailDto.getId());
     }
 
-    @After
+    @AfterAll
+    @Transactional
     @WithMockUser(value = ACCOUNT_EMAIL, roles = "MANAGER")
     public void tearDown() {
-        orderRepository.deleteOrderByAccount_Email(ACCOUNT_EMAIL);
+        festivalDetailService.delete(festivalDetailDto.getId());
+        festivalService.delete(festivalDto.getId());
+        orderService.deleteByOrderNo(orderDto.getOrderNo());
     }
 
     @Test
@@ -114,7 +116,6 @@ public class OrderControllerTest {
                                 linkWithRel("first").description("처음 링크").optional(),
                                 linkWithRel("document").description("해당 Api Document")
                         ),
-//                        requestFields(),
                         responseFields(
                                 fieldWithPath("_embedded.orderDtoList[].orderNo").type(JsonFieldType.STRING).description("주문번호"),
                                 fieldWithPath("_embedded.orderDtoList[].festival.id").type(JsonFieldType.NUMBER).description("축제 코드"),
@@ -151,10 +152,10 @@ public class OrderControllerTest {
                                 fieldWithPath("_embedded.orderDtoList[].account.emailCheckTokenGenDate").type(JsonFieldType.STRING).description("이메일체크토큰 생성일"),
                                 fieldWithPath("_embedded.orderDtoList[].statusCode").type(JsonFieldType.STRING).description("주문상태"),
                                 fieldWithPath("_embedded.orderDtoList[]._links.self.href").type(JsonFieldType.STRING).description("링크"),
-                                fieldWithPath("_links.first.href").type(JsonFieldType.STRING).description("첫번째 링크"),
+                                fieldWithPath("_links.first.href").type(JsonFieldType.STRING).description("첫번째 링크").optional(),
                                 fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("링크"),
-                                fieldWithPath("_links.next.href").type(JsonFieldType.STRING).description("다음 링크"),
-                                fieldWithPath("_links.last.href").type(JsonFieldType.STRING).description("이전 링크"),
+                                fieldWithPath("_links.next.href").type(JsonFieldType.STRING).description("다음 링크").optional(),
+                                fieldWithPath("_links.last.href").type(JsonFieldType.STRING).description("이전 링크").optional(),
                                 fieldWithPath("_links.document.href").type(JsonFieldType.STRING).description("도큐먼트 링크"),
                                 fieldWithPath("page.size").type(JsonFieldType.NUMBER).description("페이징 사이즈"),
                                 fieldWithPath("page.totalElements").type(JsonFieldType.NUMBER).description("전체 개수"),
@@ -230,10 +231,10 @@ public class OrderControllerTest {
                                 fieldWithPath("_embedded.orderDtoList[].account.emailCheckTokenGenDate").type(JsonFieldType.STRING).description("이메일체크토큰 생성일"),
                                 fieldWithPath("_embedded.orderDtoList[].statusCode").type(JsonFieldType.STRING).description("주문상태"),
                                 fieldWithPath("_embedded.orderDtoList[]._links.self.href").type(JsonFieldType.STRING).description("링크"),
-                                fieldWithPath("_links.first.href").type(JsonFieldType.STRING).description("첫번째 링크"),
+                                fieldWithPath("_links.first.href").type(JsonFieldType.STRING).description("첫번째 링크").optional(),
                                 fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("링크"),
-                                fieldWithPath("_links.next.href").type(JsonFieldType.STRING).description("다음 링크"),
-                                fieldWithPath("_links.last.href").type(JsonFieldType.STRING).description("이전 링크"),
+                                fieldWithPath("_links.next.href").type(JsonFieldType.STRING).description("다음 링크").optional(),
+                                fieldWithPath("_links.last.href").type(JsonFieldType.STRING).description("이전 링크").optional(),
                                 fieldWithPath("_links.document.href").type(JsonFieldType.STRING).description("도큐먼트 링크"),
                                 fieldWithPath("page.size").type(JsonFieldType.NUMBER).description("페이징 사이즈"),
                                 fieldWithPath("page.totalElements").type(JsonFieldType.NUMBER).description("전체 개수"),
