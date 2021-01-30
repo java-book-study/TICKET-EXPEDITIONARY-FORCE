@@ -3,6 +3,10 @@ package com.ticket.captain.account;
 import com.ticket.captain.account.dto.AccountUpdateDto;
 import com.ticket.captain.common.Address;
 import com.ticket.captain.common.BaseEntity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import com.ticket.captain.order.Order;
 import com.ticket.captain.review.Comment;
 import com.ticket.captain.review.Review;
@@ -99,7 +103,7 @@ public class Account extends BaseEntity {
         return this.emailCheckToken.equals(token);
     }
 
-    public long update(AccountUpdateDto updateRequestDto){
+    public long update(AccountUpdateDto updateRequestDto) {
         this.name = updateRequestDto.getName();
         this.email = updateRequestDto.getEmail();
         this.nickname = updateRequestDto.getNickname();
@@ -107,8 +111,8 @@ public class Account extends BaseEntity {
         return this.id;
     }
 
-    public void addRole(Role role){
-        this.role=role;
+    public void addRole(Role role) {
+        this.role = role;
     }
 
     public void completeSignUp() {

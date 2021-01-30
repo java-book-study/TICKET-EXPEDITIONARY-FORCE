@@ -1,22 +1,15 @@
 package com.ticket.captain.festival;
 
-import com.ticket.captain.common.ErrorsResource;
 import com.ticket.captain.exception.ExceptionDto;
-import com.ticket.captain.exception.NotFoundException;
 import com.ticket.captain.festival.dto.FestivalCreateDto;
 import com.ticket.captain.festival.dto.FestivalDto;
 import com.ticket.captain.festival.dto.FestivalUpdateDto;
 import com.ticket.captain.festival.validator.FestivalCreateValidator;
-import com.ticket.captain.response.ApiResponseCode;
 import com.ticket.captain.response.ApiResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.extern.slf4j.XSlf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.hateoas.MediaTypes;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +38,7 @@ public class FestivalManagerController {
             ExceptionDto exceptionDto = ExceptionDto.builder().message(field).build();
             return ApiResponseDto.VALIDATION_ERROR(exceptionDto);
         }
+
         return ApiResponseDto.createOK(festivalService.add(festivalCreateDto));
     }
 
@@ -66,8 +60,8 @@ public class FestivalManagerController {
 
     @PutMapping("/{festivalId}")
     public ApiResponseDto update(@PathVariable Long festivalId,
-                                              @Valid @RequestBody FestivalUpdateDto festivalUpdateDto,
-                                              Errors errors) {
+                                 @Valid @RequestBody FestivalUpdateDto festivalUpdateDto,
+                                 Errors errors) {
         if (errors.hasErrors()) {
             String field = errors.getFieldError().getDefaultMessage();
             ExceptionDto exceptionDto = ExceptionDto.builder().message(field).build();

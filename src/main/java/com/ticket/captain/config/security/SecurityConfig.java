@@ -5,8 +5,6 @@ import com.ticket.captain.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -37,9 +35,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/auth", "/api/email-token", "/api/sign-up").permitAll()
+                .antMatchers("/api/account/**", "/api/order/**", "/api/ticket/**").hasAnyRole("USER", "ADMIN", "MANAGER")
                 .antMatchers("/api/review/**").hasAnyRole("USER", "ADMIN", "MANAGER")
                 .antMatchers("/api/comment/**").hasAnyRole("USER", "ADMIN", "MANAGER")
-                .antMatchers("/api/account/**").hasAnyRole("USER", "ADMIN", "MANAGER")
                 .antMatchers("/api/manager/**").hasAnyRole("ADMIN", "MANAGER")
                 .antMatchers("/api/ticket/**").hasAnyRole("ADMIN", "MANAGER", "USER")
                 .antMatchers("/api/appointment/**").hasAnyRole("ADMIN")

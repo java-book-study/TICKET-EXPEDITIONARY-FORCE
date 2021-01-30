@@ -1,5 +1,6 @@
 package com.ticket.captain.festivalDetail;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ticket.captain.common.BaseEntity;
 import com.ticket.captain.festival.Festival;
 import lombok.AccessLevel;
@@ -12,7 +13,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity(name = "festival_detail")
-@Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FestivalDetail extends BaseEntity {
 
     @Id
@@ -20,6 +22,7 @@ public class FestivalDetail extends BaseEntity {
     @Column(name = "festival_detail_id")
     private Long id;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "festival_id")
     private Festival festival;
@@ -40,7 +43,7 @@ public class FestivalDetail extends BaseEntity {
     private LocalDateTime drawDate;
 
     @Builder
-    public FestivalDetail(String salesType,Long amount, BigDecimal price,
+    public FestivalDetail(String salesType, Long amount, BigDecimal price,
                           LocalDateTime processDate, LocalDateTime drawDate, Festival festival) {
         this.salesType = salesType;
         this.amount = amount;
@@ -51,7 +54,7 @@ public class FestivalDetail extends BaseEntity {
     }
 
 
-    public void update(String salesType,Long amount, BigDecimal price,
+    public void update(String salesType, Long amount, BigDecimal price,
                        LocalDateTime processDate, LocalDateTime drawDate) {
         this.amount = amount;
         this.price = price;

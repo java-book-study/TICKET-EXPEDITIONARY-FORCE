@@ -1,7 +1,6 @@
 package com.ticket.captain.order;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ticket.captain.account.Account;
 import com.ticket.captain.enumType.FestivalCategory;
 import com.ticket.captain.enumType.SalesType;
 import com.ticket.captain.festival.Festival;
@@ -10,7 +9,6 @@ import com.ticket.captain.festival.dto.FestivalCreateDto;
 import com.ticket.captain.festivalDetail.FestivalDetail;
 import com.ticket.captain.festivalDetail.FestivalDetailRepository;
 import com.ticket.captain.festivalDetail.dto.FestivalDetailCreateDto;
-import com.ticket.captain.order.dto.OrderDto;
 import com.ticket.captain.ticket.TicketRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -34,6 +31,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 @Transactional
 @AutoConfigureMockMvc
 class OrderServiceTest {
+    public static final String API_ORDER_URL = "/api/order/";
+    public Festival savedFestival;
+    public FestivalDetail savedFestivalDetail;
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
@@ -46,12 +46,6 @@ class OrderServiceTest {
     private OrderService orderService;
     @Autowired
     private FestivalRepository festivalRepository;
-
-    public Festival savedFestival;
-
-    public FestivalDetail savedFestivalDetail;
-
-    public static final String API_ORDER_URL = "/api/order/";
 
     @BeforeEach
     void beforeAll() {
@@ -81,9 +75,9 @@ class OrderServiceTest {
     @Test
     @WithMockUser(value = "mock-manager", roles = "MANAGER")
     @DisplayName("Order 생성 확인")
-    public void orderServiceTest() throws Exception{
-        mockMvc.perform(post(API_ORDER_URL+savedFestivalDetail.getId())
-                        .contentType(MediaType.APPLICATION_JSON))
+    public void orderServiceTest() throws Exception {
+        mockMvc.perform(post(API_ORDER_URL + savedFestivalDetail.getId())
+                .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
         ;
     }

@@ -1,7 +1,6 @@
 plugins {
     id 'org.springframework.boot' version '2.3.4.RELEASE'
     id 'io.spring.dependency-management' version '1.0.10.RELEASE'
-    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
     id 'java'
 
     id 'org.asciidoctor.convert' version '1.5.8'
@@ -41,7 +40,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'com.querydsl:querydsl-jpa'
     implementation 'org.apache.commons:commons-lang3:3.10'
     implementation 'commons-io:commons-io:2.6'
     //query문 처리할 때 내부 param 값 보여주는 라이브러리
@@ -74,18 +72,18 @@ dependencies {
     implementation "com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3"
     //postgreSQL
     implementation 'org.postgresql:postgresql'
+    //querydsl
+    compile("com.querydsl:querydsl-core") // querydsl
+    compile("com.querydsl:querydsl-jpa") // querydsl
+    annotationProcessor("com.querydsl:querydsl-apt:4.3.1:jpa") // querydsl JPAAnnotationProcessor 사용 지정
+    annotationProcessor("jakarta.persistence:jakarta.persistence-api")
+    annotationProcessor("jakarta.annotation:jakarta.annotation-api")
 }
 
 dependencyManagement {
     imports {
         mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
     }
-}
-
-test {
-    outputs.dir snippetsDir
-    useJUnitPlatform()
-    systemProperty "jasypt.encryptor.password", System.getProperty("jasypt.encryptor.password")
 }
 
 // RestDocs Build시 Copy되도록 Task 추가 ==
@@ -96,6 +94,12 @@ task copyDocument(type: Copy) {
     into file("src/main/resources/static/docs")
 }
 
+test {
+    outputs.dir snippetsDir
+    useJUnitPlatform()
+    systemProperty "jasypt.encryptor.password", System.getProperty("jasypt.encryptor.password")
+}
+
 build {
     dependsOn copyDocument
 }
@@ -103,23 +107,4 @@ build {
 asciidoctor {
     inputs.dir snippetsDir
     dependsOn test
-}
-
-def querydslDir = "$buildDir/generated/querydsl"
-
-querydsl {
-    jpa = true
-    querydslSourcesDir = querydslDir
-}
-
-sourceSets {
-    main.java.srcDir querydslDir
-}
-
-configurations {
-    querydsl.extendsFrom compileClasspath
-}
-
-compileQuerydsl {
-    options.annotationProcessorPath = configurations.querydsl
 }
