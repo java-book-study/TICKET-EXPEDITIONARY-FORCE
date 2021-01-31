@@ -26,6 +26,8 @@ public class WithAccountSecurityContextFactory implements WithSecurityContextFac
 
         Address address = new Address("seoul", "gangnam", "111");
 
+        AccountDto accountDto;
+
         AccountCreateDto accountCreateDto = AccountCreateDto.builder()
                 .email(nickname + "@naver.com")
                 .password("1q2w3e4r")
@@ -33,7 +35,13 @@ public class WithAccountSecurityContextFactory implements WithSecurityContextFac
                 .name("eunseong")
                 .address(address)
                 .build();
-        AccountDto accountDto = accountService.createAccount(accountCreateDto);
+
+        if(! accountService.existByEmail(accountCreateDto.getEmail()) ){
+            accountDto = accountService.createAccount(accountCreateDto);
+            accountService.roleAppoint(accountDto.getId(), Role.ROLE_USER);
+        }else{
+            accountDto = AccountDto.of(accountService.findByEmail(nickname + "@naver.com"));
+        }
 
         UserDetails principal = accountService.loadUserByUsername(accountDto.getEmail());
         Authentication authentication = new UsernamePasswordAuthenticationToken(principal, "", Collections.singleton(new SimpleGrantedAuthority(Role.ROLE_USER.name())));
