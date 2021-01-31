@@ -30,9 +30,9 @@ public class OrderQueryRepository {
 
     public Page<OrderDto> findByAccountId(Pageable pageable, String accountEmail) {
         QueryResults<Order> orders = queryFactory.selectFrom(order)
-                .join(order.account, account).fetchJoin()
-                .join(order.festival, festival).fetchJoin()
-                .join(order.festivalDetail, festivalDetail).fetchJoin()
+                .leftJoin(order.account, account).fetchJoin()
+                .leftJoin(order.festival, festival).fetchJoin()
+                .leftJoin(order.festivalDetail, festivalDetail).fetchJoin()
                 .where(order.account.email.eq(accountEmail))
                 .orderBy(order.createDate.desc())
                 .offset(pageable.getOffset())

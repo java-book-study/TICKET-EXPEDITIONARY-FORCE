@@ -1,6 +1,5 @@
 package com.ticket.captain.order;
 
-import com.ticket.captain.order.dto.OrderCreateDto;
 import com.ticket.captain.order.dto.OrderDto;
 import com.ticket.captain.response.ApiResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +51,7 @@ public class OrderController {
     }
 
     @PostMapping("/{festivalDetailId}")
-    public ApiResponseDto<OrderCreateDto> createOrder(
+    public ApiResponseDto<OrderDto> createOrder(
             @AuthenticationPrincipal User user,
             @PathVariable Long festivalDetailId) {
         String accountEmail = user.getUsername();
