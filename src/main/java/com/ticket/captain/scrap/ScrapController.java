@@ -2,6 +2,7 @@ package com.ticket.captain.scrap;
 
 import com.ticket.captain.account.Account;
 import com.ticket.captain.account.CurrentUser;
+import com.ticket.captain.scrap.dto.ScrapDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -24,9 +25,9 @@ public class ScrapController {
     @RequestMapping(value = "{festivalId}", method = RequestMethod.POST)
     public ResponseEntity<?> createScrap(@CurrentUser Account account, @PathVariable Long festivalId){
 
-        Long scrapId = scrapService.createScrap(account, festivalId);
-        EntityModel<Long> scrapModel = EntityModel.of(scrapId).add(linkTo(ScrapController.class).slash(scrapId).withSelfRel());
-        scrapModel.add(Link.of("/docs/index.html#create-scrapId").withRel("profile"));
+        ScrapDto scrapDto = scrapService.createScrap(account, festivalId);
+        EntityModel<ScrapDto> scrapModel = EntityModel.of(scrapDto).add(linkTo(ScrapController.class).slash(scrapDto.getScrapId()).withSelfRel());
+        scrapModel.add(Link.of("/docs/index.html#get-scrapId").withRel("profile"));
 
         return ResponseEntity.ok(scrapModel);
     }

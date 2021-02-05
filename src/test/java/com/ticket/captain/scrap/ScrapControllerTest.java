@@ -7,7 +7,7 @@ import com.ticket.captain.enumType.FestivalCategory;
 import com.ticket.captain.festival.FestivalService;
 import com.ticket.captain.festival.dto.FestivalCreateDto;
 import com.ticket.captain.festival.dto.FestivalDto;
-import com.ticket.captain.security.Jwt;
+import com.ticket.captain.scrap.dto.ScrapDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -53,11 +53,6 @@ public class ScrapControllerTest {
     @Autowired
     private AccountRepository accountRepository;
 
-    @Autowired
-    private Jwt jwt;
-
-    private String jwtToken;
-
     private Long festivalId;
 
     private final static String testEmail = "testEmail";
@@ -80,7 +75,6 @@ public class ScrapControllerTest {
     @WithAccount(value = testEmail)
     @Test
     public void createScrapTest() throws Exception {
-
         //given
         mockMvc.perform(post("/api/scrap/{festivalId}", festivalId)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -104,9 +98,9 @@ public class ScrapControllerTest {
     public void deleteScrapTest() throws Exception {
 
         Account account = accountRepository.findByEmail(testEmail);
-        Long scrapId = scrapService.createScrap(account, festivalId);
+        ScrapDto scrapDto = scrapService.createScrap(account, festivalId);
 
-        mockMvc.perform(delete("/api/scrap/{scrapId}", scrapId))
+        mockMvc.perform(delete("/api/scrap/{scrapId}", scrapDto.getScrapId()))
                 .andDo(print())
                 .andExpect(status().isOk());
 
