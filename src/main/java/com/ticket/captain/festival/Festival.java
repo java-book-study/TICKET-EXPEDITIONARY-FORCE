@@ -51,8 +51,8 @@ public class Festival extends BaseEntity{
     @Column(name = "category_id")
     private String festivalCategory;
 
-    @OneToOne(mappedBy = "festival")
-    private Scrap scrap;
+    @OneToMany(mappedBy = "festival", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Scrap> scraps;
 
     public static Festival createFestival(String title, String thumbnail, String content, LocalDateTime salesStartDate, LocalDateTime salesEndDate, String festivalCategory) {
         return Festival.builder()
