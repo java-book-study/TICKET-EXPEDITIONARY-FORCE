@@ -2,7 +2,6 @@ package com.ticket.captain.account;
 
 import com.ticket.captain.account.dto.AccountCreateDto;
 import com.ticket.captain.account.dto.AccountDto;
-import com.ticket.captain.common.Address;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,29 +21,19 @@ public class WithAccountSecurityContextFactory implements WithSecurityContextFac
     @Override
     public SecurityContext createSecurityContext(WithAccount withAccount) {
 
-        String nickname = withAccount.value();
-
-        Address address = new Address("seoul", "gangnam", "111");
-
-        AccountDto accountDto;
-
-        AccountCreateDto accountCreateDto = AccountCreateDto.builder()
-                .email(nickname + "@naver.com")
-                .password("1q2w3e4r")
-                .nickname(nickname)
-                .name("eunseong")
-                .address(address)
-                .build();
-
-        if(! accountService.existByEmail(accountCreateDto.getEmail()) ){
-            accountDto = accountService.createAccount(accountCreateDto);
-            accountService.roleAppoint(accountDto.getId(), Role.ROLE_USER);
-        }else{
-            accountDto = AccountDto.of(accountService.findByEmail(nickname + "@naver.com"));
+        if(!accountService.existByEmail( withAccount.email() )){
+            AccountDto accountDto = accountService.createAccount(
+                    AccountCreateDto.builder()
+                            .email(withAccount.email())
+                            .password("1q2w3e4r")
+                            .nickname(withAccount.nickname())
+                            .build());
+            accountService.roleAppoint(accountDto.getId(), withAccount.role());
         }
 
-        UserDetails principal = accountService.loadUserByUsername(accountDto.getEmail());
-        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, "", Collections.singleton(new SimpleGrantedAuthority(Role.ROLE_USER.name())));
+        UserDetails principal = accountService.loadUserByUsername(withAccount.email());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, "",
+                Collections.singleton(new SimpleGrantedAuthority(withAccount.role().name())));
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authentication);
 

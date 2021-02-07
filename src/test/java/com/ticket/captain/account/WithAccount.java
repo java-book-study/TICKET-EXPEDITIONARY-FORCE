@@ -10,5 +10,9 @@ import java.lang.annotation.RetentionPolicy;
 @WithSecurityContext(factory = WithAccountSecurityContextFactory.class)
 public @interface WithAccount {
 
-    String value();
+    String email() default "testTicket@gmail.com";
+
+    String nickname() default "testTicket";
+
+    Role role() default Role.ROLE_USER;
 }
