@@ -44,7 +44,7 @@ public class ReviewService {
         return Review.builder()
                 .title(reviewCreateDto.getTitle())
                 .contents(reviewCreateDto.getContents())
-                .writer(account.getName())
+                .writer(account.getNickname())
                 .commentCount(0)
                 .account(account)
                 .festival(festival)

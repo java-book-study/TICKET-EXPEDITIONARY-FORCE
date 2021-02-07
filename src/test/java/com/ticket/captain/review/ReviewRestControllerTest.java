@@ -59,7 +59,6 @@ public class ReviewRestControllerTest {
 
     private final String REVIEW_API_ADDRESS = "/api/review/";
 
-
     @BeforeEach
     void setUp() {
         FestivalCreateDto festivalCreateDto = FestivalCreateDto.builder()
@@ -76,7 +75,7 @@ public class ReviewRestControllerTest {
 
     @Test
     @DisplayName("리뷰 작성")
-    @WithAccount("eunseong")
+    @WithAccount
     public void reviewWrite() throws Exception {
         ReviewCreateDto createDto = reviewCreateDtoSample();
 
@@ -112,7 +111,7 @@ public class ReviewRestControllerTest {
 
     @Test
     @DisplayName("리뷰 작성 실패")
-    @WithAccount("eunseong")
+    @WithAccount
     public void reviewWriteFail() throws Exception{
         ReviewCreateDto createDto = ReviewCreateDto.builder()
                 .title("title")
@@ -138,7 +137,7 @@ public class ReviewRestControllerTest {
 
     @Test
     @DisplayName("리뷰 조회")
-    @WithAccount("eunseong")
+    @WithAccount(email = "eunseong@naver.com")
     public  void reviewDetail() throws Exception {
         ReviewDto reviewDto = reviewCreate("eunseong@naver.com");
 
@@ -169,7 +168,7 @@ public class ReviewRestControllerTest {
 
     @Test
     @DisplayName("리뷰 수정")
-    @WithAccount("eunseong")
+    @WithAccount(email = "eunseong@naver.com")
     public void reviewUpdate() throws Exception {
         ReviewDto reviewDto = reviewCreate("eunseong@naver.com");
 
@@ -213,7 +212,7 @@ public class ReviewRestControllerTest {
 
     @Test
     @DisplayName("리뷰 수정실패")
-    @WithAccount("eunseong")
+    @WithAccount
     public void reviewUpdateFail() throws Exception {
         ReviewDto reviewDto = reviewCreate("oceana57@naver.com");
 
@@ -247,7 +246,7 @@ public class ReviewRestControllerTest {
 
     @Test
     @DisplayName("리뷰 삭제")
-    @WithAccount("eunseong")
+    @WithAccount(email = "eunseong@naver.com")
     public void reviewDelete() throws Exception{
         ReviewDto reviewDto = reviewCreate("eunseong@naver.com");
 
@@ -260,7 +259,7 @@ public class ReviewRestControllerTest {
 
     @Test
     @DisplayName("리뷰 삭제실패")
-    @WithAccount("eunseong")
+    @WithAccount
     public void reviewDeleteFail() throws Exception{
         ReviewDto reviewDto = reviewCreate("oceana57@naver.com");
 

@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -39,6 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
 @Slf4j
+@Transactional
 public class ScrapControllerTest {
 
     @Autowired
@@ -72,7 +74,7 @@ public class ScrapControllerTest {
 
     }
 
-    @WithAccount(value = testEmail)
+    @WithAccount
     @Test
     public void createScrapTest() throws Exception {
         //given
@@ -93,7 +95,7 @@ public class ScrapControllerTest {
                 ));
     }
 
-    @WithAccount(value = testEmail)
+    @WithAccount
     @Test
     public void deleteScrapTest() throws Exception {
 
