@@ -42,27 +42,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 public class ReviewRestControllerTest {
 
+    private final String REVIEW_API_ADDRESS = "/api/review/";
     @Autowired
     MockMvc mockMvc;
-
     @Autowired
     ReviewService reviewService;
-
     @Autowired
     CommentService commentService;
-
     @Autowired
     FestivalService festivalService;
-
     @Autowired
     AccountService accountService;
-
     private Festival festival;
-
     private Account writeAccount;
-
-    private final String REVIEW_API_ADDRESS = "/api/review/";
-
 
     @BeforeEach
     void setUp() {
@@ -80,44 +72,44 @@ public class ReviewRestControllerTest {
 
     @Test
     @DisplayName("리뷰 작성")
-    @WithAccount("eunseong")
+    @WithAccount
     public void reviewWrite() throws Exception {
         ReviewCreateDto createDto = reviewCreateDtoSample();
 
         MvcResult mvcResult = mockMvc.perform(post(REVIEW_API_ADDRESS)
-                            .contentType(MediaTypes.HAL_JSON_VALUE)
-                            .content(new ObjectMapper().writeValueAsString(createDto)))
-                            .andExpect(status().isOk())
-                            .andDo(document("review_write_success",
-                                    getDocumentRequest(),
-                                    getDocumentResponse(),
-                                    requestFields(
-                                            fieldWithPath("title").type(JsonFieldType.STRING).description("review title"),
-                                            fieldWithPath("contents").type(JsonFieldType.STRING).description("review contents"),
-                                            fieldWithPath("festivalId").type(JsonFieldType.NUMBER).description("festivalId")
-                                    ),
-                                    responseFields(
-                                            fieldWithPath("id").type(JsonFieldType.NUMBER).description("리뷰 id"),
-                                            fieldWithPath("title").type(JsonFieldType.STRING).description("리뷰 제목"),
-                                            fieldWithPath("contents").type(JsonFieldType.STRING).description("리뷰 내용"),
-                                            fieldWithPath("writer").type(JsonFieldType.STRING).description("작성자"),
-                                            fieldWithPath("commentCount").type(JsonFieldType.NUMBER).description("댓글수"),
-                                            fieldWithPath("festivalId").type(JsonFieldType.NUMBER).description("페스티벌 id"),
-                                            fieldWithPath("createId").type(JsonFieldType.STRING).description("작성자 id"),
-                                            fieldWithPath("createDate").type(JsonFieldType.STRING).description("생성날짜"),
-                                            fieldWithPath("modifyId").type(JsonFieldType.STRING).description("수정자 id"),
-                                            fieldWithPath("modifyDate").type(JsonFieldType.STRING).description("수정날짜"),
-                                            fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("리뷰 경로"),
-                                            fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로")
-                                    )))
-                            .andDo(print())
-                            .andReturn();
+                .contentType(MediaTypes.HAL_JSON_VALUE)
+                .content(new ObjectMapper().writeValueAsString(createDto)))
+                .andExpect(status().isOk())
+                .andDo(document("review_write_success",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        requestFields(
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("review title"),
+                                fieldWithPath("contents").type(JsonFieldType.STRING).description("review contents"),
+                                fieldWithPath("festivalId").type(JsonFieldType.NUMBER).description("festivalId")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("리뷰 id"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("리뷰 제목"),
+                                fieldWithPath("contents").type(JsonFieldType.STRING).description("리뷰 내용"),
+                                fieldWithPath("writer").type(JsonFieldType.STRING).description("작성자"),
+                                fieldWithPath("commentCount").type(JsonFieldType.NUMBER).description("댓글수"),
+                                fieldWithPath("festivalId").type(JsonFieldType.NUMBER).description("페스티벌 id"),
+                                fieldWithPath("createId").type(JsonFieldType.STRING).description("작성자 id"),
+                                fieldWithPath("createDate").type(JsonFieldType.STRING).description("생성날짜"),
+                                fieldWithPath("modifyId").type(JsonFieldType.STRING).description("수정자 id"),
+                                fieldWithPath("modifyDate").type(JsonFieldType.STRING).description("수정날짜"),
+                                fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("리뷰 경로"),
+                                fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로")
+                        )))
+                .andDo(print())
+                .andReturn();
     }
 
     @Test
     @DisplayName("리뷰 작성 실패")
-    @WithAccount("eunseong")
-    public void reviewWriteFail() throws Exception{
+    @WithAccount
+    public void reviewWriteFail() throws Exception {
         ReviewCreateDto createDto = ReviewCreateDto.builder()
                 .title("title")
                 .contents("content")
@@ -141,9 +133,9 @@ public class ReviewRestControllerTest {
     }
 
     @Test
-    @DisplayName("리뷰 조회 - 댓글 제외")
-    @WithAccount("eunseong")
-    public  void reviewDetail() throws Exception {
+    @DisplayName("리뷰 조회")
+    @WithAccount(email = "eunseong@naver.com")
+    public void reviewDetail() throws Exception {
         ReviewDto reviewDto = reviewCreate("eunseong@naver.com");
 
         MvcResult mvcResult = mockMvc.perform(get(REVIEW_API_ADDRESS + reviewDto.getId())
@@ -173,7 +165,7 @@ public class ReviewRestControllerTest {
 
     @Test
     @DisplayName("리뷰 조회 - 댓글 포함")
-    @WithAccount("eunseong")
+    @WithAccount(email = "eunseong@naver.com")
     public void reviewAndCommentDetail() throws Exception {
         ReviewDto reviewDto = reviewCreate("eunseong@naver.com");
 
@@ -189,7 +181,7 @@ public class ReviewRestControllerTest {
 
     @Test
     @DisplayName("리뷰 수정")
-    @WithAccount("eunseong")
+    @WithAccount(email = "eunseong@naver.com")
     public void reviewUpdate() throws Exception {
         ReviewDto reviewDto = reviewCreate("eunseong@naver.com");
 
@@ -200,40 +192,40 @@ public class ReviewRestControllerTest {
                 .build();
 
         MvcResult mvcResult = mockMvc.perform(put(REVIEW_API_ADDRESS)
-                                .contentType(MediaTypes.HAL_JSON_VALUE)
-                                .content(new ObjectMapper().writeValueAsString(updateDto)))
-                                .andExpect(status().isOk())
-                                .andDo(document("review_write_success",
-                                        getDocumentRequest(),
-                                        getDocumentResponse(),
-                                        requestFields(
-                                                fieldWithPath("title").type(JsonFieldType.STRING).description("review title"),
-                                                fieldWithPath("contents").type(JsonFieldType.STRING).description("review contents"),
-                                                fieldWithPath("reviewId").type(JsonFieldType.NUMBER).description("reviewId")
-                                        ),
-                                        responseFields(
-                                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("리뷰 id"),
-                                                fieldWithPath("title").type(JsonFieldType.STRING).description("리뷰 제목"),
-                                                fieldWithPath("contents").type(JsonFieldType.STRING).description("리뷰 내용"),
-                                                fieldWithPath("writer").type(JsonFieldType.STRING).description("작성자"),
-                                                fieldWithPath("commentCount").type(JsonFieldType.NUMBER).description("댓글수"),
-                                                fieldWithPath("festivalId").type(JsonFieldType.NUMBER).description("페스티벌 id"),
-                                                fieldWithPath("createId").type(JsonFieldType.STRING).description("작성자 id"),
-                                                fieldWithPath("createDate").type(JsonFieldType.STRING).description("생성날짜"),
-                                                fieldWithPath("modifyId").type(JsonFieldType.STRING).description("수정자 id"),
-                                                fieldWithPath("modifyDate").type(JsonFieldType.STRING).description("수정날짜"),
-                                                fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("리뷰 경로"),
-                                                fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로")
-                                        )))
-                                .andDo(print())
-                                .andReturn();
+                .contentType(MediaTypes.HAL_JSON_VALUE)
+                .content(new ObjectMapper().writeValueAsString(updateDto)))
+                .andExpect(status().isOk())
+                .andDo(document("review_write_success",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        requestFields(
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("review title"),
+                                fieldWithPath("contents").type(JsonFieldType.STRING).description("review contents"),
+                                fieldWithPath("reviewId").type(JsonFieldType.NUMBER).description("reviewId")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("리뷰 id"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("리뷰 제목"),
+                                fieldWithPath("contents").type(JsonFieldType.STRING).description("리뷰 내용"),
+                                fieldWithPath("writer").type(JsonFieldType.STRING).description("작성자"),
+                                fieldWithPath("commentCount").type(JsonFieldType.NUMBER).description("댓글수"),
+                                fieldWithPath("festivalId").type(JsonFieldType.NUMBER).description("페스티벌 id"),
+                                fieldWithPath("createId").type(JsonFieldType.STRING).description("작성자 id"),
+                                fieldWithPath("createDate").type(JsonFieldType.STRING).description("생성날짜"),
+                                fieldWithPath("modifyId").type(JsonFieldType.STRING).description("수정자 id"),
+                                fieldWithPath("modifyDate").type(JsonFieldType.STRING).description("수정날짜"),
+                                fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("리뷰 경로"),
+                                fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로")
+                        )))
+                .andDo(print())
+                .andReturn();
 
         reviewService.delete(reviewDto.getId(), writeAccount.getId());
     }
 
     @Test
     @DisplayName("리뷰 수정실패")
-    @WithAccount("eunseong")
+    @WithAccount
     public void reviewUpdateFail() throws Exception {
         ReviewDto reviewDto = reviewCreate("oceana57@naver.com");
 
@@ -267,8 +259,8 @@ public class ReviewRestControllerTest {
 
     @Test
     @DisplayName("리뷰 삭제")
-    @WithAccount("eunseong")
-    public void reviewDelete() throws Exception{
+    @WithAccount(email = "eunseong@naver.com")
+    public void reviewDelete() throws Exception {
         ReviewDto reviewDto = reviewCreate("eunseong@naver.com");
 
         MvcResult mvcResult = mockMvc.perform(delete(REVIEW_API_ADDRESS + reviewDto.getId()))
@@ -280,8 +272,8 @@ public class ReviewRestControllerTest {
 
     @Test
     @DisplayName("리뷰 삭제실패")
-    @WithAccount("eunseong")
-    public void reviewDeleteFail() throws Exception{
+    @WithAccount
+    public void reviewDeleteFail() throws Exception {
         ReviewDto reviewDto = reviewCreate("oceana57@naver.com");
 
         MvcResult mvcResult = mockMvc.perform(delete(REVIEW_API_ADDRESS + reviewDto.getId()))

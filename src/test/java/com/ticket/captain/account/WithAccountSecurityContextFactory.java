@@ -19,24 +19,26 @@ public class WithAccountSecurityContextFactory implements WithSecurityContextFac
 
     private final AccountService accountService;
 
+    Address address = new Address("seoul", "gangnam", "111");
+
     @Override
     public SecurityContext createSecurityContext(WithAccount withAccount) {
 
-        String nickname = withAccount.value();
+        if(!accountService.existByEmail( withAccount.email() )){
+            AccountDto accountDto = accountService.createAccount(
+                    AccountCreateDto.builder()
+                            .email(withAccount.email())
+                            .name("test")
+                            .password("1q2w3e4r")
+                            .nickname(withAccount.nickname())
+                            .address(address)
+                            .build());
+            accountService.roleAppoint(accountDto.getId(), withAccount.role());
+        }
 
-        Address address = new Address("seoul", "gangnam", "111");
-
-        AccountCreateDto accountCreateDto = AccountCreateDto.builder()
-                .email(nickname + "@naver.com")
-                .password("1q2w3e4r")
-                .nickname(nickname)
-                .name("eunseong")
-                .address(address)
-                .build();
-        AccountDto accountDto = accountService.createAccount(accountCreateDto);
-
-        UserDetails principal = accountService.loadUserByUsername(accountDto.getEmail());
-        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, "", Collections.singleton(new SimpleGrantedAuthority(Role.ROLE_USER.name())));
+        UserDetails principal = accountService.loadUserByUsername(withAccount.email());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, "",
+                Collections.singleton(new SimpleGrantedAuthority(withAccount.role().name())));
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authentication);
 

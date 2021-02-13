@@ -8,9 +8,7 @@ import com.ticket.captain.festival.Festival;
 import com.ticket.captain.festival.FestivalService;
 import com.ticket.captain.festival.dto.FestivalCreateDto;
 import com.ticket.captain.festival.dto.FestivalDto;
-import com.ticket.captain.review.Comment;
 import com.ticket.captain.review.CommentService;
-import com.ticket.captain.review.Review;
 import com.ticket.captain.review.ReviewService;
 import com.ticket.captain.review.dto.*;
 import org.junit.jupiter.api.AfterEach;
@@ -33,7 +31,6 @@ import static com.ticket.captain.document.utils.ApiDocumentUtils.getDocumentRequ
 import static com.ticket.captain.document.utils.ApiDocumentUtils.getDocumentResponse;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -44,28 +41,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 public class CommentRestControllerTest {
 
+    private final String COMMENT_API_ADDRESS = "/api/comment/";
     @Autowired
     MockMvc mockMvc;
-
     @Autowired
     CommentService commentService;
-
     @Autowired
     ReviewService reviewService;
-
     @Autowired
     FestivalService festivalService;
-
     @Autowired
     AccountService accountService;
-
     private Festival festival;
-
     private Account writeAccount;
-
     private ReviewDto review;
-
-    private final String COMMENT_API_ADDRESS = "/api/comment/";
 
     @BeforeEach
     void setUp() {
@@ -84,7 +73,7 @@ public class CommentRestControllerTest {
 
     @Test
     @DisplayName("댓글 생성")
-    @WithAccount("eunseong")
+    @WithAccount(email = "eunseong@naver.com")
     public void commentCreate() throws Exception {
         review = reviewCreate("eunseong@naver.com");
         CommentCreateDto createDto = createDto(review);
@@ -122,8 +111,8 @@ public class CommentRestControllerTest {
 
     @Test
     @DisplayName("댓글 수정")
-    @WithAccount("eunseong")
-    public void commentUpdate() throws Exception{
+    @WithAccount(email = "eunseong@naver.com")
+    public void commentUpdate() throws Exception {
         review = reviewCreate("eunseong@naver.com");
         CommentCreateDto createDto = createDto(review);
         CommentDto comment = commentService.create(createDto, writeAccount.getId());
@@ -163,7 +152,7 @@ public class CommentRestControllerTest {
 
     @Test
     @DisplayName("댓글 삭제")
-    @WithAccount("eunseong")
+    @WithAccount(email = "eunseong@naver.com")
     public void commentDelete() throws Exception {
         review = reviewCreate("eunseong@naver.com");
         CommentCreateDto createDto = createDto(review);
@@ -178,7 +167,7 @@ public class CommentRestControllerTest {
 
     @Test
     @DisplayName("댓글 조회 - 리뷰 제외 댓글만")
-    @WithAccount("eunseong")
+    @WithAccount(email = "eunseong@naver.com")
     public void commentDetail() throws Exception {
         review = reviewCreate("eunseong@naver.com");
         CommentCreateDto createDto = createDto(review);
