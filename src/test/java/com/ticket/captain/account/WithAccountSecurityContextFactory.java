@@ -2,6 +2,7 @@ package com.ticket.captain.account;
 
 import com.ticket.captain.account.dto.AccountCreateDto;
 import com.ticket.captain.account.dto.AccountDto;
+import com.ticket.captain.common.Address;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,6 +19,8 @@ public class WithAccountSecurityContextFactory implements WithSecurityContextFac
 
     private final AccountService accountService;
 
+    Address address = new Address("seoul", "gangnam", "111");
+
     @Override
     public SecurityContext createSecurityContext(WithAccount withAccount) {
 
@@ -25,8 +28,10 @@ public class WithAccountSecurityContextFactory implements WithSecurityContextFac
             AccountDto accountDto = accountService.createAccount(
                     AccountCreateDto.builder()
                             .email(withAccount.email())
+                            .name("test")
                             .password("1q2w3e4r")
                             .nickname(withAccount.nickname())
+                            .address(address)
                             .build());
             accountService.roleAppoint(accountDto.getId(), withAccount.role());
         }
