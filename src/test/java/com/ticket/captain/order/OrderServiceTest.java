@@ -81,7 +81,6 @@ class OrderServiceTest {
     public void orderServiceTest() throws Exception {
         mockMvc.perform(post(API_ORDER_URL + savedFestivalDetail.getId())
                 .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-        ;
+                .andDo(print());
     }
 }

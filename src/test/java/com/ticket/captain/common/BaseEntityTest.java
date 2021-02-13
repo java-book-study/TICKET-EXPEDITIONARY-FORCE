@@ -3,29 +3,18 @@ package com.ticket.captain.common;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ticket.captain.enumType.FestivalCategory;
 import com.ticket.captain.festival.Festival;
-import com.ticket.captain.festival.FestivalRepository;
 import com.ticket.captain.festival.FestivalService;
 import com.ticket.captain.festival.dto.FestivalCreateDto;
-import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -36,18 +25,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class BaseEntityTest {
 
+    public static final String API_MANAGER_URL = "/api/manager/festival";
     @Autowired
     MockMvc mockMvc;
-
     @Autowired
     private FestivalService festivalService;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     private Festival festival;
-
-    public static final String API_MANAGER_URL = "/api/manager/festival";
 
     @Test
     @WithMockUser(value = "mock-manager", roles = "MANAGER")
@@ -60,7 +45,7 @@ public class BaseEntityTest {
                 .festivalCategory(FestivalCategory.ROCK.name())
                 .build();
 
-        mockMvc.perform(post(API_MANAGER_URL + "/generate/")
+        mockMvc.perform(post(API_MANAGER_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createDto))
                 .with(csrf()))

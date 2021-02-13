@@ -3,6 +3,7 @@ package com.ticket.captain.review;
 import com.ticket.captain.account.Account;
 import com.ticket.captain.account.CurrentUser;
 import com.ticket.captain.response.ApiResponseDto;
+import com.ticket.captain.review.dto.ReviewCommentDto;
 import com.ticket.captain.review.dto.ReviewCreateDto;
 import com.ticket.captain.review.dto.ReviewDto;
 import com.ticket.captain.review.dto.ReviewUpdateDto;
@@ -17,6 +18,8 @@ import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "api/review", produces = MediaTypes.HAL_JSON_VALUE)
@@ -40,6 +43,12 @@ public class ReviewRestController {
         EntityModel<ReviewDto> reviewDtoEntityModel = ReviewResource.of(reviewDto);
         reviewDtoEntityModel.add(Link.of("/docs/index.html#get-review").withRel("profile"));
         return ResponseEntity.ok(reviewDtoEntityModel);
+    }
+
+    @GetMapping("/reviewCommentDetail/{reviewId}")
+    public ResponseEntity<?> reviewCommentDetail(@PathVariable Long reviewId) {
+        ReviewCommentDto reviewCommentDto = reviewService.reviewComments(reviewId);
+        return ResponseEntity.ok(reviewCommentDto);
     }
 
     @PostMapping("")

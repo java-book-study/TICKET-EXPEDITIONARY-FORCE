@@ -13,4 +13,9 @@ public class CommentCreateDto {
 
     private Long superCommentId;
 
+    public CommentCreateDto(String contents, Long reviewId, Long superCommentId) {
+        this.contents = contents;
+        this.reviewId = reviewId;
+        this.superCommentId = superCommentId;
+    }
 }

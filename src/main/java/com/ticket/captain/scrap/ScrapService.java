@@ -4,6 +4,7 @@ import com.ticket.captain.account.Account;
 import com.ticket.captain.exception.NotFoundException;
 import com.ticket.captain.festival.Festival;
 import com.ticket.captain.festival.FestivalRepository;
+import com.ticket.captain.scrap.dto.ScrapDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,15 +16,13 @@ public class ScrapService {
 
     private final FestivalRepository festivalRepository;
 
-    public Long createScrap(Account account , Long festivalId){
+    public ScrapDto createScrap(Account account , Long festivalId){
 
         Festival festival = festivalRepository.findById(festivalId).orElseThrow(NotFoundException::new);
 
         Scrap scrap = new Scrap(account,festival);
 
-        Scrap save = scrapRepository.save(scrap);
-
-        return save.getId();
+        return ScrapDto.of(scrapRepository.save(scrap));
     }
 
     public void deleteScrap(Account account, Long scrapId) {

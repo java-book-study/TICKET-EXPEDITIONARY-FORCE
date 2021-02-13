@@ -147,4 +147,8 @@ public class AccountService implements UserDetailsService {
     public void deleteById(Long accountId) {
         accountRepository.deleteById(accountId);
     }
+
+    public boolean existByEmail(String email){
+       return accountRepository.existsByEmail(email);
+    }
 }
