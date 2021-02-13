@@ -12,4 +12,10 @@ public class CommentUpdateDto {
     private Long reviewId;
 
     private Long commentId;
+
+    public CommentUpdateDto(String contents, Long reviewId, Long commentId) {
+        this.contents = contents;
+        this.reviewId = reviewId;
+        this.commentId = commentId;
+    }
 }

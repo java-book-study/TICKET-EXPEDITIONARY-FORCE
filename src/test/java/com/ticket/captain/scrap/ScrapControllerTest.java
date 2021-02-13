@@ -36,21 +36,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Slf4j
 public class ScrapControllerTest {
 
+    private final static String testEmail = "testEmail";
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private FestivalService festivalService;
-
     @Autowired
     private ScrapService scrapService;
-
     @Autowired
     private AccountRepository accountRepository;
-
     private Long festivalId;
-
-    private final static String testEmail = "testEmail@naver.com";
 
     @BeforeAll
     public void before() {

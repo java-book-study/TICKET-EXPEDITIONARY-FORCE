@@ -8,6 +8,7 @@ import com.ticket.captain.festival.Festival;
 import com.ticket.captain.festival.FestivalService;
 import com.ticket.captain.festival.dto.FestivalCreateDto;
 import com.ticket.captain.festival.dto.FestivalDto;
+import com.ticket.captain.review.dto.CommentCreateDto;
 import com.ticket.captain.review.dto.ReviewCreateDto;
 import com.ticket.captain.review.dto.ReviewDto;
 import com.ticket.captain.review.dto.ReviewUpdateDto;
@@ -46,6 +47,9 @@ public class ReviewRestControllerTest {
 
     @Autowired
     ReviewService reviewService;
+
+    @Autowired
+    CommentService commentService;
 
     @Autowired
     FestivalService festivalService;
@@ -137,7 +141,7 @@ public class ReviewRestControllerTest {
     }
 
     @Test
-    @DisplayName("리뷰 조회")
+    @DisplayName("리뷰 조회 - 댓글 제외")
     @WithAccount("eunseong")
     public  void reviewDetail() throws Exception {
         ReviewDto reviewDto = reviewCreate("eunseong@naver.com");
@@ -164,6 +168,22 @@ public class ReviewRestControllerTest {
                                 fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로")
                         )))
                 .andDo(print())
+                .andReturn();
+    }
+
+    @Test
+    @DisplayName("리뷰 조회 - 댓글 포함")
+    @WithAccount("eunseong")
+    public void reviewAndCommentDetail() throws Exception {
+        ReviewDto reviewDto = reviewCreate("eunseong@naver.com");
+
+        CommentCreateDto createDto = createDto(reviewDto);
+        commentService.create(createDto, writeAccount.getId());
+
+        MvcResult mvcResult = mockMvc.perform(get(REVIEW_API_ADDRESS + "reviewCommentDetail/" + reviewDto.getId())
+                .contentType(MediaTypes.HAL_JSON_VALUE))
+                .andDo(print())
+                .andExpect(status().isOk())
                 .andReturn();
     }
 
@@ -297,5 +317,9 @@ public class ReviewRestControllerTest {
         Account account = accountService.findByEmail(email);
         writeAccount = account;
         return reviewService.add(reviewCreateDtoSample(), account.getId(), festival.getId());
+    }
+
+    private CommentCreateDto createDto(ReviewDto review) {
+        return new CommentCreateDto("comment", review.getId(), 2024L);
     }
 }

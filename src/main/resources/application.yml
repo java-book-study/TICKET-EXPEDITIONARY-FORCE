@@ -18,6 +18,7 @@ spring:
         type:
           descriptor:
             sql: trace
+        default_batch_fetch_size: 100
 
   data:
     web:
