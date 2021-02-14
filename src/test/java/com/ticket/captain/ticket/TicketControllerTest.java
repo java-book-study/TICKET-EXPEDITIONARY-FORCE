@@ -2,12 +2,20 @@ package com.ticket.captain.ticket;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ticket.captain.account.dto.AccountCreateDto;
+import com.ticket.captain.common.Address;
+import com.ticket.captain.enumType.FestivalCategory;
 import com.ticket.captain.enumType.SalesType;
 import com.ticket.captain.enumType.StatusCode;
+import com.ticket.captain.festival.Festival;
 import com.ticket.captain.festival.FestivalRepository;
+import com.ticket.captain.festival.dto.FestivalCreateDto;
 import com.ticket.captain.festivalDetail.FestivalDetail;
 import com.ticket.captain.festivalDetail.FestivalDetailRepository;
 import com.ticket.captain.festivalDetail.dto.FestivalDetailCreateDto;
+import com.ticket.captain.order.Order;
+import com.ticket.captain.order.OrderRepository;
+import com.ticket.captain.order.dto.OrderCreateDto;
 import com.ticket.captain.ticket.dto.TicketCreateDto;
 import com.ticket.captain.ticket.dto.TicketUpdateDto;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,10 +57,13 @@ public class TicketControllerTest {
     private FestivalRepository festivalRepository;
     @Autowired
     private TicketRepository ticketRepository;
+    @Autowired
+    private OrderRepository orderRepository;
 
     public static final String API_TICKET_URL = "/api/ticket/";
     public FestivalDetail savedFestivalDetail;
     public Ticket savedTicket;
+    public Order savedOrder;
 
     @BeforeEach
     void BeforeEach(){
@@ -63,7 +74,31 @@ public class TicketControllerTest {
                 .drawDate(LocalDateTime.now())
                 .processDate(LocalDateTime.now())
                 .build();
-        savedFestivalDetail = festivalDetailRepository.save(festivalDetailCreateDto.toEntity());
+        FestivalDetail festivalDetail = festivalDetailCreateDto.toEntity();
+
+        Festival festival = FestivalCreateDto.builder()
+                .title("Test Festival")
+                .content("Test Festival Content")
+                .thumbnail("Test ThumbNail")
+                .salesEndDate(LocalDateTime.now())
+                .salesStartDate(LocalDateTime.now())
+                .festivalCategory(FestivalCategory.ACOUSTIC.name())
+                .build()
+                .toEntity();
+        Festival savedFestival = festivalRepository.save(festival);
+
+        festivalDetail.setFestival(savedFestival);
+        savedFestivalDetail = festivalDetailRepository.save(festivalDetail);
+
+        Order order = Order.builder()
+                .festival(savedFestival)
+                .festivalDetail(savedFestivalDetail)
+                .orderNo("Test OrderNo")
+                .statusCode(StatusCode.DELIVERED)
+                .account(null)
+                .build();
+        savedOrder = orderRepository.save(order);
+
 
         TicketCreateDto ticketCreateDto = TicketCreateDto.builder()
                 .ticketNo("ticketNo-001")
@@ -72,6 +107,7 @@ public class TicketControllerTest {
                 .build();
         Ticket ticket = ticketCreateDto.toEntity();
         ticket.festivalDetailSetting(savedFestivalDetail);
+        ticket.orderSetting(savedOrder);
         savedTicket = ticketRepository.save(ticket);
     }
 
@@ -87,7 +123,7 @@ public class TicketControllerTest {
                 .build();
 
         //then
-        mockMvc.perform(post(API_TICKET_URL + savedFestivalDetail.getId())
+        mockMvc.perform(post(API_TICKET_URL + savedFestivalDetail.getId() + "/" + savedOrder.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ticketCreateDto))
                 .with(csrf()))

@@ -27,10 +27,11 @@ public class TicketController {
         return ApiResponseDto.createOK(ticketService.findById(ticketId));
     }
 
-    @PostMapping("/{festivalDetailId}")
+    @PostMapping("/{festivalDetailId}/{orderId}")
     public ApiResponseDto<TicketDto> ticketAdd(@PathVariable("festivalDetailId") Long festivalDetailId,
+                                               @PathVariable("orderId") Long orderId,
                                                @RequestBody TicketCreateDto ticketCreateDto) {
-        return ApiResponseDto.createOK(ticketService.add(festivalDetailId, ticketCreateDto.toDto()));
+        return ApiResponseDto.createOK(ticketService.add(festivalDetailId, orderId, ticketCreateDto.toDto()));
     }
 
     @PutMapping("/{ticketId}")
