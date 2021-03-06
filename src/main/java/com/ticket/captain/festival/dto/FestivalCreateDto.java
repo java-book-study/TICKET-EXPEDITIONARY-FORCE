@@ -1,48 +1,53 @@
 package com.ticket.captain.festival.dto;
 
 import com.ticket.captain.festival.Festival;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
-@Builder
-@Getter @Setter
-@ToString
+
+/**
+ * 생성할 때 사용하는 Dto 이다.
+ * 입력되는 값만 필드로 갖고 있기 때문에 Long id 등의 필드는 존재하지 않는다.
+ */
+@Getter
+@NoArgsConstructor
 public class FestivalCreateDto {
 
-    @NotBlank
-    @Length(min = 2, max = 20)
     private String title;
 
-    private String Thumbnail;
+    private String thumbnail;
 
-    @NotBlank
-    @Length(min = 2, max = 1000)
     private String content;
 
-    @NotBlank
     private LocalDateTime salesStartDate;
 
-    @NotBlank
     private LocalDateTime salesEndDate;
 
-    @NotBlank
-    private Long createId;
+    private String festivalCategory;
 
-    @NotBlank
-    private LocalDateTime createDate;
-
-    private LocalDateTime modifyDate;
-
-    private Long modifyId;
-
-    public Festival newFestival() {
-        return new Festival(title, content, Thumbnail, salesStartDate, salesEndDate, createId, modifyDate, modifyId);
+    @Builder
+    public FestivalCreateDto(String title, String thumbnail, String content,
+                             LocalDateTime salesStartDate, LocalDateTime salesEndDate, String festivalCategory) {
+        this.title = title;
+        this.thumbnail = thumbnail;
+        this.content = content;
+        this.salesStartDate = salesStartDate;
+        this.salesEndDate = salesEndDate;
+        this.festivalCategory = festivalCategory;
     }
 
+    public Festival toEntity() {
+
+        return Festival.builder()
+                .title(title)
+                .content(content)
+                .thumbnail(thumbnail)
+                .salesStartDate(salesStartDate)
+                .salesEndDate(salesEndDate)
+                .festivalCategory(festivalCategory)
+                .build();
+    }
 }

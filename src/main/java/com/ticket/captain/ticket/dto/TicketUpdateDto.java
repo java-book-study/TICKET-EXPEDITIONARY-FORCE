@@ -1,26 +1,29 @@
 package com.ticket.captain.ticket.dto;
 
+import com.ticket.captain.enumType.StatusCode;
 import com.ticket.captain.ticket.Ticket;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TicketUpdateDto {
-    private Long stateCode;
+    private String statusCode;
 
     @Builder
-    private TicketUpdateDto(Long stateCode) {
-        this.stateCode = stateCode;
+    private TicketUpdateDto(String statusCode) {
+        this.statusCode = statusCode;
     }
 
     public TicketUpdateDto toDto() {
         return TicketUpdateDto.builder()
-                .stateCode(stateCode)
+                .statusCode(statusCode)
                 .build();
     }
 
     public void apply(Ticket ticket) {
-        ticket.update(stateCode);
+        ticket.update(statusCode);
     }
 }

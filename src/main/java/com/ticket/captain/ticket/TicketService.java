@@ -1,6 +1,11 @@
 package com.ticket.captain.ticket;
 
 import com.ticket.captain.exception.NotFoundException;
+import com.ticket.captain.festivalDetail.FestivalDetail;
+import com.ticket.captain.festivalDetail.FestivalDetailRepository;
+import com.ticket.captain.order.Order;
+import com.ticket.captain.order.OrderRepository;
+import com.ticket.captain.order.dto.OrderDto;
 import com.ticket.captain.ticket.dto.TicketCreateDto;
 import com.ticket.captain.ticket.dto.TicketDto;
 import com.ticket.captain.ticket.dto.TicketUpdateDto;
@@ -9,12 +14,15 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service
+@Service @Transactional
 @RequiredArgsConstructor
 public class TicketService {
     private final TicketRepository ticketRepository;
+    private final FestivalDetailRepository festivalDetailRepository;
+    private final OrderRepository orderRepository;
 
     public List<TicketDto> findAll() {
         return ticketRepository.findAll().stream()
@@ -28,11 +36,18 @@ public class TicketService {
                 .orElseThrow(NotFoundException::new);
     }
 
-    public TicketDto add(TicketCreateDto create) {
-        Ticket target = create.toEntity();
-        Ticket created = ticketRepository.save(target);
+    public TicketDto add(Long festivalDetailId, Long orderId, TicketCreateDto ticketCreateDto) {
+        FestivalDetail findFestivalDetail = festivalDetailRepository.findById(festivalDetailId)
+                .orElseThrow(NotFoundException::new);
+        Order findOrder = orderRepository.findById(orderId)
+                .orElseThrow(NotFoundException::new);
 
-        return TicketDto.of(created);
+        Ticket target = ticketCreateDto.toEntity();
+        target.festivalDetailSetting(findFestivalDetail);
+        target.orderSetting(findOrder);
+        Ticket createdTicket = ticketRepository.save(target);
+
+        return TicketDto.of(createdTicket);
     }
 
     public void delete(Long ticketId) {
@@ -42,12 +57,11 @@ public class TicketService {
         ticketRepository.delete(ticket);
     }
 
-    @Transactional
-    public TicketDto update(Long ticketId, TicketUpdateDto update) {
+    public TicketDto update(Long ticketId, TicketUpdateDto ticketUpdateDto) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(NotFoundException::new);
 
-        update.apply(ticket);
+        ticketUpdateDto.apply(ticket);
 
         return TicketDto.of(ticket);
     }

@@ -50,5 +50,12 @@ public class ApiResponseDto<T> {
         return new ApiResponseDto<>(ApiResponseCode.BAD_REQUEST, data);
     }
 
+    public static <T> ApiResponseDto<T> VALIDATION_ERROR(T data) {
+        return new ApiResponseDto<>(ApiResponseCode.VALIDATION_ERROR, data);
+    }
+
+    public static <T> ApiResponseDto<T> UNAUTHORIZED(T data) {
+        return new ApiResponseDto<>(ApiResponseCode.UNAUTHORIZED, data);
+    }
 }
 

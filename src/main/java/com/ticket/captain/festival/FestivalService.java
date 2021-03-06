@@ -2,56 +2,67 @@ package com.ticket.captain.festival;
 
 import com.ticket.captain.exception.NotFoundException;
 import com.ticket.captain.festival.dto.FestivalCreateDto;
+import com.ticket.captain.festival.dto.FestivalDto;
+import com.ticket.captain.festival.dto.FestivalUpdateDto;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
+@Slf4j
 public class FestivalService {
 
     private final FestivalRepository festivalRepository;
 
-    public FestivalService(FestivalRepository festivalRepository) {
-        this.festivalRepository = festivalRepository;
+    public FestivalDto add(FestivalCreateDto festivalCreateDto) {
+        Festival festival = festivalCreateDto.toEntity();
+        return FestivalDto.of(festivalRepository.save(festival));
     }
 
-    public Festival generate(Festival newFestival) {
-        return festivalRepository.save(newFestival);
+    @Transactional(readOnly = true)
+    public List<FestivalDto> findAll(Pageable pageable) {
+        return festivalRepository.findAll(pageable).stream()
+                .map(FestivalDto::of)
+                .collect(Collectors.toList());
     }
 
-    public Festival updateFestival(Long festivalId, FestivalCreateDto festivalCreateDto) {
-        checkNotNull(festivalId, "festivalId must be provided.");
+    @Transactional(readOnly = true)
+    public FestivalDto findById(Long festivalId) {
+        Optional<Festival> findFestival = festivalRepository.findById(festivalId);
+        return findFestival
+                .map(FestivalDto::of)
+                .orElseThrow(NotFoundException::new);
+    }
+
+    public void delete(Long festivalId) {
         Festival festival = festivalRepository.findById(festivalId)
                 .orElseThrow(NotFoundException::new);
-        festival.update(festivalCreateDto);
-        return festivalRepository.save(festival);
+
+        festivalRepository.delete(festival);
+    }
+
+    public void deleteAll() {
+        festivalRepository.deleteAll();
+    }
+
+    public FestivalDto update(Long festivalId, FestivalUpdateDto festivalUpdateDto) {
+        Festival festival = festivalRepository.findById(festivalId)
+                .orElseThrow(NotFoundException::new);
+        festivalUpdateDto.apply(festival);
+        return FestivalDto.of(festival);
     }
 
     @Transactional(readOnly = true)
-    public Optional<Festival> findById(Long festivalId) {
-        checkNotNull(festivalId, "festivalId must be provided.");
-        return festivalRepository.findById(festivalId);
-    }
-
-    @Transactional(readOnly = true)
-    public Boolean existsByName(String title) {
-        checkNotNull(title, "title must be provided.");
-        return festivalRepository.existsByTitle(title);}
-
-    public void deleteFestival(Long festivalId) {
-        checkNotNull(festivalId, "festivalId must be provided.");
-        festivalRepository.deleteById(festivalId);
-    }
-
-
-    @Transactional(readOnly = true)
-    public List<Festival> getFestivals(Pageable pageable) {
-        return festivalRepository.findAll(pageable).getContent();
+    public Festival findByTitle(String title) {
+        return festivalRepository.findByTitle(title);
     }
 }

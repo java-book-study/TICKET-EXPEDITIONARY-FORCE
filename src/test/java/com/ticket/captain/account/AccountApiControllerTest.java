@@ -1,90 +1,82 @@
 package com.ticket.captain.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ticket.captain.account.dto.AccountCreateDto;
 import com.ticket.captain.account.dto.AccountDto;
+import com.ticket.captain.account.dto.AccountUpdateDto;
 import com.ticket.captain.common.Address;
-import com.ticket.captain.exception.NotFoundException;
+import com.ticket.captain.security.Jwt;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static com.ticket.captain.document.utils.ApiDocumentUtils.getDocumentRequest;
+import static com.ticket.captain.document.utils.ApiDocumentUtils.getDocumentResponse;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@AutoConfigureRestDocs
 @Transactional
 public class AccountApiControllerTest {
 
+    public static final String ACCOUNT_EMAIL = "test@email.com";
+    public static final Long ERROR_ID = 99L;
+    public static final String API_ACCOUNT_URL = "/api/account/";
+    public static Long TEST_ID;
+    Address address = new Address("seoul", "mapo", "03951");
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private AccountService accountService;
-    @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
-    private AccountRepository accountRepository;
+    private AccountService accountService;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private Jwt jwt;
+    private String jwtToken;
 
-    public static final String ACCOUNT_EMAIL = "test@email.com";
-
-    public static final Long ERROR_ID = 99L;
-
-    public static Long TEST_ID;
-
-    public static final String API_ACCOUNT_URL = "/api/account/";
     @Before
     public void setUp() {
-        Address adrs = new Address("seoul", "mapo", "03951");
-
-        Account account = Account.builder()
-                .email(ACCOUNT_EMAIL)
-                .name("test")
-                .password(passwordEncoder.encode("1111"))
-                .createDate(LocalDateTime.now())
-                .modifyDate(LocalDateTime.now())
-                .point(5000)
-                .address(adrs)
-                .build();
-
-        Account save = accountRepository.save(account);
-
+        AccountCreateDto accountCreateDto = accountCreateDtoSample();
+        Account save = accountSample();
         TEST_ID = save.getId();
+        save.addRole(Role.ROLE_USER);
+        jwtToken = jwt.createToken(TEST_ID, save.getName(), save.getEmail(), save.getRole().name());
     }
 
     @After
     public void after() {
-        accountRepository.deleteById(TEST_ID);
+        accountService.deleteById(TEST_ID);
     }
 
-    @DisplayName("사이트 회원들 목록을 page를 추가해 리턴하는 테스트")
     @Test
-    @Order(1)
-    public void 회원목록() throws Exception {
+    @DisplayName("사이트 회원들 목록을 page를 추가해 리턴하는 테스트")
+    public void 회원_목록() throws Exception {
 
         Pageable page = PageRequest.of(0, 10);
 
@@ -92,160 +84,167 @@ public class AccountApiControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .param("page", String.valueOf(page.getPageNumber()))
                 .param("size", String.valueOf(page.getPageSize()))
-                .with(csrf()))
+                .header("X-AUTH-TOKEN", jwtToken))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andReturn();
+                .andDo(document("list-accounts",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        responseFields(
+                                fieldWithPath("_embedded.accountDtoList[].id").type(JsonFieldType.NUMBER).description(" 회원 id"),
+                                fieldWithPath("_embedded.accountDtoList[].name").type(JsonFieldType.STRING).description("회원 이름"),
+                                fieldWithPath("_embedded.accountDtoList[].nickname").type(JsonFieldType.STRING).description("회원 닉네임"),
+                                fieldWithPath("_embedded.accountDtoList[].email").type(JsonFieldType.STRING).description("회원 이메일"),
+                                fieldWithPath("_embedded.accountDtoList[].address.city").type(JsonFieldType.STRING).description("회원 상세주소(시)"),
+                                fieldWithPath("_embedded.accountDtoList[].address.street").type(JsonFieldType.STRING).description("회원 상세주소(도로명주소)"),
+                                fieldWithPath("_embedded.accountDtoList[].address.zipcode").type(JsonFieldType.STRING).description("회원 상세주소(우편번호)"),
+                                fieldWithPath("_embedded.accountDtoList[].role").type(JsonFieldType.STRING).description("회원 권한"),
+                                fieldWithPath("_embedded.accountDtoList[].point").type(JsonFieldType.NUMBER).description("회원 포인트"),
+                                fieldWithPath("_embedded.accountDtoList[].emailCheckToken").type(JsonFieldType.STRING).description("회원 이메일 토큰"),
+                                fieldWithPath("_embedded.accountDtoList[].emailCheckTokenGenDate").type(JsonFieldType.STRING).description("회원 이메일 발송시간"),
+                                fieldWithPath("_embedded.accountDtoList[]._links.self.href").type(JsonFieldType.STRING).description("각 회원 경로"),
+                                fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("현재 경로"),
+                                fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로"),
+                                fieldWithPath("page.size").type(JsonFieldType.NUMBER).description("한 페이지 의 회원 수"),
+                                fieldWithPath("page.totalElements").type(JsonFieldType.NUMBER).description("총 요소"),
+                                fieldWithPath("page.totalPages").type(JsonFieldType.NUMBER).description("총 페이지 수"),
+                                fieldWithPath("page.number").type(JsonFieldType.NUMBER).description("현재 페이지 인덱스")
+                        )
+                        )
+                );
     }
 
-    @DisplayName("한 회원에 대한 정보 출력 테스트")
     @Test
-    @Order(2)
+    @DisplayName("한 회원에 대한 정보 출력 테스트")
     public void 회원_상세조회() throws Exception {
 
         //when
-        MvcResult mvcResult = mockMvc.perform(get(API_ACCOUNT_URL + TEST_ID)
-                .with(csrf()))
+        mockMvc.perform(get(API_ACCOUNT_URL + TEST_ID)
+                .header("X-AUTH-TOKEN", jwtToken))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andReturn();
-
-        String contentAsString = mvcResult.getResponse().getContentAsString();
-        AccountDto.Response accountResponseDto = objectMapper.readValue(contentAsString, AccountDto.Response.class);
-
-        assertEquals(accountService.findAccountDetail(TEST_ID).getEmail(), accountResponseDto.getEmail());
+                .andDo(document("detail-account",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description(" 회원 id"),
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("회원 이름"),
+                                fieldWithPath("nickname").type(JsonFieldType.STRING).description("회원 닉네임"),
+                                fieldWithPath("email").type(JsonFieldType.STRING).description("회원 이메일"),
+                                fieldWithPath("point").type(JsonFieldType.NUMBER).description("회원 포인트"),
+                                fieldWithPath("address.city").type(JsonFieldType.STRING).description("회원 상세주소(시)"),
+                                fieldWithPath("address.street").type(JsonFieldType.STRING).description("회원 상세주소(도로명주소)"),
+                                fieldWithPath("address.zipcode").type(JsonFieldType.STRING).description("회원 상세주소(우편번호)"),
+                                fieldWithPath("role").type(JsonFieldType.STRING).description("회원 권한"),
+                                fieldWithPath("emailCheckToken").type(JsonFieldType.STRING).description("이메일 인증 토큰"),
+                                fieldWithPath("emailCheckTokenGenDate").type(JsonFieldType.STRING).description("이메일 토큰 발행 시간"),
+                                fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("회원 경로"),
+                                fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로")
+                        )
+                        )
+                );
 
     }
 
-    @DisplayName("회원 수정 시 값이 정상적으로 보냈는지 테스트")
     @Test
-    @Order(4)
+    @DisplayName("회원 수정 시 값이 정상적으로 보냈는지 테스트")
     public void 회원_수정_성공() throws Exception {
 
         //given
-        AccountDto.Update updateRequestDto =
-                new AccountDto.Update("update","update@email.com", Role.ROLE_ADMIN);
+        AccountUpdateDto updateRequestDto =
+                new AccountUpdateDto("update", "update@email.com", "updateNickname");
 
-        //when
-        mockMvc.perform(post(API_ACCOUNT_URL + TEST_ID)
+        mockMvc.perform(MockMvcRequestBuilders.put(API_ACCOUNT_URL + "{id}", TEST_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequestDto))
-                .with(csrf()))
+                .header("X-AUTH-TOKEN", jwtToken))
                 .andDo(print())
-                .andExpect(status().isOk());
-
-        Account account = accountRepository.findById(TEST_ID).orElseThrow(NotFoundException::new);
-
-        //then
-        assertEquals("update@email.com", account.getEmail());
-        assertEquals("update", account.getName());
-//        assertEquals(accountResponseDto.getRole(), Role.ROLE_ADMIN);
+                .andExpect(status().isOk())
+                .andDo(document("update-account",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        requestFields(
+                                fieldWithPath("email").description("수정할 이메일"),
+                                fieldWithPath("name").description("수정할 이름"),
+                                fieldWithPath("nickname").description("수정할 닉네임")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").description("수정된 고유 계정 id"),
+                                fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("회원 경로"),
+                                fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로")
+                        )
+                        )
+                );
     }
 
-    @DisplayName("회원 수정 오류시 값이 변경 되었는지 확인하는 테스트")
     @Test
-    @Order(5)
+    @DisplayName("회원 수정시 수정할 계정이 있는지 확인하는 테스트")
     public void 회원_수정_실패() throws Exception {
 
         //given
-        AccountDto.Update updateRequestDto =
-                new AccountDto.Update("update","update@email.com", Role.ROLE_ADMIN);
+        AccountUpdateDto updateRequestDto =
+                new AccountUpdateDto("update", "update@email.com", "updateNickname");
 
         //when + then
-        mockMvc.perform(post(API_ACCOUNT_URL + ERROR_ID)
+        mockMvc.perform(MockMvcRequestBuilders.put(API_ACCOUNT_URL + ERROR_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequestDto))
-                .with(csrf()))
+                .header("X-AUTH-TOKEN", jwtToken))
                 .andDo(print())
-                .andExpect(jsonPath("code").exists())
-                .andExpect(jsonPath("message").exists())
-                .andExpect(status().isNotFound());
-
+                .andExpect(status().isNotFound())
+                .andDo(document("error-account",
+                        getDocumentResponse(),
+                        responseFields(
+                                fieldWithPath("message").description("에러 메시지"),
+                                fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로")
+                        )
+                        )
+                );
     }
 
-    @DisplayName("기본 유저는 ROLE_USER를 가지고 있는지 테스트")
     @Test
-    public void containsUSERTest() throws Exception{
-        //given
-        Address adrs = new Address("seoul", "mapo", "03951");
+    @WithMockUser(roles = {"ADMIN"})
+    @DisplayName("권한 부여 테스트 성공")
+    public void 권한_부여() throws Exception {
 
-        Account adminAccount = Account.builder()
-                .email("admin@gmail.com")
-                .name("adminTest")
-                .password(passwordEncoder.encode("1111"))
-                .createDate(LocalDateTime.now())
-                .modifyDate(LocalDateTime.now())
-                .point(5000)
-                .address(adrs)
-                .build();
-        Account savedAccount = accountRepository.save(adminAccount);
-        //then
-        assertThat(savedAccount.getRole()).isEqualTo(Role.ROLE_USER);
-    }
-
-    @DisplayName("addRole메서드 테스트")
-    @Test
-    public void addRoleTest() throws Exception{
-        //given
-        Address adrs = new Address("seoul", "mapo", "03951");
-
-        Account adminAccount = Account.builder()
-                .email("admin@gmail.com")
-                .name("adminTest")
-                .password(passwordEncoder.encode("1111"))
-                .createDate(LocalDateTime.now())
-                .modifyDate(LocalDateTime.now())
-                .point(5000)
-                .address(adrs)
-                .build();
-
-        Account savedAccount = accountRepository.save(adminAccount);
-        //when
-        savedAccount.addRole(Role.ROLE_MANAGER);
-        //then
-        assertThat(savedAccount.getRole()).isNotEqualTo(Role.ROLE_USER);
-        assertThat(savedAccount.getRole()).isEqualTo(Role.ROLE_MANAGER);
-    }
-
-    @DisplayName("managerAppoint 메서드를 통한 ROLE 변경 확인 테스트")
-    @Test
-    public void roleUpdateTest() throws Exception{
-        //given
-        Address adrs = new Address("seoul", "mapo", "03951");
-
-        Account adminAccount = Account.builder()
-                .email("admin@gmail.com")
-                .name("adminTest")
-                .password(passwordEncoder.encode("1111"))
-                .createDate(LocalDateTime.now())
-                .modifyDate(LocalDateTime.now())
-                .point(5000)
-                .address(adrs)
-                .build();
-        Account savedAccount = accountRepository.save(adminAccount);
-        Long id = savedAccount.getId();
-        //when
-        assertThat(savedAccount.getRole()).isEqualTo(Role.ROLE_USER);
-        accountService.managerAppoint(id);
-        Account findAccount = accountRepository.findById(id).orElseThrow(NullPointerException::new);
-        //then
-        assertThat(findAccount.getRole()).isEqualTo(Role.ROLE_MANAGER);
-    }
-
-    @DisplayName("managerAppoint API 테스트")
-    //이거하면 권한가지고 테스트 가능
-    @WithMockUser("ROLE_ADMIN")
-    @Test
-    public void appointApiTest() throws Exception{
-        //given
-        Address adrs = new Address("seoul", "mapo", "03951");
-        //when
-
-        //then
-        mockMvc.perform(put(API_ACCOUNT_URL+"admin/appoint/"+TEST_ID)
-                .with(csrf()))
+        mockMvc.perform(put(API_ACCOUNT_URL + "appoint/{id}", TEST_ID)
+                .param("role", Role.ROLE_MANAGER.name())
+                .header("X-AUTH-TOKEN", jwtToken))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("data.role").value("ROLE_MANAGER"));
+                .andDo(document("grant-account",
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("id").description("수정할 계정 고유 id값")
+                        ),
+                        requestParameters(
+                                parameterWithName("role").description("줄 권한")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("권한이 부여된 고유 계정 id"),
+                                fieldWithPath("role").type(JsonFieldType.STRING).description("부여된 계정"),
+                                fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("회원 경로"),
+                                fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("문서 경로")
+                        )
+                ));
     }
+
+    private AccountCreateDto accountCreateDtoSample() {
+        return AccountCreateDto.builder()
+                .email(ACCOUNT_EMAIL)
+                .password("1111")
+                .nickname("test")
+                .name("test")
+                .address(address)
+                .build();
+    }
+
+    private Account accountSample() {
+
+        AccountCreateDto accountCreateDto = accountCreateDtoSample();
+        AccountDto accountDto = accountService.createAccount(accountCreateDto);
+        Account newAccount = accountService.findByEmail(accountDto.getEmail());
+        return newAccount;
+    }
+
 }

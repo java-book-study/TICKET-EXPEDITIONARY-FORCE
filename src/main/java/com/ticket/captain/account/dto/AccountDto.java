@@ -1,104 +1,70 @@
 package com.ticket.captain.account.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ticket.captain.account.Account;
 import com.ticket.captain.account.Role;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.ticket.captain.common.Address;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
+@Getter
+@NoArgsConstructor
 public class AccountDto {
 
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class Response {
+    private Long id;
 
-        @NotBlank
-        private Long id;
-        @NotBlank
-        @Length(min=2, max=20)
-        private String name;
+    private String email;
 
-        @Email
-        @NotBlank
-        private String email;
-        @NotBlank
-        private Role role;
+    @JsonIgnore
+    private String profileImage;
 
-        public Response(Account account){
-            this.id = account.getId();
-            this.name = account.getName();
-            this.email = account.getEmail();
-            this.role = account.getRole();
-        }
-    }
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class Update{
+    private String name;
 
-        @Length(min=2, max=20)
-        private String name;
-        @Email
-        private String email;
+    private String nickname;
 
-        private Role role;
-    }
+    private long point;
 
-    @NoArgsConstructor
-    @Getter
-    public static class Create{
+    private String emailCheckToken;
 
-        @Email
-        @NotBlank
-        private String email;
+    private LocalDateTime emailCheckTokenGenDate;
 
-        @NotBlank
-        @Length(min=8, max=50)
-        private String password;
+    private Role role;
 
-        @NotBlank
-        private String nickname;
+    private Address address;
 
-        @NotBlank
-        private String name;
-
-
-        @Builder
-        public Create(String email, String password, String nickname, String name) {
-            this.email = email;
-            this.password = password;
-            this.nickname = nickname;
-            this.name = name;
-        }
-
-        public Account toEntity(){
-            return Account.builder()
-                    .email(email)
-                    .nickname(nickname)
-                    .name(name)
-                    .createDate(LocalDateTime.now())
-                    .build();
-        }
-
-        private String getIpInfo(){
-            HttpServletRequest req = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-            String ip = req.getHeader("X-FORWARDED-FOR");
-            if(ip == null){
-                ip = req.getRemoteAddr();
-            }
-            return ip;
-        }
+    @Builder
+    private AccountDto(Long id, String email, String profileImage, String name,
+                       String nickname, long point, String emailCheckToken, LocalDateTime emailCheckTokenGenDate, Role role, Address address) {
+        this.id = id;
+        this.email = email;
+        this.profileImage = profileImage;
+        this.name = name;
+        this.nickname = nickname;
+        this.point = point;
+        this.emailCheckToken = emailCheckToken;
+        this.emailCheckTokenGenDate = emailCheckTokenGenDate;
+        this.role = role;
+        this.address = address;
     }
 
+    public static AccountDto of(Account account) {
+
+        return AccountDto.builder()
+                .id(account.getId())
+                .email(account.getEmail())
+                .profileImage(account.getProfileImage())
+                .name(account.getName())
+                .nickname(account.getNickname())
+                .point(account.getPoint())
+                .role(account.getRole())
+                .address(account.getAddress())
+                .emailCheckToken(account.getEmailCheckToken())
+                .emailCheckTokenGenDate(account.getEmailCheckTokenGenDate())
+                .build();
+    }
 }

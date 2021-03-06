@@ -1,25 +1,24 @@
 package com.ticket.captain.ticket.dto;
 
+import com.ticket.captain.enumType.StatusCode;
 import com.ticket.captain.ticket.Ticket;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
+@Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TicketCreateDto {
     private String ticketNo;
-    private String orderNo;
-    private Long festivalId;
-    private Long festivalSq;
-    private Long statusCode;
-    private Long price;
+    private String statusCode;
+    private BigDecimal price;
 
     @Builder
-    private TicketCreateDto(String ticketNo, String orderNo, Long festivalId, Long festivalSq, Long statusCode, Long price) {
+    private TicketCreateDto(String ticketNo, Long festivalDetailId, String statusCode, BigDecimal price) {
         this.ticketNo = ticketNo;
-        this.orderNo = orderNo;
-        this.festivalId = festivalId;
-        this.festivalSq = festivalSq;
         this.statusCode = statusCode;
         this.price = price;
     }
@@ -27,9 +26,6 @@ public class TicketCreateDto {
     public TicketCreateDto toDto() {
         return TicketCreateDto.builder()
                 .ticketNo(ticketNo)
-                .orderNo(orderNo)
-                .festivalId(festivalId)
-                .festivalSq(festivalSq)
                 .statusCode(statusCode)
                 .price(price)
                 .build();
@@ -38,9 +34,6 @@ public class TicketCreateDto {
     public Ticket toEntity() {
         return Ticket.builder()
                 .ticketNo(ticketNo)
-                .orderNo(orderNo)
-                .festivalId(festivalId)
-                .festivalSq(festivalSq)
                 .statusCode(statusCode)
                 .price(price)
                 .build();

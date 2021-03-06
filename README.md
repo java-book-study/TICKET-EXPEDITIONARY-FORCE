@@ -5,10 +5,6 @@ RESTApi, TDD를 준수하며 백엔드를 우선으로 만들어 보는 프로�
 
 ---
 
-[![NPM Version][npm-image]][npm-url]
-[![Build Status][travis-image]][travis-url]
-[![Downloads Stats][npm-downloads]][npm-url]
-
 ## 최소한의 규칙
 
 - [설계 원칙](./design/README.md)
@@ -39,7 +35,7 @@ RESTApi, TDD를 준수하며 백엔드를 우선으로 만들어 보는 프로�
 
 #### Back-End
 
-👩🏻‍💻 **안소현** - [@ahnzhx](https://github.com/ahnzhx)
+~~👩🏻‍💻 **안소현** - [@ahnzhx](https://github.com/ahnzhx)~~
 
 👩🏻‍💻 **나현성** - [@HyunSung-Na](https://github.com/HyunSung-Na)
 

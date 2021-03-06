@@ -2,6 +2,8 @@ package com.ticket.captain.festival.validator;
 
 import com.ticket.captain.festival.FestivalService;
 import com.ticket.captain.festival.dto.FestivalCreateDto;
+import com.ticket.captain.festival.dto.FestivalUpdateDto;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -15,14 +17,23 @@ public class FestivalCreateValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return clazz.isAssignableFrom(FestivalCreateDto.class);
+        return clazz.isAssignableFrom(clazz);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
-        FestivalCreateDto festivalCreateDto = (FestivalCreateDto) target;
-        if(festivalService.existsByName(festivalCreateDto.getTitle())){
-            errors.rejectValue("title", "invalid.title", new Object[]{festivalCreateDto.getTitle()}, "이미 사용중인 이름입니다.");
+        if (target instanceof FestivalCreateDto) {
+            FestivalCreateDto festivalCreateDto = (FestivalCreateDto) target;
+            if(festivalService.findByTitle(festivalCreateDto.getTitle()) != null){
+                errors.rejectValue("title", "Invalid Title", new Object[]{festivalCreateDto.getTitle()},
+                        "이미 사용중인 이름입니다.");
+            }
+        } else if (target instanceof FestivalUpdateDto) {
+            FestivalUpdateDto festivalUpdateDto = (FestivalUpdateDto) target;
+            if(festivalService.findByTitle(festivalUpdateDto.getTitle()) != null){
+                errors.rejectValue("title", "Invalid Title", new Object[]{festivalUpdateDto.getTitle()},
+                        "이미 사용중인 이름입니다.");
+            }
         }
     }
 }

@@ -27,14 +27,17 @@ public class TicketController {
         return ApiResponseDto.createOK(ticketService.findById(ticketId));
     }
 
-    @PostMapping({"", "/"})
-    public ApiResponseDto<TicketDto> ticketAdd(@RequestBody TicketCreateDto create) {
-        return ApiResponseDto.createOK(ticketService.add(create.toDto()));
+    @PostMapping("/{festivalDetailId}/{orderId}")
+    public ApiResponseDto<TicketDto> ticketAdd(@PathVariable("festivalDetailId") Long festivalDetailId,
+                                               @PathVariable("orderId") Long orderId,
+                                               @RequestBody TicketCreateDto ticketCreateDto) {
+        return ApiResponseDto.createOK(ticketService.add(festivalDetailId, orderId, ticketCreateDto.toDto()));
     }
 
     @PutMapping("/{ticketId}")
-    public ApiResponseDto<TicketDto> ticketUpdate(Long ticketId, @Valid TicketUpdateDto update) {
-        return ApiResponseDto.createOK(ticketService.update(ticketId, update.toDto()));
+    public ApiResponseDto<TicketDto> ticketUpdate(@PathVariable("ticketId") Long ticketId,
+                                                  @Valid @RequestBody TicketUpdateDto ticketUpdateDto) {
+        return ApiResponseDto.createOK(ticketService.update(ticketId, ticketUpdateDto.toDto()));
     }
 
     @DeleteMapping("/{ticketId}")
